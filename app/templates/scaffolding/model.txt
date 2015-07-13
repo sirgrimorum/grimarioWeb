@@ -1,0 +1,18 @@
+<?php
+
+class $NAME$ extends \Eloquent {
+
+    // Add your validation rules here
+    public static $rules = [
+        'name' => 'required|min:8|unique:proyects,name',
+        'code' => 'min:6|unique:proyects,code',
+        'state' => 'required',
+        'type' => 'required',
+        'priority' => 'required',
+    ];
+
+    //protected $fillable = [];
+
+    protected $guarded = array();
+
+}

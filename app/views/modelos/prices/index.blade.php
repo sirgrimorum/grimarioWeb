@@ -1,0 +1,1 @@
+D:\wamp\www\grimario\app/views/prices/index.blade.php
