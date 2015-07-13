@@ -42,7 +42,7 @@ class ProyectsController extends \BaseController {
             ];
         }
 
-        return View::make('modelos.proyects.index', ['proyects'=>$proyects,'botonCrear'=>$botonCrear,'configCampos'=>$configCampos,'configBotones'=>$configBotones, 'userSen'=>$userSen]);
+        return View::make('modelos.proyects.index', ['proyects' => $proyects, 'botonCrear' => $botonCrear, 'configCampos' => $configCampos, 'configBotones' => $configBotones, 'userSen' => $userSen]);
     }
 
     /**
@@ -51,6 +51,11 @@ class ProyectsController extends \BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if (!$userSen->hasAccess("proyects")) {
+            return Redirect::route("home");
+        }
         if (Input::has('en')) {
             $enterpriseId = Input::get('en');
             $enterpise = Enterprise::find($enterpriseId);
@@ -135,9 +140,64 @@ class ProyectsController extends \BaseController {
      * @return Response
      */
     public function show($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->inGroup(Sentry::findGroupByName('Jugador'))) {
+            $botonCrearEntregables = false;
+            $botonCrearSupuestos = false;
+            $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit'];
+            $configBotonesEntregables = "";
+            $configBotonesSupuestos = "";
+        }
+        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
+            $botonCrearEntregables = false;
+            $botonCrearSupuestos = true;
+            $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
+            $configBotonesEntregables = "";
+            $configBotonesSupuestos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array("{ID}")) . "'>" . Lang::get("restriction.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
+            ];
+        }
+        if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
+            $botonCrearEntregables = true;
+            $botonCrearSupuestos = true;
+            $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
+            $configBotonesEntregables = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.show', array("{ID}")) . "'>" . Lang::get("payment.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.edit', array("{ID}")) . "'>" . Lang::get("payment.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.destroy', array("{ID}")) . "'>" . Lang::get("payment.labels.eliminar") . "</a>",
+            ];
+            $configBotonesSupuestos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array("{ID}")) . "'>" . Lang::get("restriction.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
+            ];
+        }
+        if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+            $botonCrearEntregables = true;
+            $botonCrearSupuestos = true;
+            $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
+            $configBotonesEntregables = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.show', array("{ID}")) . "'>" . Lang::get("payment.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.edit', array("{ID}")) . "'>" . Lang::get("payment.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.destroy', array("{ID}")) . "'>" . Lang::get("payment.labels.eliminar") . "</a>",
+            ];
+            $configBotonesSupuestos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array("{ID}")) . "'>" . Lang::get("restriction.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.destroy', array("{ID}")) . "'>" . Lang::get("restriction.labels.eliminar") . "</a>",
+            ];
+        }
         $proyect = Proyect::findOrFail($id);
 
-        return View::make('modelos.proyects.show', compact('proyect'));
+        return View::make('modelos.proyects.show', [
+            "proyect" => $proyect,
+            "botonCrearEntregables" => $botonCrearEntregables,
+            "botonCrearSupuestos" => $botonCrearSupuestos,
+            "configCampos" => $configCampos,
+            "configBotonesEntregables" => $configBotonesEntregables,
+            "configBotonesSupuestos" => $configBotonesSupuestos,
+        ]);
     }
 
     /**
@@ -147,6 +207,11 @@ class ProyectsController extends \BaseController {
      * @return Response
      */
     public function edit($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if (!$userSen->hasAccess("proyects")) {
+            return Redirect::route("home");
+        }
         $proyect = Proyect::find($id);
         if (Input::has('en')) {
             $enterpriseId = Input::get('en');

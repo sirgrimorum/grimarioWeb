@@ -3,7 +3,7 @@
 return array(
     'title' => Lang::get("tasktype.labels.tipos"),
     'single' => Lang::get("tasktype.labels.tipo"),
-    'model' => 'TaskType',
+    'model' => 'Tasktype',
     'columns' => array(
         'name' => array(
             'title' => Lang::get("tasktype.labels.name")

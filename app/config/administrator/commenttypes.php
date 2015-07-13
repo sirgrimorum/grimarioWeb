@@ -3,7 +3,7 @@
 return array(
     'title' => Lang::get("commenttype.labels.tipos"),
     'single' => Lang::get("commenttype.labels.tipo"),
-    'model' => 'CommentType',
+    'model' => 'Commenttype',
     'columns' => array(
         'name' => array(
             'title' => Lang::get("commenttype.labels.name")
