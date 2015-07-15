@@ -4,25 +4,13 @@ $config = array_except(Config::get('crudgen.payment'), array('campos'));
 $config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('paymentdate'));
 $configTareas = array_except(Config::get('crudgen.task'), array('campos', 'botones'));
 $configTareas['campos'] = array_only(Config::get('crudgen.task.campos'), array('priority', 'name', 'code', 'state', 'contribution', 'dpercentage', 'game_id', 'tasktype', 'description', 'dificulty', 'start', 'end'));
-$configTareas['botones'] = [
-    "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")) . "'>" . Lang::get("task.labels.ver") . "</a>",
-    "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array("{ID}")) . "'>" . Lang::get("task.labels.editar") . "</a>",
-    "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
-];
+$configTareas['botones'] = $configBotonesActividades;
 $configIndicadores = array_except(Config::get('crudgen.indicator'), array('campos', 'botones'));
 $configIndicadores['campos'] = array_only(Config::get('crudgen.indicator.campos'), array('priority', 'name', 'type', 'state', 'description', 'fuente', 'user_id'));
-$configIndicadores['botones'] = [
-    "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.show', array("{ID}")) . "'>" . Lang::get("indicator.labels.ver") . "</a>",
-    "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.edit', array("{ID}")) . "'>" . Lang::get("indicator.labels.editar") . "</a>",
-    "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.destroy', array("{ID}")) . "'>" . Lang::get("indicator.labels.eliminar") . "</a>",
-];
+$configIndicadores['botones'] = $configBotonesIndicadores;
 $configRiesgos = array_except(Config::get('crudgen.risk'), array('campos', 'botones'));
 $configRiesgos['campos'] = array_only(Config::get('crudgen.risk.campos'), array('probability', 'name', 'type', 'state', 'description', 'impact', 'importance', 'detect'));
-$configRiesgos['botones'] = [
-    "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array("{ID}")) . "'>" . Lang::get("risk.labels.ver") . "</a>",
-    "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.edit', array("{ID}")) . "'>" . Lang::get("risk.labels.editar") . "</a>",
-    "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.destroy', array("{ID}")) . "'>" . Lang::get("risk.labels.eliminar") . "</a>",
-];
+$configRiesgos['botones'] = $configBotonesRiesgos;
 ?>
 
 @section("contenido")
@@ -54,17 +42,25 @@ $configRiesgos['botones'] = [
 </div>
 <div class='container'>
     <h2>{{ Lang::get("indicator.titulos.index") }}</h2>
-    <a href='{{ action('IndicatorsController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("indicator.labels.create") }}</a>
+    @if ($botonCrearIndicadores)
+        <a href='{{ action('IndicatorsController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("indicator.labels.create") }}</a>
+    @endif
     {{ CrudLoader::lists($configIndicadores,$payment->indicators()->get()) }}
 </div>
 <div class='container'>
     <h2>{{ Lang::get("risk.titulos.index") }}</h2>
-    <a href='{{ action('RisksController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("risk.labels.create") }}</a>
+    @if ($botonCrearRiesgos)
+        <a href='{{ action('RisksController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("risk.labels.create") }}</a>
+    @endif
     {{ CrudLoader::lists($configRiesgos,$payment->risks()->get()) }}
 </div>
 <div class='container'>
     <h2>{{ Lang::get("task.titulos.index") }}</h2>
-    <a href='{{ action('TasksController@create') }}?py={{ $payment->id }}&pr={{ $payment->proyect_id }}' class='btn btn-info' >{{ Lang::get("task.labels.create") }}</a>
+    <div id='pie_tasks_per'></div>
+    @piechart('tasks_per', 'pie_tasks_per')
+    @if ($botonCrearActividades)
+        <a href='{{ action('TasksController@create') }}?py={{ $payment->id }}&pr={{ $payment->proyect_id }}' class='btn btn-info' >{{ Lang::get("task.labels.create") }}</a>
+    @endif
     {{ CrudLoader::lists($configTareas,$payment->tasks()->get()) }}
 </div>
 @stop

@@ -221,11 +221,13 @@ $configCosts['botones'] = [
     </div>
     <div class="form-group">
         <div class="boton_centrado">
-            @if (Input::get('st')=='ter')
+            @if (Input::get('st')=='ter' && $user->inGroup(Sentry::findGroupByName('Coordinador')))
             {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
             @else
             {{ Form::submit(Lang::get('task.labels.detener'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
-            {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
+                @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
+                {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
+                @endif
             @endif
         </div>
     </div>

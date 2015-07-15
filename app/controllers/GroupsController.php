@@ -8,6 +8,12 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function index() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("groups")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         //$groups = Sentry::findAllGroups();
         $groups = Group::all();
         return View::make('modelos.groups.index', compact('groups'));
@@ -19,6 +25,12 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("groups")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         return View::make('modelos.groups.create');
     }
 
@@ -28,7 +40,7 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function store() {
-        $messagesV = array_merge(Lang::get("group.mensajes.validation"),Lang::get("principal.mensajes.validation"));
+        $messagesV = array_merge(Lang::get("group.mensajes.validation"), Lang::get("principal.mensajes.validation"));
         $validator = Validator::make($data = Input::all(), Group::$rules, $messagesV);
 
         if ($validator->fails()) {
@@ -72,6 +84,12 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function show($id) {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("groups")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         try {
             $group = Sentry::findGroupById($id);
         } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
@@ -89,6 +107,12 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function edit($id) {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("groups")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         try {
             $group = Sentry::findGroupById($id);
         } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
@@ -106,7 +130,7 @@ class GroupsController extends BaseController {
      * @return Response
      */
     public function update($id) {
-        $messagesV = array_merge(Lang::get("group.mensajes.validation"),Lang::get("principal.mensajes.validation"));
+        $messagesV = array_merge(Lang::get("group.mensajes.validation"), Lang::get("principal.mensajes.validation"));
         $validator = Validator::make($data = Input::all(), Group::$rules, $messagesV);
 
         if ($validator->fails()) {

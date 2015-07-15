@@ -15,6 +15,7 @@ class CreateWorksTable extends Migration {
 		Schema::create('works', function(Blueprint $table)
 		{
 			$table->increments('id');
+                        $table->string('name', 150);
 			$table->integer('task_id')->unsigned()->index();
 			$table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
 			$table->integer('user_id')->unsigned()->index();

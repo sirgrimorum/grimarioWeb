@@ -19,6 +19,12 @@ class TasksController extends \BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("proyects")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         if (Input::has('pr') && Input::has('py')) {
             $proyectId = Input::get('pr');
             $paymentId = Input::get('py');
@@ -57,7 +63,7 @@ class TasksController extends \BaseController {
             return Redirect::back()->withErrors($validator)->withInput();
         }
         $data = Input::except('_token', 'payments', 'users', 'tasktype');
-        $data['type']=Input::get("tasktype");
+        $data['type'] = Input::get("tasktype");
         $task = Task::create($data);
         if (Input::has('payments')) {
             $payment = Payment::find(Input::get('payments'));
@@ -89,8 +95,11 @@ class TasksController extends \BaseController {
     public function show($id) {
         $task = Task::findOrFail($id);
         $user = Sentry::getUser();
-        $work = $task->works()->where('user_id', '=', $user->id)->orderBy('start', 'desc')->first();
-
+        $work = $task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first();
+        if ($work && $task->state == 'pau') {
+            $task->state = 'des';
+            $task->save();
+        }
         return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
     }
 
@@ -102,7 +111,12 @@ class TasksController extends \BaseController {
      */
     public function edit($id) {
         $task = Task::find($id);
-
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("tasks")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         $vista = ".edit";
         $pasa = false;
         if (Input::has('equipo')) {
@@ -112,6 +126,11 @@ class TasksController extends \BaseController {
                 'proyect' => $task->proyect,
                 'payment' => $task->payments()->first(),
             ];
+            if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+                $messages = new Illuminate\Support\MessageBag;
+                $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                return Redirect::route("home")->withErrors($messages);
+            }
             return View::make('modelos.tasks.equipo', $parametros);
         } elseif (Input::has('st')) {
             if (Input::get('st') == 'des') {
@@ -136,7 +155,7 @@ class TasksController extends \BaseController {
                 $state = Input::get('st');
 
                 $user = Sentry::getUser();
-                $work = $task->works()->where('user_id', '=', $user->id)->orderBy('start', 'desc')->first();
+                $work = $task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first();
                 $parametros = [
                     'task' => $task,
                     'state' => $state,
@@ -148,10 +167,21 @@ class TasksController extends \BaseController {
                     'work' => $work,
                     'comments' => $task->comments,
                     'costs' => $work->costs()->get(),
+                    'user' => $user,
                 ];
                 if (Input::get('st') == 'ent') {
+                    if (!$userSen->hasAccess("proyects")) {
+                        $messages = new Illuminate\Support\MessageBag;
+                        $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                        return Redirect::route("home")->withErrors($messages);
+                    }
                     $vista = ".entregar";
                 } elseif (Input::get('st') == 'cer') {
+                    if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+                        $messages = new Illuminate\Support\MessageBag;
+                        $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                        return Redirect::route("home")->withErrors($messages);
+                    }
                     $vista = ".evaluar";
                 } else {
                     $vista = ".actualizar";
@@ -258,7 +288,6 @@ class TasksController extends \BaseController {
                     $data['cuality'] = Input::get("cuality");
                     if ($data['cuality'] == "noc") {
                         $data['state'] = 'pau';
-                        Session::put('userTo', $task->works()->orderBy('end', 'desc')->first()->coordinator->id);
                         Mail::send(array('emails.html.tasks.devuelta', 'emails.text.tasks.devuelta'), array('task' => $task, 'user' => Sentry::getUser(), 'userTo' => $task->works()->orderBy('end', 'desc')->first()->coordinator, 'payment' => $task->payments()->first()), function($message) {
                             $user = User::find(Session::get('userTo'));
                             $message->from(Lang::get("email.from_email"), Lang::get("email.from_name"));
@@ -269,22 +298,22 @@ class TasksController extends \BaseController {
                 $pasa = true;
             } else {
                 if (Input::get('formaction') == Lang::get('task.labels.edit')) {
-                    $data = Input::except('payments', 'users','tasktype','formaction');
-                    $data['type']=Input::get("tasktype");
+                    $data = Input::except('payments', 'users', 'tasktype', 'formaction');
+                    $data['type'] = Input::get("tasktype");
                     $validator = Validator::make($data, Task::$rules);
 
                     if ($validator->fails()) {
-                        return "<pre>" . print_r($validator->messages,true) . "</pre>";
+                        return "<pre>" . print_r($validator->messages, true) . "</pre>";
                         return Redirect::back()->withErrors($validator)->withInput();
                     }
-                    $data = Input::except('_token', 'payments', 'users','tasktype','formaction');
-                    $data['type']=Input::get("tasktype");
+                    $data = Input::except('_token', 'payments', 'users', 'tasktype', 'formaction');
+                    $data['type'] = Input::get("tasktype");
                     $task->update($data);
                     if (Input::has('users')) {
                         $usuarios = Input::get('users');
                         $task->users()->sync($usuarios);
                     }
-                    
+
                     return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
                 } else {
                     $data['dpercentage'] = Input::get('dpercentage');

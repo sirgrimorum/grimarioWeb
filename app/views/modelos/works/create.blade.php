@@ -1,67 +1,51 @@
-D:\wamp\www\grimario\app/views/modelos/works/create.blade.php
 <?php
-$config = [
-            "modelo" => "$NAME$",
-            "tabla" => "$COLLECTION$",
-            "nombre" => "name",
-            "id" => "id",
-            "campos" => [
-                "content" => [
-                    "tipo" => "html",
-                    "label" => "Content"
-                ],
-                "author_user_id" => [
-                    "label" => "Autor",
-                    "tipo" => "relationship",
-                    "modelo" => "User",
-                    "id" => "id",
-                    "campo" => "name",
-                    "todos" => ""
-                ],
-                "permissions"=>[
-                    "tipo"=>"select",
-                    "label"=>Lang::get("group.labels.permissions"),
-                    "placeholder"=>Lang::get("group.placeholders.permissions"),
-                    "description"=>Lang::get("group.descriptions.permissions"),
-                    "opciones"=>array(
-                        "admin"=>"Administrador",
-                        "user"=>"Usuario",
-                        "superuser"=>"SuperUsuario",
-                        "empleado"=>"Empleado",
-                    )
-                ],
-                "hobbies"=>[
-                    "tipo"=>"checkbox",
-                    "valor"=>[
-                        1=>[
-                            "label"=>Lang::get("group.labels.hobbies.1"),
-                            "description"=>Lang::get("group.descriptions.hobbies.1"),
-                        ],
-                        2=>[
-                            "label"=>Lang::get("group.labels.hobbies.2"),
-                            "description"=>Lang::get("group.descriptions.hobbies.2"),
-                        ],
-                    ],
-                ],    
-                "activated"=>[
-                    "tipo"=>"checkbox",
-                    "label"=>Lang::get("group.labels.activated"),
-                    "description"=>Lang::get("group.descriptions.activated"),
-                    "valor"=>activated,
-                ]           
-            ],
-            "botones" => [
-                "<a href='{ID}'>Borrar</a>"
-            ]
-        ]
+$config = array_except(Config::get('crudgen.work'), array('campos'));
+$config['campos'] = array_except(Config::get('crudgen.work.campos'), array('end', 'coordinator'));
+$config["campos"]["user_id"]["tipo"] = "hidden";
+$config["campos"]["user_id"]["valor"] = $user->id;
+$preDatos = false;
+if (Input::has('tk')) {
+    $preDatos = true;
+    $config["campos"]["task_id"]["tipo"] = "hidden";
+    $config["campos"]["task_id"]["valor"] = $task->id;
+    $config["campos"]["users"]["valor"] = $users;
+}
+$config["campos"]["calendario"] = [
+    "tipo" => "checkbox",
+    "label" => Lang::get("work.labels.calendario"),
+    "description" => Lang::get("work.descriptions.calendario"),
+    "valor" => false,
+    "value" => true
+];
+$config["campos"]["sala"] = [
+    "tipo" => "checkbox",
+    "label" => Lang::get("work.labels.sala"),
+    "description" => Lang::get("work.descriptions.sala"),
+    "valor" => false,
+    "value" => true
+];
 ?>
 @extends("layouts.principal")
 
 @section("contenido")
-<h1>{{ Lang::get("$NAME$.titulos") }}</h3>
-<p>{{ TransArticle::get("$NAME$.prueba2") }}</p>
+<h1>{{ Lang::get("work.titulos.create") }}</h3>
+<p>{{ TransArticle::get("work.prueba2") }}</p>
+@if ($preDatos)
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>{{ $task->name }}</h3> <h6>{{ $task->code }}</h6>
+            </div>
+            <div class="panel-body">
+                <p>{{ $task->description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 <div class='container'>
-    {{ CrudLoader::lists($config) }}
+    {{ CrudLoader::create($config) }}
 </div>
 
 @stop
@@ -69,7 +53,7 @@ $config = [
 @section("selfjs")
 <script>
     $(document).ready(function() {
-        alert(translations.$NAME$.error);
+        //alert(translations.task.error);
     });
 </script>
 @stop

@@ -19,6 +19,12 @@ class IndicatorsController extends BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("proyects")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         if (Input::has('py')) {
             $paymentId = Input::get('py');
             $payment = Payment::find($paymentId);
@@ -57,6 +63,7 @@ class IndicatorsController extends BaseController {
      * @return Response
      */
     public function show($id) {
+        
         $indicator = Indicator::findOrFail($id);
 
         $payment = $indicator->payment;
@@ -73,6 +80,12 @@ class IndicatorsController extends BaseController {
      * @return Response
      */
     public function edit($id) {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("proyects")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         $indicator = Indicator::find($id);
 
         return View::make('modelos.indicators.edit', compact('indicator'));

@@ -626,6 +626,12 @@ return array(
         "url" => action('WorksController@store'),
         "botones" => Lang::get("work.labels.create"),
         "campos" => [
+            "name" => [
+                "tipo" => "text",
+                "label" => Lang::get("work.labels.name"),
+                "placeholder" => Lang::get("work.placeholders.name"),
+                "enlace" => URL::route(Lang::get("principal.menu.links.trabajo") . '.show', array("{ID}")),
+            ],
             "coordinator" => [
                 "label" => Lang::get("work.labels.coordinator"),
                 "tipo" => "relationship",
@@ -653,6 +659,15 @@ return array(
                 "campo" => "name",
                 "todos" => "",
                 "enlace" => URL::to(Lang::get("principal.menu.links.tarea"), array("{ID}")),
+            ],
+            "users" => [
+                "label" => Lang::get("work.labels.users"),
+                "tipo" => "relationships",
+                "modelo" => "User",
+                "id" => "id",
+                "campo" => "name",
+                "todos" => "",
+                "enlace" => URL::to(Lang::get("principal.menu.links.usuario"), array("{ID}")),
             ],
         ],
     ],
@@ -832,7 +847,7 @@ return array(
                 "id" => "id",
                 "campo" => "name",
                 "todos" => "",
-                //"enlace" => URL::to(Lang::get("principal.menu.links.usuario"), array("{ID}")),
+                "enlace" => URL::to(Lang::get("principal.menu.links.usuario"), array("{ID}")),
             ],
         ],
     ],

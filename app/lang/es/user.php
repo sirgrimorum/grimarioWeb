@@ -84,6 +84,7 @@ return array(
         "not_found" => "El usuario no ha sido encontrado",
         "already_activated" => "El usuario ya se encuentra activado",
         "codigor_invalido" => "El código es inválido. Vuelva a solicitarlo.",
+        "no_permission" => "No tiene permisos para realizar esta acción",
         "validation" => array(
             "email.required" => "El email es obligatorio.",
             "email.exists" => "Este email ya se encuentra registrado.",

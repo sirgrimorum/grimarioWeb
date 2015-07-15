@@ -1,5 +1,7 @@
 <?php
 
+use Khill\Lavacharts\Lavacharts;
+
 class ProyectsController extends \BaseController {
 
     /**
@@ -11,7 +13,9 @@ class ProyectsController extends \BaseController {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
         if (!$userSen->hasAccess("proyects")) {
-            return Redirect::route("home");
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $proyects = $usuario->proyects()->get();
@@ -54,7 +58,9 @@ class ProyectsController extends \BaseController {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
         if (!$userSen->hasAccess("proyects")) {
-            return Redirect::route("home");
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
         }
         if (Input::has('en')) {
             $enterpriseId = Input::get('en');
@@ -190,13 +196,26 @@ class ProyectsController extends \BaseController {
         }
         $proyect = Proyect::findOrFail($id);
 
+        $dtEntregasPer = Lava::DataTable();
+        $dtEntregasPer->addStringColumn(Lang::get("payment.labels.pagos"))
+                ->addNumberColumn('percentage');
+        foreach ($proyect->payments()->get() as $payment) {
+            $dtEntregasPer->addRow(array($payment->name, $payment->percentage));
+        }
+        $pieEntregasPer = Lava::PieChart("payments_per")
+                ->setOptions(array(
+            'datatable' => $dtEntregasPer,
+            'title' => Lang::get("payment.labels.pagos"),
+            'is3D' => true,
+        ));
+
         return View::make('modelos.proyects.show', [
-            "proyect" => $proyect,
-            "botonCrearEntregables" => $botonCrearEntregables,
-            "botonCrearSupuestos" => $botonCrearSupuestos,
-            "configCampos" => $configCampos,
-            "configBotonesEntregables" => $configBotonesEntregables,
-            "configBotonesSupuestos" => $configBotonesSupuestos,
+                    "proyect" => $proyect,
+                    "botonCrearEntregables" => $botonCrearEntregables,
+                    "botonCrearSupuestos" => $botonCrearSupuestos,
+                    "configCampos" => $configCampos,
+                    "configBotonesEntregables" => $configBotonesEntregables,
+                    "configBotonesSupuestos" => $configBotonesSupuestos,
         ]);
     }
 
@@ -210,7 +229,9 @@ class ProyectsController extends \BaseController {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
         if (!$userSen->hasAccess("proyects")) {
-            return Redirect::route("home");
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
         }
         $proyect = Proyect::find($id);
         if (Input::has('en')) {

@@ -1,7 +1,7 @@
 <?php
 $config = array_except(Config::get('crudgen.task'), array('campos'));
 $config['campos'] = array_except(Config::get('crudgen.task.campos'), array('users', 'order', 'start', 'end'));
-if ($task->state == 'des') {
+if ($task->state == 'des' || $task->state == 'pau') {
     $config['campos']['start'] = [
         "tipo" => "date",
         "label" => Lang::get("task.labels.start"),
@@ -40,7 +40,7 @@ if ($task->state == 'cer') {
     ];
 }
 $configWorks = array_except(Config::get('crudgen.work'), array('campos', 'botones'));
-$configWorks['campos'] = array_except(Config::get('crudgen.work.campos'), array('task_id'));
+$configWorks['campos'] = array_except(Config::get('crudgen.work.campos'), array('task_id','users'));
 $configWorks['botones'] = "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.trabajo") . '.show', array("{ID}")) . "'>" . Lang::get("work.labels.ver") . "</a>";
 $configWorks['campos']['totalcost'] = [
     "tipo" => "function",
@@ -66,28 +66,36 @@ $configComments['botones'] = [
 <div class='container botones'>
     <div class='row'>
         @if ($task->state == 'pla')
-        <div class='col-sm-offset-4 col-sm-4'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.comenzar") }}</a>
-        </div>
-        @elseif ($task->state == 'pau')
-        <div class='col-sm-offset-4 col-sm-4'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
-        </div>
-        @elseif ($task->state == 'des')
-        <div class='col-sm-offset-4 col-sm-2'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=pau" class='btn btn-default'>{{ Lang::get("task.labels.detener") }}</a>
-        </div>
-        <div class='col-sm-2'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
-        </div>
-        @elseif ($task->state == 'ter')
-        <div class='col-sm-offset-4 col-sm-4'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ent" class='btn btn-default'>{{ Lang::get("task.labels.entregar") }}</a>
-        </div>
-        @elseif ($task->state == 'ent')
-        <div class='col-sm-offset-4 col-sm-4'>
-            <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=cer" class='btn btn-default'>{{ Lang::get("task.labels.evaluar") }}</a>
-        </div>
+            <div class='col-sm-offset-4 col-sm-4'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.comenzar") }}</a>
+            </div>
+        @elseif ($task->state == 'pau' || !($work))
+            <div class='col-sm-offset-3 col-sm-3'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
+            </div>
+            <div class='col-sm-2'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.trabajo"). '.create') }}?tk={{ $task->id }}" class='btn btn-default'>{{ Lang::get("task.labels.planear_work") }}</a>
+            </div>
+        @elseif ($task->state == 'des' || ($work))
+            <div class='col-sm-offset-3 col-sm-2'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=pau" class='btn btn-default'>{{ Lang::get("task.labels.detener") }}</a>
+            </div>
+            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
+                <div class='col-sm-2'>
+                    <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
+                </div>
+            @endif
+            <div class='col-sm-2'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.trabajo"). '.create') }}?tk={{ $task->id }}" class='btn btn-default'>{{ Lang::get("task.labels.planear_work") }}</a>
+            </div>
+        @elseif ($task->state == 'ter' && $user->inGroup(Sentry::findGroupByName('Coordinador')))
+            <div class='col-sm-offset-4 col-sm-4'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ent" class='btn btn-default'>{{ Lang::get("task.labels.entregar") }}</a>
+            </div>
+        @elseif ($task->state == 'ent' && $user->inGroup(Sentry::findGroupByName('Director')))
+            <div class='col-sm-offset-4 col-sm-4'>
+                <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=cer" class='btn btn-default'>{{ Lang::get("task.labels.evaluar") }}</a>
+            </div>
         @endif
     </div>
 </div>
@@ -96,7 +104,9 @@ $configComments['botones'] = [
     <span class="help-block" id="work_end_help">
         {{ Lang::get('task.descriptions.users') }}
     </span>
-    <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?equipo=act" class='btn btn-info'>{{ Lang::get("task.labels.edit_equipo") }}</a>
+    @if ($user->inGroup(Sentry::findGroupByName('Director')))
+        <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?equipo=act" class='btn btn-info'>{{ Lang::get("task.labels.edit_equipo") }}</a>
+    @endif
     <table class="table table-striped table-bordered" id='list_users'>
         <thead>
             <tr>

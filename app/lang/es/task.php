@@ -46,6 +46,7 @@ return array(
         "edit" => "Editar tarea",
         "comenzar" => "Empezar a trabajar en la tarea",
         "reanudar" => "Reanudar el trabajo en la tarea",
+        "planear_work" => "Planear una jornada de trabajo",
         "detener" => "Pausar el trabajo en la tarea",
         "finalizar" => "Tarea terminada",
         "entregar" => "Entregar la tarea",
@@ -137,6 +138,7 @@ return array(
         "description" => "Juego, gamification, gerencia de proyectos",
         "show" => "Información de la tarea",
         "edit" => "Tarea en proceso",
+        "actualizar" => "Actualizar estado de la tarea",
     ),
     "mensajes" => array(
         "no_actualizado" => "No fue posible actualizar la tarea",

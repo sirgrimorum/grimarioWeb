@@ -1,4 +1,5 @@
 <?php
+use Khill\Lavacharts\Lavacharts;
 
 class PaymentsController extends BaseController {
 
@@ -20,6 +21,12 @@ class PaymentsController extends BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         if (Input::has('pr')) {
             $proyectId = Input::get('pr');
             $proyect = Proyect::find($proyectId);
@@ -44,7 +51,7 @@ class PaymentsController extends BaseController {
 
         $payment = Payment::create($data);
 
-        return Redirect::route(Lang::get("principal.menu.links.pago"). '.show', array($payment->id));
+        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id));
     }
 
     /**
@@ -54,9 +61,60 @@ class PaymentsController extends BaseController {
      * @return Response
      */
     public function show($id) {
+        $userSen = Sentry::getUser();
+        if ($userSen->inGroup(Sentry::findGroupByName('Jugador'))) {
+            $botonCrearIndicadores = false;
+            $botonCrearRiesgos = false;
+            $botonCrearActividades = false;
+            $configBotonesIndicadores = "";
+            $configBotonesRiesgos = "";
+            $configBotonesActividades = "";
+        }
+        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador')) || $userSen->inGroup(Sentry::findGroupByName('Director'))) {
+            $botonCrearIndicadores = true;
+            $botonCrearRiesgos = true;
+            $botonCrearActividades = true;
+            $configBotonesIndicadores = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.show', array("{ID}")) . "'>" . Lang::get("indicator.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.edit', array("{ID}")) . "'>" . Lang::get("indicator.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.destroy', array("{ID}")) . "'>" . Lang::get("indicator.labels.eliminar") . "</a>",
+            ];
+            $configBotonesRiesgos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array("{ID}")) . "'>" . Lang::get("risk.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.edit', array("{ID}")) . "'>" . Lang::get("risk.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.destroy', array("{ID}")) . "'>" . Lang::get("risk.labels.eliminar") . "</a>",
+            ];
+            $configBotonesActividades = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")) . "'>" . Lang::get("task.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array("{ID}")) . "'>" . Lang::get("task.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
+            ];
+        }
         $payment = Payment::findOrFail($id);
+        
+        $dtTareasPer = Lava::DataTable();
+        $dtTareasPer->addStringColumn(Lang::get("task.labels.tareas"))
+                ->addNumberColumn('percentage');
+        foreach ($payment->tasks()->get() as $task) {
+            $dtTareasPer->addRow(array($task->name, $task->percentage));
+        }
+        $pieTareasPer = Lava::PieChart("tasks_per")
+                ->setOptions(array(
+            'datatable' => $dtTareasPer,
+            'title' => Lang::get("task.labels.percentage"),
+            'is3D' => true,
+        ));
 
-        return View::make('modelos.payments.show', compact('payment'));
+        return View::make('modelos.payments.show', [
+            "payment" => $payment,
+            "userSen" => $userSen,
+            "configBotonesIndicadores" => $configBotonesIndicadores,
+            "configBotonesRiesgos" => $configBotonesRiesgos,
+            "configBotonesActividades" => $configBotonesActividades,
+            "botonCrearIndicadores" => $botonCrearIndicadores,
+            "botonCrearRiesgos" => $botonCrearRiesgos,
+            "botonCrearActividades" => $botonCrearActividades,
+        ]);
     }
 
     /**
@@ -66,6 +124,12 @@ class PaymentsController extends BaseController {
      * @return Response
      */
     public function edit($id) {
+        $userSen = Sentry::getUser();
+        if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         $payment = Payment::find($id);
 
         return View::make('modelos.payments.edit', compact('payment'));
@@ -85,12 +149,12 @@ class PaymentsController extends BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput();
         }
-        
+
         $data = Input::except('_token');
 
         $payment->update($data);
 
-        return Redirect::route(Lang::get("principal.menu.links.pago"). '.show', array($payment->id));
+        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id));
     }
 
     /**

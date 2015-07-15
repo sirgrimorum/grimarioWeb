@@ -18,7 +18,8 @@ class OauthController extends BaseController {
         // check if code is valid
         // if code is provided get user data and sign in
         if (!empty($code)) {
-
+            
+            $googleService->setAccessType("offline");
             // This was a callback request from google, get the token
             $token = $googleService->requestAccessToken($code);
 
@@ -75,6 +76,8 @@ class OauthController extends BaseController {
                 $profile->type = "Google";
                 $profile = $user->profiles()->save($profile);
             }
+            $profile->update_c = time();
+            $profile->token_json = json_encode(toDataObj($token));
             $profile->access_token = getReflectedPropertyValue($token, 'accessToken');
             $profile->save();
 

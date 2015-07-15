@@ -19,6 +19,12 @@ class RestrictionsController extends BaseController {
      * @return Response
      */
     public function create() {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("proyects")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         if (Input::has('pr')) {
             $proyectId = Input::get('pr');
             $proyect = Proyect::find($proyectId);
@@ -72,6 +78,12 @@ class RestrictionsController extends BaseController {
      * @return Response
      */
     public function edit($id) {
+        $userSen = Sentry::getUser();
+        if (!$userSen->hasAccess("proyects")) {
+            $messages = new Illuminate\Support\MessageBag;
+            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+            return Redirect::route("home")->withErrors($messages);
+        }
         $restriction = Restriction::find($id);
 
         return View::make('modelos.restrictions.edit', compact('restriction'));

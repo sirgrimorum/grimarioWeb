@@ -33,6 +33,8 @@ $configRestriccion['botones'] = $configBotonesSupuestos;
     <span class="help-block" id="work_end_help">
         {{ Lang::get('proyect.descriptions.payments') }}
     </span>
+    <div id='pie_payments_per'></div>
+    @piechart('payments_per', 'pie_payments_per')
     @if ($botonCrearEntregables)
     <a href='{{ action('PaymentsController@create') }}?pr={{ $proyect->id }}' class='btn btn-info' >{{ Lang::get("payment.labels.create") }}</a>
     @endif

@@ -39,7 +39,7 @@ return array(
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'America/Bogota',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -131,6 +131,7 @@ return array(
 		'Artdarek\OAuth\OAuthServiceProvider',
                 'Way\Generators\GeneratorsServiceProvider',
                 'Intervention\Image\ImageServiceProvider',
+                "Khill\Lavacharts\Laravel\LavachartsServiceProvider",
 	),
 
 	/*

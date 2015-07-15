@@ -18,6 +18,8 @@ class CreateProfilesTable extends Migration {
 			$table->string('uid', 100);
                         $table->string('username', 100);
                         $table->string('access_token', 250);
+                        $table->text('token_json');
+                        $table->string('update_c', 150);
 			$table->string('type', 20);
 			$table->text('data');
                         $table->integer('user_id')->unsigned()->index();

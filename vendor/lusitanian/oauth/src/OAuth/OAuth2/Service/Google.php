@@ -145,11 +145,13 @@ class Google extends AbstractService
 
         if (isset($data['refresh_token'])) {
             $token->setRefreshToken($data['refresh_token']);
-            unset($data['refresh_token']);
+            //unset($data['refresh_token']);
+        }else{
+            
         }
 
-        unset($data['access_token']);
-        unset($data['expires_in']);
+        //unset($data['access_token']);
+        //unset($data['expires_in']);
 
         $token->setExtraParams($data);
 
