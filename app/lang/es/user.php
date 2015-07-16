@@ -11,6 +11,7 @@ return array(
         "first_name" => "Nombres",
         "last_name" => "Appelidos",
         "name" => "Nombre",
+        "points" => "Puntos",
         "valueph" => "Valor de la hora",
         "ingresar" => "Entrar",
         "reset" => "Recuperar clave",
@@ -22,6 +23,7 @@ return array(
     "descriptions" => array(
         "usuario" => "Usuario",
         "usuarios" => "Usuarios",
+        "points" => "Puntos",
         "email" => "usuario@dominio.com",
         "password" => "******",
     ),
@@ -67,6 +69,7 @@ return array(
         "registro" => "Registro de usuario",
         "nuevo_password" => "Nueva clave",
         "login" => "Iniciar sesión",
+        "index" => "Jugadores",
     ),
     "mensajes" => array(
         "subject_registro" => "Bienvenido!",

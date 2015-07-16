@@ -1,6 +1,64 @@
 <?php
 
 return array(
+    'game' => [
+        "modelo" => "Game",
+        "tabla" => "games",
+        "nombre" => "name",
+        "id" => "id",
+        "url" => action('GamesController@store'),
+        "botones" => Lang::get("game.labels.create"),
+        "campos" => [
+            "name" => [
+                "tipo" => "text",
+                "label" => Lang::get("game.labels.name"),
+                "placeholder" => Lang::get("game.placeholders.name"),
+                "enlace" => URL::route(Lang::get("principal.menu.links.juego") . '.show', array("{ID}")),
+            ],
+            "description" => [
+                "tipo" => "html",
+                "label" => Lang::get("game.labels.description"),
+                "description" => Lang::get("game.descriptions.description"),
+            ],
+            "type" => [
+                "tipo" => "select",
+                "label" => Lang::get("game.labels.type"),
+                "opciones" => Lang::get("game.selects.type")
+            ],
+            "difficulty" => [
+                "tipo" => "number",
+                "label" => Lang::get("game.labels.difficulty"),
+                "placeholder" => Lang::get("game.placeholders.difficulty"),
+                "valor" => 100,
+                "description" => Lang::get("game.descriptions.difficulty"),
+            ],
+            "state" => [
+                "tipo" => "select",
+                "label" => Lang::get("game.labels.state"),
+                "opciones" => Lang::get("game.selects.state"),
+                "valor" => "pla",
+            ],
+            "start" => [
+                "tipo" => "datetime",
+                "label" => Lang::get("game.labels.date"),
+                "placeholder" => Lang::get("game.placeholders.date"),
+            ],
+            "end" => [
+                "tipo" => "datetime",
+                "label" => Lang::get("game.labels.end"),
+                "placeholder" => Lang::get("game.placeholders.end"),
+            ],
+            "teams" => [
+                "label" => Lang::get("game.labels.teams"),
+                "tipo" => "relationships",
+                "modelo" => "Team",
+                "id" => "id",
+                "campo" => "name",
+                "todos" => "",
+                "enlace" => URL::to(Lang::get("principal.menu.links.equipo"), array("{ID}")),
+            ],
+        ],
+    ],
     'proyect' => [
         "modelo" => "Proyect",
         "tabla" => "proyects",

@@ -100,6 +100,15 @@ class TasksController extends \BaseController {
             $task->state = 'des';
             $task->save();
         }
+        $dtPointsTeams = Lava::DataTable();
+        $dtPointsTeams->addStringColumn(Lang::get("team.labels.equipos"))
+                ->addNumberColumn('points');
+        foreach ($task->game->teams()->get() as $team) {
+            $dtPointsTeams->addRow(array($team->name, $team->taskpoints($task)));
+        }
+        $barPointsTeams = Lava::BarChart('points_teams')->setOptions(array(
+            'datatable' => $dtPointsTeams
+        ));
         return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
     }
 
@@ -156,6 +165,19 @@ class TasksController extends \BaseController {
 
                 $user = Sentry::getUser();
                 $work = $task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first();
+                if (!$work){
+                    $work = $task->works()->orderBy('end', 'desc')->first();
+                }
+                $first = true;
+                foreach ($task->works()->get() as $auxwork){
+                    $nuecosts = $auxwork->costs()->get();
+                    if ($first){
+                        $costs = $nuecosts;
+                    }else{
+                        $costs = $costs->merge($nuecosts);
+                    }
+                    $first = false;
+                }
                 $parametros = [
                     'task' => $task,
                     'state' => $state,
@@ -166,7 +188,7 @@ class TasksController extends \BaseController {
                     'payment' => $task->payments()->first(),
                     'work' => $work,
                     'comments' => $task->comments,
-                    'costs' => $work->costs()->get(),
+                    'costs' => $costs,
                     'user' => $user,
                 ];
                 if (Input::get('st') == 'ent') {
@@ -260,6 +282,7 @@ class TasksController extends \BaseController {
             } else {
                 $data['state'] = Input::get('state');
             }
+            
             if ($data['state'] == 'ent') {
                 $data['end'] = date("Y-m-d H:i:s");
                 foreach ($task->users()->get() as $worker) {
@@ -280,7 +303,7 @@ class TasksController extends \BaseController {
                     $message->to($user->email, $user->name)->subject(Lang::get("task.emails.titulos.entregada"));
                 });
                 $pasa = true;
-            } elseif ($data['state'] == 'cer' && !Input::has('formaction')) {
+            } elseif ($data['state'] == 'cer' && Input::has('formaction')) {
                 if (Input::has("satisfaction")) {
                     $data['satisfaction'] = Input::get("satisfaction");
                 }
@@ -295,6 +318,7 @@ class TasksController extends \BaseController {
                         });
                     }
                 }
+                
                 $pasa = true;
             } else {
                 if (Input::get('formaction') == Lang::get('task.labels.edit')) {

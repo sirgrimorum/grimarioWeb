@@ -9,7 +9,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
     use UserTrait,
         RemindableTrait;
-    
+
     // Add your validation rules here
     public static $rules = [
         'email' => 'required|email|unique:users,email',
@@ -35,11 +35,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function articles() {
         return $this->hasMany('Article', 'author_user_id');
     }
-    
+
     public function comments() {
         return $this->hasMany('Comment');
     }
-    
+
     public function profiles() {
         return $this->hasMany('Profile');
     }
@@ -47,11 +47,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function tasks() {
         return $this->belongsToMany('Task', 'task_user')->withPivot(array('valueph', 'calification', 'responsability'));
     }
-    
+
     public function works() {
         return $this->belongsToMany('Work', 'user_work')->withPivot(array('hours'));
     }
-    
+
     public function costs() {
         return $this->hasMany('Cost');
     }
@@ -69,20 +69,62 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function groups() {
-        return $this->belongsToMany('Group','users_groups');
+        return $this->belongsToMany('Group', 'users_groups');
     }
-    
+
     public function proyects() {
         return $this->hasMany('Proyect');
     }
-    
-    public function taskhours($task_id){
-        $task = Task::findOrFail($task_id);
+
+    public function taskhours($task) {
         $total = 0;
-        foreach ($task->works()->get() as $work){
-            $total += $work->users()->where("users.id","=",$this->id)->first()->pivot->hours;
+        foreach ($task->works()->get() as $work) {
+            $userwork = $work->users()->where("users.id", "=", $this->id)->get();
+            if (!$userwork->isEmpty()) {
+                $total += $userwork->first()->pivot->hours;
+            }
         }
         return $total;
+    }
+
+    public function taskpoints($task, $game) {
+        $total = 0;
+        $user_id = $this->id;
+        $team = $task->proyect->teams()->get()->filter(function($team) use ($user_id) {
+                    if (!$team->users()->where("users.id", "=", $user_id)->get()->isEmpty()) {
+                        return true;
+                    }
+                })->first();
+        switch ($this->tasks()->where("tasks.id", "=", $task->id)->first()->pivot->calification) {
+            case 0:
+                $cuality = 0.6;
+                break;
+            case 1:
+                $cuality = 1;
+                break;
+            case 2:
+                $cuality = 1.2;
+                break;
+            default:
+                $cuality = 0;
+        }
+        $total = $team->taskpoints($task, $game) * $cuality;
+        return $total;
+    }
+
+    public function gamepoints($game) {
+        $total = 0;
+        $totalh = 0;
+        foreach ($game->tasks()->get() as $task) {
+            $total += $this->taskpoints($task, $game);
+            $totalh += $this->taskhours($task);
+        }
+        if ($totalh > 160) {
+            $multp = 1.1;
+        } else {
+            $multp = 1;
+        }
+        return $total * $multp;
     }
 
 }

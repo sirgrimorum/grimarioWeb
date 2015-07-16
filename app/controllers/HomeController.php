@@ -19,6 +19,7 @@ class HomeController extends BaseController {
 	{
             $user_id = Sentry::getUser()->id;
             $user = User::findOrFail($user_id);
+            
             return View::make('hello', ["user"=>$user, "tasks"=> $user->tasks()->where("state","<>","cer")->get()]);
 	}
 

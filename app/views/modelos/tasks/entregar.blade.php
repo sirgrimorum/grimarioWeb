@@ -138,7 +138,7 @@ $configRestriccion['botones'] = [
                                 {{ $usuario->pivot->responsability }}
                             </td>
                             <td>
-                                {{ $usuario->taskhours($task->id) }}
+                                {{ $usuario->taskhours($task) }}
                             </td>
                             <td>
                                 {{ Form::select("work_users_c_" . $usuario->id, Lang::get("task.selects.user_calification"), 0, array('class' => 'form-control ', 'id' => 'work_users_c_' . $usuario->id)) }}

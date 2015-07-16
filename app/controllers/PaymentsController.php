@@ -1,4 +1,5 @@
 <?php
+
 use Khill\Lavacharts\Lavacharts;
 
 class PaymentsController extends BaseController {
@@ -91,29 +92,28 @@ class PaymentsController extends BaseController {
             ];
         }
         $payment = Payment::findOrFail($id);
-        
+
         $dtTareasPer = Lava::DataTable();
         $dtTareasPer->addStringColumn(Lang::get("task.labels.tareas"))
                 ->addNumberColumn('percentage');
         foreach ($payment->tasks()->get() as $task) {
             $dtTareasPer->addRow(array($task->name, $task->percentage));
         }
-        $pieTareasPer = Lava::PieChart("tasks_per")
-                ->setOptions(array(
+        $pieTareasPer = Lava::PieChart("tasks_per")->setOptions(array(
             'datatable' => $dtTareasPer,
             'title' => Lang::get("task.labels.percentage"),
             'is3D' => true,
         ));
 
         return View::make('modelos.payments.show', [
-            "payment" => $payment,
-            "userSen" => $userSen,
-            "configBotonesIndicadores" => $configBotonesIndicadores,
-            "configBotonesRiesgos" => $configBotonesRiesgos,
-            "configBotonesActividades" => $configBotonesActividades,
-            "botonCrearIndicadores" => $botonCrearIndicadores,
-            "botonCrearRiesgos" => $botonCrearRiesgos,
-            "botonCrearActividades" => $botonCrearActividades,
+                    "payment" => $payment,
+                    "userSen" => $userSen,
+                    "configBotonesIndicadores" => $configBotonesIndicadores,
+                    "configBotonesRiesgos" => $configBotonesRiesgos,
+                    "configBotonesActividades" => $configBotonesActividades,
+                    "botonCrearIndicadores" => $botonCrearIndicadores,
+                    "botonCrearRiesgos" => $botonCrearRiesgos,
+                    "botonCrearActividades" => $botonCrearActividades,
         ]);
     }
 

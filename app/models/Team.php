@@ -16,17 +16,67 @@ class Team extends \Eloquent {
     public function enterprises() {
         return $this->belongsToMany('Enterprise', 'enterprise_team');
     }
+
     public function games() {
         return $this->belongsToMany('Game', 'game_team');
     }
+
     public function prices() {
         return $this->belongsToMany('Price', 'price_team');
     }
+
     public function proyects() {
         return $this->belongsToMany('Proyect', 'proyect_team');
     }
+
     public function users() {
         return $this->belongsToMany('User', 'team_user');
+    }
+
+    public function gametasks($game) {
+        if ($game) {
+            $strWhere = "";
+            $preWhere = "(";
+            foreach ($this->users()->get() as $user) {
+                $strWhere .= $preWhere . " users.id = '" . $user->id . "' ";
+                $preWhere = " or ";
+            }
+            if ($strWhere != "") {
+                $strWhere .= ")";
+
+                $tasks = $game->tasks()->get()->filter(function($task) use ($strWhere) {
+                    if (!$task->users()->whereRaw($strWhere)->get()->isEmpty()) {
+                        return true;
+                    }
+                });
+                return $tasks;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function taskpoints($task, $game) {
+        $total = 0;
+        if ($tasks = $this->gametasks($task->game)) {
+            foreach ($this->users()->get() as $user) {
+                $total += $task->teamPoints($user->id);
+            }
+            $total = $total / $tasks->count();
+        }
+        return $total*$game->difficulty;
+    }
+
+    public function points($game) {
+        $points = 0;
+        if ($tasks = $this->gametasks($game)) {
+            foreach ($tasks as $task) {
+                $points+=$this->taskpoints($task, $game);
+            }
+        }
+        return $points;
     }
 
 }

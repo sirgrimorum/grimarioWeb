@@ -90,13 +90,13 @@ return array(
             'type' => 'relationship',
             'name_field' => 'name',
         ),
-        'tasks' => array(
+        /*'tasks' => array(
             'title' => Lang::get("game.labels.tasks"),
             'type' => 'relationship',
             'name_field' => 'name',
             'editable' => false,
             'sort_field'=>'id'
-        )
+        )*/
     ),
     'filters' => array(
         'name' => array(

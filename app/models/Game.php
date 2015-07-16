@@ -12,7 +12,8 @@ class Game extends \Eloquent {
         'end' => 'required|date',
     ];
     // Don't forget to fill this array
-    protected $fillable = [];
+    //protected $fillable = ['name','code','proyect_id',];
+    protected $guarded = array();
     
     public function tasks() {
         return $this->hasMany('Task');

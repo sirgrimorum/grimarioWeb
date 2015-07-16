@@ -69,7 +69,7 @@ $configComments['botones'] = [
             <div class='col-sm-offset-4 col-sm-4'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.comenzar") }}</a>
             </div>
-        @elseif ($task->state == 'pau' || !($work))
+        @elseif ($task->state == 'pau' || ( $task->state == 'des'  && !($work)))
             <div class='col-sm-offset-3 col-sm-3'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
             </div>
@@ -151,7 +151,11 @@ $configComments['botones'] = [
     <a href='{{ action('CommentsController@create') }}?tk={{ $task->id }}' class='btn btn-info' >{{ Lang::get("comment.labels.create") }}</a>
     {{ CrudLoader::lists($configComments,$task->comments()->get()) }}
 </div>
-
+<div class='container'>
+    <h2>{{ Lang::get("team.titulos.index") }}</h2>
+    <div id='bar_teams'></div>
+    @barchart('points_teams', 'bar_teams')
+</div>
 @stop
 
 @section("selfjs")
