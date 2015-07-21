@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.proyect'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'profit'));
+$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'value', 'profit'));
 $config["campos"]["state"]["tipo"] = "hidden";
 $preDatos = false;
 if (Input::has('en')) {

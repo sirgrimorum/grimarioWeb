@@ -27,8 +27,8 @@ return array(
         "pago" => "Entregable",
         "pagos" => "Entregables",
         "name" => "Nombre",
-        "percentage" => "Porcentaje",
-        "value" => "Valor",
+        "percentage" => "Porcentaje que este representa frente a la ejecución del proyecto",
+        "value" => "Valor que el cliente pagará luego de la entrega",
         "totalcost" => "Suba de costos por uso de recursos, honorarios y otros gastos",
         "profit" => "Utilidad",
         "plan" => "Presupuesto disponible",
@@ -42,10 +42,11 @@ return array(
     ),
     "selects" => array(
         "state" => array(
-            "pla" => "Planeado",
-            "act" => "Activo",
+            "cre" => "Creada",
+            "pla" => "Planeada",
+            "act" => "Activa",
             "ges" => "En gestión",
-            "pag" => "Pagado",
+            "pag" => "Pagada",
         ),
     ),
     "titulos" => array(

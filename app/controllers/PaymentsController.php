@@ -97,7 +97,7 @@ class PaymentsController extends BaseController {
         $dtTareasPer->addStringColumn(Lang::get("task.labels.tareas"))
                 ->addNumberColumn('percentage');
         foreach ($payment->tasks()->get() as $task) {
-            $dtTareasPer->addRow(array($task->name, $task->percentage));
+            $dtTareasPer->addRow(array($task->name, $task->percentage/100));
         }
         $pieTareasPer = Lava::PieChart("tasks_per")->setOptions(array(
             'datatable' => $dtTareasPer,

@@ -135,6 +135,12 @@ class ProyectsController extends \BaseController {
                 $proyect->teams()->attach($team);
             }
         }
+        Session::put('userTo', $proyect->user->id);
+        Mail::send(array('emails.html.proyects.creado', 'emails.text.proyects.creado'), array('proyect' => $proyect, 'user' => Sentry::getUser(), 'userTo' => $proyect->user), function($message) {
+            $user = User::find(Session::get('userTo'));
+            $message->from(Lang::get("email.from_email"), Lang::get("email.from_name"));
+            $message->to($user->email, $user->name)->subject(Lang::get("proyect.emails.titulos.creada"));
+        });
 
         return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id));
     }
@@ -168,7 +174,7 @@ class ProyectsController extends \BaseController {
         if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
             $botonCrearEntregables = true;
             $botonCrearSupuestos = true;
-            $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
+            $configCampos = [ 'value', 'profit'];
             $configBotonesEntregables = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.show', array("{ID}")) . "'>" . Lang::get("payment.labels.ver") . "</a>",
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.edit', array("{ID}")) . "'>" . Lang::get("payment.labels.editar") . "</a>",
@@ -182,7 +188,7 @@ class ProyectsController extends \BaseController {
         if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
             $botonCrearEntregables = true;
             $botonCrearSupuestos = true;
-            $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
+            $configCampos = [];
             $configBotonesEntregables = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.show', array("{ID}")) . "'>" . Lang::get("payment.labels.ver") . "</a>",
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.edit', array("{ID}")) . "'>" . Lang::get("payment.labels.editar") . "</a>",
@@ -200,7 +206,7 @@ class ProyectsController extends \BaseController {
         $dtEntregasPer->addStringColumn(Lang::get("payment.labels.pagos"))
                 ->addNumberColumn('percentage');
         foreach ($proyect->payments()->get() as $payment) {
-            $dtEntregasPer->addRow(array($payment->name, $payment->percentage));
+            $dtEntregasPer->addRow(array($payment->name, $payment->percentage / 100));
         }
         $pieEntregasPer = Lava::PieChart("payments_per")
                 ->setOptions(array(
@@ -252,7 +258,7 @@ class ProyectsController extends \BaseController {
     public function update($id) {
         $proyect = Proyect::findOrFail($id);
 
-        $validator = Validator::make($data = Input::except('pop_nue'), array_except(Proyect::$rules, 'name', 'code'));
+        $validator = Validator::make($data = Input::except('pop_nue'), array_except(Proyect::$rules, [ 'name', 'code']));
 
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput();
@@ -261,7 +267,11 @@ class ProyectsController extends \BaseController {
         $file = Input::file('pop_nue');
 
         if ($file) {
-
+            if (substr($file->getMimeType(), 0, 5) == 'image') {
+                $esImagen = true;
+            } else {
+                $esImagen = false;
+            }
             $destinationPath = public_path() . '/images/proyects/';
             $filename = $file->getClientOriginalName();
             $filename = str_random(20) . "." . $file->getClientOriginalExtension();
@@ -271,19 +281,20 @@ class ProyectsController extends \BaseController {
 
             if ($upload_success) {
 
-                // resizing an uploaded file
-                Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($destinationPath . "thumb/" . $filename, 100);
-
+                if ($esImagen) {
+                    // resizing an uploaded file
+                    Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save($destinationPath . "thumb/" . $filename, 100);
+                }
                 //return Response::json('success', 200);
             } else {
                 return Response::json('error', 400);
             }
-            $data = Input::except('_token', 'pop', 'teams', 'enterprises');
+            $data = Input::except('_token', 'pop', 'pop_nue', 'teams', 'enterprises');
             $data['pop'] = $filename;
         } else {
-            $data = Input::except('_token', 'teams', 'enterprises');
+            $data = Input::except('_token', 'pop_nue', 'teams', 'enterprises');
         }
 
 

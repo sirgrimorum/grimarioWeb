@@ -59,6 +59,7 @@ return array(
     ),
     "selects" => array(
         "state" => array(
+            "cre" => "Creado",
             "pla" => "Planeado",
             "act" => "Activo",
             "ter" => "Terminado",
@@ -87,5 +88,14 @@ return array(
         "error" => "uyy qué error tan grande",
         "reaml" => "paila parcero",
     ),
+    "emails" => array(
+        "titulos" => array(
+            "creada" => "Han creado un nuevo proyecto",
+        ),
+        "textos" => array(
+            "acaba_de_crear" => " acaba de crear el proyecto ",
+            "solicitud_planear" => "Por favor, para comenzar el proceso, lo invitamos a revise el nuevo proyecto y haga la planeación para la ejecución en el siguiente enlace:",
+        )
+    )
         )
 ?>

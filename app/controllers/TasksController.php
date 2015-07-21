@@ -57,8 +57,10 @@ class TasksController extends \BaseController {
      * @return Response
      */
     public function store() {
-        $validator = Validator::make(Input::all(), Task::$rules);
-
+        $data = Input::except('payments', 'users', 'tasktype');
+        $data['type'] = Input::get("tasktype");
+        $validator = Validator::make($data, Task::$rules);
+        //return "<pre>" . print_r(Input::all(),true) . "</pre>";
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput();
         }
@@ -81,7 +83,7 @@ class TasksController extends \BaseController {
                 $task->users()->save($usuario);
             }
         }
-        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payment->id));
+        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id));
 
         //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.index');
     }
@@ -100,15 +102,7 @@ class TasksController extends \BaseController {
             $task->state = 'des';
             $task->save();
         }
-        $dtPointsTeams = Lava::DataTable();
-        $dtPointsTeams->addStringColumn(Lang::get("team.labels.equipos"))
-                ->addNumberColumn('points');
-        foreach ($task->game->teams()->get() as $team) {
-            $dtPointsTeams->addRow(array($team->name, $team->taskpoints($task)));
-        }
-        $barPointsTeams = Lava::BarChart('points_teams')->setOptions(array(
-            'datatable' => $dtPointsTeams
-        ));
+        
         return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
     }
 

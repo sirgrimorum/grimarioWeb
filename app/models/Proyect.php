@@ -28,6 +28,10 @@ class Proyect extends \Eloquent {
         return $this->belongsToMany('Enterprise', 'enterprise_proyect');
     }
 
+     public function enterprises() {
+        return $this->belongsToMany('Enterprise', 'enterprise_proyect');
+    }
+    
     public function tasks() {
         return $this->hasMany('Task', 'proyect_id');
     }

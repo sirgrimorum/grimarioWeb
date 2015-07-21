@@ -1,11 +1,11 @@
 <?php
 $config = array_except(Config::get('crudgen.proyect'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'profit'));
+$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'value', 'profit'));
 $config['botones'] = Lang::get("proyect.labels.edit");
 $config['url'] = action('ProyectsController@update', [$proyect->id]);
 unset($config["campos"]["state"]["valor"]);
 $config["campos"]["pop_nue"]=$config["campos"]["pop"];
-$config["campos"]["pop_nue"]["label"]=Lang::get("comment.labels.pop_nue");
+$config["campos"]["pop_nue"]["label"]=Lang::get("proyect.labels.pop_nue");
 $config["campos"]["pop"]["tipo"]="text";
 $config["campos"]["pop"]["readonly"]="readonly";
 $config["campos"]["name"]["readonly"]="readonly";

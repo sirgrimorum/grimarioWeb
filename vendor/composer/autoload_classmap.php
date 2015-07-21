@@ -178,6 +178,7 @@ return array(
     'CreatePricesTable' => $baseDir . '/app/database/migrations/2015_02_05_165530_create_prices_table.php',
     'CreateProfilesTable' => $baseDir . '/app/database/migrations/2015_02_26_212227_create_profiles_table.php',
     'CreateProyectTeamTable' => $baseDir . '/app/database/migrations/2015_02_05_172633_create_proyect_team_table.php',
+    'CreateProyectUserTable' => $baseDir . '/app/database/migrations/2015_07_21_150253_create_proyect_user_table.php',
     'CreateProyectsTable' => $baseDir . '/app/database/migrations/2015_02_05_171309_create_proyects_table.php',
     'CreateResourceWorkTable' => $baseDir . '/app/database/migrations/2015_06_16_171509_create_resource_work_table.php',
     'CreateResourcesTable' => $baseDir . '/app/database/migrations/2015_06_16_171426_create_resources_table.php',

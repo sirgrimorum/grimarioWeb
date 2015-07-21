@@ -118,7 +118,8 @@ return array(
                 "tipo" => "file",
                 "label" => Lang::get("proyect.labels.pop"),
                 "pathImage" => 'proyects/thumb/',
-                "enlace" => asset("images/proyects/{value}")
+                "enlace" => asset("images/proyects/{value}"),
+                "placeholder" => Lang::get("proyect.placeholders.pop"),
             ],
             "type" => [
                 "tipo" => "select",
@@ -129,7 +130,7 @@ return array(
                 "tipo" => "select",
                 "label" => Lang::get("proyect.labels.state"),
                 "opciones" => Lang::get("proyect.selects.state"),
-                "valor" => "pla",
+                "valor" => "cre",
             ],
             "advance" => [
                 "tipo" => "function",
@@ -161,6 +162,14 @@ return array(
                 "post" => "COP",
                 "format" => [0,".","."],
             ],
+            "value" => [
+                "tipo" => "function",
+                "label" => Lang::get("proyect.labels.value"),
+                "placeholder" => Lang::get("proyect.placeholders.value"),
+                "pre" => "$",
+                "post" => "COP",
+                "format" => [0,".","."],
+            ],
             "profit" => [
                 "tipo" => "function",
                 "label" => Lang::get("proyect.labels.profit"),
@@ -187,7 +196,7 @@ return array(
                 "enlace" => URL::route(Lang::get("principal.menu.links.equipo") . '.show', array("{ID}")),
                 "todos" => ""
             ],
-            "user" => [
+            "user_id" => [
                 "label" => Lang::get("proyect.labels.user_id"),
                 "tipo" => "relationship",
                 "modelo" => "User",
@@ -285,12 +294,13 @@ return array(
                 "tipo" => "select",
                 "label" => Lang::get("payment.labels.state"),
                 "opciones" => Lang::get("payment.selects.state"),
-                "valor" => "pla",
+                "valor" => "cre",
             ],
             "percentage" => [
                 "tipo" => "number",
                 "label" => Lang::get("payment.labels.percentage"),
                 "placeholder" => Lang::get("payment.placeholders.percentage"),
+                "description" => Lang::get("payment.descriptions.percentage"),
                 "post" => "%",
             ],
             "value" => [
@@ -300,6 +310,7 @@ return array(
                 "pre" => "$",
                 "post" => "COP",
                 "format" => [0,".","."],
+                "description" => Lang::get("payment.descriptions.value"),
             ],
             "conditions" => [
                 "tipo" => "html",

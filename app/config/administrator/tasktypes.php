@@ -13,11 +13,11 @@ return array(
             'relationship'=>'enterprise',
             'select' => '(:table).nickname',
         ),
-        'commenttypes' => array(
+        /*'commenttypes' => array(
             'title' => Lang::get("tasktype.labels.commenttypes"),
             'relationship'=>'commenttype',
             'select' => 'GROUP_CONCAT((:table).name SEPARATOR ',')',
-        ),
+        ),*/
     ),
     'edit_fields' => array(
         'name' => array(

@@ -40,8 +40,7 @@ return array(
     ),
     "selects" => array(
         "type" => array(
-            "det" => "Determinante",
-            "req" => "Requerimiento",
+            "emp" => "Expectativa de la empresa",
             "cli" => "Expectativa de tercero",
             "exp" => "Expectativa del cliente",
         ),

@@ -6,10 +6,10 @@ return array(
         'Mis tareas' => array(
             'logedin' => true,
             'items' => array(
-                'Equipos' => Lang::get("principal.menu.links.equipo"),
-                'Proyectos' => Lang::get("principal.menu.links.proyecto"),
+                'Equipos' => URL::to(Lang::get("principal.menu.links.equipo")),
+                'Proyectos' =>URL::to(Lang::get("principal.menu.links.proyecto")),
                 '_' => '_',
-                'Tareas' => Lang::get("principal.menu.links.tarea"),
+                'Tareas' => URL::to(Lang::get("principal.menu.links.tarea")),
             )
         )
     ),

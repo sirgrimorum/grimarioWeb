@@ -151,11 +151,7 @@ $configComments['botones'] = [
     <a href='{{ action('CommentsController@create') }}?tk={{ $task->id }}' class='btn btn-info' >{{ Lang::get("comment.labels.create") }}</a>
     {{ CrudLoader::lists($configComments,$task->comments()->get()) }}
 </div>
-<div class='container'>
-    <h2>{{ Lang::get("team.titulos.index") }}</h2>
-    <div id='bar_teams'></div>
-    @barchart('points_teams', 'bar_teams')
-</div>
+
 @stop
 
 @section("selfjs")

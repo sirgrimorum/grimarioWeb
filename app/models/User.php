@@ -95,20 +95,29 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                         return true;
                     }
                 })->first();
-        switch ($this->tasks()->where("tasks.id", "=", $task->id)->first()->pivot->calification) {
-            case 0:
-                $cuality = 0.6;
-                break;
-            case 1:
-                $cuality = 1;
-                break;
-            case 2:
-                $cuality = 1.2;
-                break;
-            default:
-                $cuality = 0;
+        $tasks = $this->tasks()->where("tasks.id", "=", $task->id)->first();
+        if ($tasks) {
+            switch ($tasks->pivot->calification) {
+                case 0:
+                    $cuality = 0.6;
+                    break;
+                case 1:
+                    $cuality = 1;
+                    break;
+                case 2:
+                    $cuality = 1.2;
+                    break;
+                default:
+                    $cuality = 0;
+            }
+        } else {
+            $cuality = 0;
         }
-        $total = $team->taskpoints($task, $game) * $cuality;
+        if ($team){
+            $total = $team->taskpoints($task, $game) * $cuality;
+        }else{
+            $total = 0;
+        }
         return $total;
     }
 

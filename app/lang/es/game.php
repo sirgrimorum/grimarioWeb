@@ -48,6 +48,7 @@ return array(
         "author" => "SirGrimorum",
         "title" => "Grimario, juega a controlar tu tiempo",
         "description" => "Juego, gamification, gerencia de proyectos",
+        "show" => "Información del juego",
     ),
     "mensajes" => array(
         "error" => "uyy qué error tan grande",

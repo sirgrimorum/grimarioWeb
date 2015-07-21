@@ -61,12 +61,14 @@ class Team extends \Eloquent {
     public function taskpoints($task, $game) {
         $total = 0;
         if ($tasks = $this->gametasks($task->game)) {
-            foreach ($this->users()->get() as $user) {
-                $total += $task->teamPoints($user->id);
+            if ($tasks->count() > 0) {
+                foreach ($this->users()->get() as $user) {
+                    $total += $task->teamPoints($user->id);
+                }
+                $total = $total / $tasks->count();
             }
-            $total = $total / $tasks->count();
         }
-        return $total*$game->difficulty;
+        return $total * $game->difficulty;
     }
 
     public function points($game) {
