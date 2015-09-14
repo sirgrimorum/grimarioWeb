@@ -85,7 +85,11 @@ class ProyectsController extends \BaseController {
         $file = Input::file('pop');
 
         if ($file) {
-
+            if (substr($file->getMimeType(), 0, 5) == 'image') {
+                $esImagen = true;
+            } else {
+                $esImagen = false;
+            }
             $destinationPath = public_path() . '/images/proyects/';
             $filename = $file->getClientOriginalName();
             $filename = str_random(20) . "." . $file->getClientOriginalExtension();
@@ -94,12 +98,12 @@ class ProyectsController extends \BaseController {
             $upload_success = $file->move($destinationPath, $filename);
 
             if ($upload_success) {
-
-                // resizing an uploaded file
-                Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($destinationPath . "thumb/" . $filename, 100);
-
+                if ($esImagen) {
+                    // resizing an uploaded file
+                    Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save($destinationPath . "thumb/" . $filename, 100);
+                }
                 //return Response::json('success', 200);
             } else {
                 return Response::json('error', 400);

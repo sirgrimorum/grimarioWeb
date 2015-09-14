@@ -70,6 +70,15 @@ class TasksController extends \BaseController {
         if (Input::has('payments')) {
             $payment = Payment::find(Input::get('payments'));
             $task->payments()->save($payment);
+            if ($payment->state == 'cre') {
+                $payment->state = 'pla';
+                $payment->save();
+            }
+        }
+        $proyect = $task->proyect;
+        if ($proyect->state == 'cre') {
+            $proyect->state = 'pla';
+            $proyect->save();
         }
         if (Input::has('users')) {
             $usuarios = Input::get('users');
@@ -102,7 +111,7 @@ class TasksController extends \BaseController {
             $task->state = 'des';
             $task->save();
         }
-        
+
         return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
     }
 
@@ -153,21 +162,31 @@ class TasksController extends \BaseController {
                 $work->task()->associate($task);
                 $work->coordinator()->associate($user);
                 $work->save();
+                $payment = $task->payments()->first();
+                if ($payment->state == 'pla' || $payment->state == 'cre') {
+                    $payment->state = 'act';
+                    $payment->save();
+                }
+                $proyect = $task->proyect;
+                if ($proyect->state == 'pla' || $proyect->state == 'cre') {
+                    $proyect->state = 'act';
+                    $proyect->save();
+                }
                 return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id))->with('message', Lang::get("task.mensajes.comenzado"));
             } else {
                 $state = Input::get('st');
 
                 $user = Sentry::getUser();
                 $work = $task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first();
-                if (!$work){
+                if (!$work) {
                     $work = $task->works()->orderBy('end', 'desc')->first();
                 }
                 $first = true;
-                foreach ($task->works()->get() as $auxwork){
+                foreach ($task->works()->get() as $auxwork) {
                     $nuecosts = $auxwork->costs()->get();
-                    if ($first){
+                    if ($first) {
                         $costs = $nuecosts;
-                    }else{
+                    } else {
                         $costs = $costs->merge($nuecosts);
                     }
                     $first = false;
@@ -241,6 +260,7 @@ class TasksController extends \BaseController {
     public function update($id) {
         $task = Task::findOrFail($id);
 
+        $paraEntrega = false;
         $pasa = false;
         if (Input::has('act_equipo')) {
             foreach ($task->users()->get() as $worker) {
@@ -248,10 +268,17 @@ class TasksController extends \BaseController {
                     //$user_task = $task->users()->find($worker->id);
                     //$user_task->pivot->calification = Input::get("work_users_c_" . $worker->id);
                     //$user_task->pivot->save();
-                    $task->users()->updateExistingPivot($worker->id, [
-                        'valueph' => Input::get("task_users_v_" . $worker->id),
-                        'responsability' => Input::get("task_users_r_" . $worker->id)
-                    ]);
+                    if (Input::has("task_users_v_" . $worker->id)) {
+                        $task->users()->updateExistingPivot($worker->id, [
+                            'valueph' => Input::get("task_users_v_" . $worker->id),
+                            'responsability' => Input::get("task_users_r_" . $worker->id)
+                        ]);
+                    } else {
+                        $task->users()->updateExistingPivot($worker->id, [
+                            'valueph' => Input::get("task_users_v_" . $worker->id),
+                            'responsability' => Input::get("task_users_r_" . $worker->id)
+                        ]);
+                    }
                 }
             }
             return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
@@ -263,6 +290,9 @@ class TasksController extends \BaseController {
             } else {
                 
             }
+        } elseif ($task->state == 'pau' || ( $task->state == 'des' && !($task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first()))) {
+            $data['state'] = 'ter';
+            $pasa = true;
         } else {
             $data = $task->getAttributes();
             if (Input::has('formaction')) {
@@ -276,7 +306,7 @@ class TasksController extends \BaseController {
             } else {
                 $data['state'] = Input::get('state');
             }
-            
+
             if ($data['state'] == 'ent') {
                 $data['end'] = date("Y-m-d H:i:s");
                 foreach ($task->users()->get() as $worker) {
@@ -305,14 +335,18 @@ class TasksController extends \BaseController {
                     $data['cuality'] = Input::get("cuality");
                     if ($data['cuality'] == "noc") {
                         $data['state'] = 'pau';
-                        Mail::send(array('emails.html.tasks.devuelta', 'emails.text.tasks.devuelta'), array('task' => $task, 'user' => Sentry::getUser(), 'userTo' => $task->works()->orderBy('end', 'desc')->first()->coordinator, 'payment' => $task->payments()->first()), function($message) {
+                        $userTo = $task->works()->orderBy('end', 'desc')->first()->coordinator;
+                        Session::put('userTo', $userTo->id);
+                        Mail::send(array('emails.html.tasks.devuelta', 'emails.text.tasks.devuelta'), array('task' => $task, 'user' => Sentry::getUser(), 'userTo' => $userTo, 'payment' => $task->payments()->first()), function($message) {
                             $user = User::find(Session::get('userTo'));
                             $message->from(Lang::get("email.from_email"), Lang::get("email.from_name"));
                             $message->to($user->email, $user->name)->subject(Lang::get("task.emails.titulos.devuelta"));
                         });
                     }
+                } else {
+                    $paraEntrega = true;
                 }
-                
+
                 $pasa = true;
             } else {
                 if (Input::get('formaction') == Lang::get('task.labels.edit')) {
@@ -374,6 +408,18 @@ class TasksController extends \BaseController {
                 return Redirect::back()->withErrors($validator)->withInput();
             }
             $task->update($data);
+            if ($paraEntrega) {
+                $payment = $task->payments()->first();
+                if ($payment->advance() == 100) {
+                    $payment->state = 'ent';
+                    $payment->save();
+                }
+                $proyect = $task->proyect;
+                if ($proyect->advance() == 100) {
+                    $proyect->state = 'ter';
+                    $proyect->save();
+                }
+            }
             return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } else {
             return Redirect::back()->with('message', Lang::get("task.mensajes.no_actualizado"));

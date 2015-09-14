@@ -59,6 +59,70 @@ return array(
             ],
         ],
     ],
+    'userdata' => [
+        "modelo" => "Userdatum",
+        "tabla" => "userdatas",
+        "nombre" => "charge",
+        "id" => "id",
+        "url" => action('UserdatasController@store'),
+        "botones" => Lang::get("userdata.labels.create"),
+        "campos" => [
+            "first_name" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.first_name"),
+                "placeholder" => Lang::get("user.placeholders.first_name"),
+            ],
+            "last_name" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.last_name"),
+                "placeholder" => Lang::get("user.placeholders.last_name"),
+            ],
+            "email" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.email"),
+                "placeholder" => Lang::get("user.placeholders.email"),
+            ],
+            "charge" => [
+                "tipo" => "text",
+                "label" => Lang::get("userdata.labels.charge"),
+                "placeholder" => Lang::get("userdata.placeholders.charge"),
+            ],
+            "oenterprise" => [
+                "tipo" => "text",
+                "label" => Lang::get("userdata.labels.oenterprise"),
+                "placeholder" => Lang::get("userdata.placeholders.oenterprise"),
+            ],
+            "cel" => [
+                "tipo" => "text",
+                "label" => Lang::get("userdata.labels.cel"),
+                "placeholder" => Lang::get("userdata.placeholders.cel"),
+            ],
+            "otel" => [
+                "tipo" => "text",
+                "label" => Lang::get("userdata.labels.otel"),
+                "placeholder" => Lang::get("userdata.placeholders.cel"),
+            ],
+            "dir" => [
+                "tipo" => "textarea",
+                "label" => Lang::get("userdata.labels.dir"),
+                "description" => Lang::get("userdata.descriptions.dir"),
+            ],
+            "comments" => [
+                "tipo" => "html",
+                "label" => Lang::get("userdata.labels.comments"),
+                "description" => Lang::get("userdata.descriptions.comments"),
+            ],
+            "user_id" => [
+                "label" => Lang::get("userdata.labels.user_id"),
+                "tipo" => "relationship",
+                "modelo" => "User",
+                "id" => "id",
+                "campo" => "name",
+                //"enlace" => URL::route(Lang::get("principal.menu.links.usuario") . '.show', array("{ID}")),
+                "todos" => ""
+            ],
+        ],
+    ],
     'proyect' => [
         "modelo" => "Proyect",
         "tabla" => "proyects",
@@ -547,11 +611,6 @@ return array(
                 "label" => Lang::get("task.labels.name"),
                 "placeholder" => Lang::get("task.placeholders.name"),
                 "enlace" => URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")),
-            ],
-            "code" => [
-                "tipo" => "text",
-                "label" => Lang::get("task.labels.code"),
-                "placeholder" => Lang::get("task.placeholders.code"),
             ],
             "proyect_id" => [
                 "label" => Lang::get("task.labels.proyect_id"),

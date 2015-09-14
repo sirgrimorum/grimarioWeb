@@ -22,6 +22,7 @@ class CommentsController extends \BaseController {
         if (Input::has('tk')) {
             $taskId = Input::get('tk');
             $task = Task::find($taskId);
+            $commenttypes = $taks->tasktype->commenttypes()->get();
             $user = Sentry::getUser();
             if (Input::has('wk')) {
                 $workId = Input::get('wk');
@@ -29,7 +30,7 @@ class CommentsController extends \BaseController {
             } else {
                 $work = $task->works()->where('user_id', '=', $user->id)->orderBy('start', 'desc')->first();
             }
-            return View::make('modelos.comments.create', ['work' => $work, 'task' => $task, 'user' => $user]);
+            return View::make('modelos.comments.create', ['work' => $work, 'task' => $task, 'user' => $user, 'commenttypes' => $commenttypes]);
         } else {
             return View::make('modelos.comments.create');
         }
@@ -41,7 +42,7 @@ class CommentsController extends \BaseController {
      * @return Response
      */
     public function store() {
-        $data = Input::except('image', 'redirect','commenttype');
+        $data = Input::except('image', 'redirect', 'commenttype');
         $data['type'] = Input::get('commenttype');
         $validator = Validator::make($data, Comment::$rules);
 
@@ -52,7 +53,11 @@ class CommentsController extends \BaseController {
         $file = Input::file('image');
 
         if ($file) {
-
+            if (substr($file->getMimeType(), 0, 5) == 'image') {
+                $esImagen = true;
+            } else {
+                $esImagen = false;
+            }
             $destinationPath = public_path() . '/images/comments/';
             $filename = $file->getClientOriginalName();
             $filename = str_random(20) . "." . $file->getClientOriginalExtension();
@@ -61,23 +66,24 @@ class CommentsController extends \BaseController {
             $upload_success = $file->move($destinationPath, $filename);
 
             if ($upload_success) {
+                if ($esImagen) {
+                    // resizing an uploaded file
+                    Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save($destinationPath . "thumb/" . $filename, 100);
 
-                // resizing an uploaded file
-                Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($destinationPath . "thumb/" . $filename, 100);
-
-                //return Response::json('success', 200);
+                    //return Response::json('success', 200);
+                }
             } else {
                 return Response::json('error', 400);
             }
-            $data = Input::except('_token', 'image', 'redirect','commenttype');
+            $data = Input::except('_token', 'image', 'redirect', 'commenttype');
             $data['type'] = Input::get('commenttype');
             $data['image'] = $filename;
 
             Comment::create($data);
         } else {
-            $data = Input::except('_token', 'image', 'redirect','commenttype');
+            $data = Input::except('_token', 'image', 'redirect', 'commenttype');
             $data['type'] = Input::get('commenttype');
             Comment::create($data);
         }
@@ -120,7 +126,7 @@ class CommentsController extends \BaseController {
      */
     public function update($id) {
         $comment = Comment::findOrFail($id);
-        $data = Input::except('image', 'image_nue', 'redirect','commenttype');
+        $data = Input::except('image', 'image_nue', 'redirect', 'commenttype');
         $data['type'] = Input::get('commenttype');
         $validator = Validator::make($data, Comment::$rules);
 
@@ -150,13 +156,13 @@ class CommentsController extends \BaseController {
             } else {
                 return Response::json('error', 400);
             }
-            $data = Input::except('_token', 'image', 'image_nue', 'redirect','commenttype');
+            $data = Input::except('_token', 'image', 'image_nue', 'redirect', 'commenttype');
             $data['type'] = Input::get('commenttype');
             $data['image'] = $filename;
 
             $comment->update($data);
         } else {
-            $data = Input::except('_token', 'image_nue', 'redirect','commenttype');
+            $data = Input::except('_token', 'image_nue', 'redirect', 'commenttype');
             $data['type'] = Input::get('commenttype');
             $comment->update($data);
         }

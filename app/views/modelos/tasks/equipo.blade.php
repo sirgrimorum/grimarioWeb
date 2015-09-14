@@ -77,7 +77,9 @@ $configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('
                         <tr>
                             <td>{{ Lang::get('task.labels.user') }}</td>
                             <td>{{ Lang::get('task.labels.users_responsability') }}</td>
+                            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
                             <td>{{ Lang::get('task.labels.users_valueph') }}</td>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -87,11 +89,13 @@ $configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('
                                 {{ $usuario->name }}
                             </td>
                             <td>
-                                {{ Form::text("task_users_r_" . $usuario->id, "", array('class' => 'form-control hour_users', 'id' => 'work_users_r_' . $usuario->id)) }}
+                                {{ Form::text("task_users_r_" . $usuario->id, $usuario->pivot->responsability, array('class' => 'form-control hour_users', 'id' => 'work_users_r_' . $usuario->id)) }}
                             </td>
+                            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
                             <td>
-                                {{ Form::number("task_users_v_" . $usuario->id, "0", array('class' => 'form-control hour_users', 'id' => 'work_users_v_' . $usuario->id)) }}
+                                {{ Form::number("task_users_v_" . $usuario->id, $usuario->pivot->valueph, array('class' => 'form-control hour_users', 'id' => 'work_users_v_' . $usuario->id)) }}
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

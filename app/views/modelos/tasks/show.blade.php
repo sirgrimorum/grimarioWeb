@@ -70,9 +70,14 @@ $configComments['botones'] = [
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.comenzar") }}</a>
             </div>
         @elseif ($task->state == 'pau' || ( $task->state == 'des'  && !($work)))
-            <div class='col-sm-offset-3 col-sm-3'>
+            <div class='col-sm-offset-3 col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
             </div>
+        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
+                <div class='col-sm-2'>
+                    <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
+                </div>
+            @endif
             <div class='col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.trabajo"). '.create') }}?tk={{ $task->id }}" class='btn btn-default'>{{ Lang::get("task.labels.planear_work") }}</a>
             </div>

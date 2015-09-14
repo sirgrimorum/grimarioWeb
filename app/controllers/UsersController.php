@@ -56,7 +56,7 @@ class UsersController extends BaseController {
             ));
             
             // Find the group using the group id
-            $adminGroup = Sentry::findGroupByName('Usuario');
+            $adminGroup = Sentry::findGroupByName('Jugador');
             // Assign the group to the user
             $user->addGroup($adminGroup);
 
@@ -325,6 +325,71 @@ class UsersController extends BaseController {
                 return Redirect::back()->withErrors($messages)->withInput();
             }
         }
+    }
+    
+    /**
+     * Crear un usuario con datos.
+     *
+     * @return Response
+     */
+    public function getNew(){
+        return View::make('modelos.users.newuser');
+    }
+    
+    /**
+     * Guardar datos de un nuevo usuario y crear clave y enviar correo de activación.
+     *
+     * @return Response
+     */
+    public function postNew(){
+        $data = Input::all();
+        $data['password']=str_random(8);
+        $messagesV = array_merge(Lang::get("principal.mensajes.validation"), Lang::get("user.mensajes.validation"));
+        $validator = Validator::make($data, User::$rules, $messagesV);
+
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
+        try {
+            $messages = new Illuminate\Support\MessageBag;
+            // Let's register a user.
+            $user = Sentry::register(array(
+                        'email' => $data['email'],
+                        'password' => $data['password'],
+                        'first_name' => $data['first_name'],
+                        'last_name' => $data['last_name'],
+            ));
+            
+            // Find the group using the group id
+            $adminGroup = Sentry::findGroupByName('Cliente');
+            // Assign the group to the user
+            $user->addGroup($adminGroup);
+            
+            $userdata = Userdatum::create(array_except($data, ["_token", "email","password","first_name","last_name"]));
+            $userdata->user()->associate($user);
+            $userdata->save();
+
+            // Let's get the activation code
+            $activationCode = $user->getActivationCode();
+
+            // Send activation code to the user so he can activate the account
+            Mail::send('emails.auth.registrocliente', array("activationCode" => $activationCode, "id" => $user->id, "email" => $data['email'], "clave" => $data['password']), function($message) {
+                $message->subject(Lang::get("user.mensajes.subject_registrocliente"));
+                $message->from('grimorum@grimorum.com', Lang::get("user.mensajes.from_email"));
+                $message->to(Input::get('email'));
+            });
+            return Redirect::back()->with('message', Lang::get("user.mensajes.usuario_registrado"));
+        } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
+            $messages->add('email.required', Lang::get("user.mensaje.validation.email.required"));
+            return Redirect::back()->withErrors($messages)->withInput();
+        } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+            $messages->add('password.required', Lang::get("user.mensaje.validation.password.required"));
+            return Redirect::back()->withErrors($messages)->withInput();
+        } catch (Cartalyst\Sentry\Users\UserExistsException $e) {
+            $messages->add('email.exists', Lang::get("user.mensaje.validation.email.exists"));
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        return View::make('modelos.users.newuser');
     }
 
     /**

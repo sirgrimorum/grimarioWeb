@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.task'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.task.campos'), array('start', 'end', 'dcuantity', 'contribution'));
+$config['campos'] = array_except(Config::get('crudgen.task.campos'), array('start', 'end', 'dcuantity', 'contribution', 'dpercentage'));
 $config["campos"]["state"]["tipo"] = "hidden";
 $preDatos = false;
 if (Input::has('pr') && Input::has('py')) {

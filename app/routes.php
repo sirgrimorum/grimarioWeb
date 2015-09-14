@@ -32,6 +32,7 @@ Route::group(array('before' => 'loged'), function() {
     Route::resource(Lang::get("principal.menu.links.indicador"), 'IndicatorsController');
     Route::resource(Lang::get("principal.menu.links.riesgo"), 'RisksController');
     Route::resource(Lang::get("principal.menu.links.restriccion"), 'RestrictionsController');
+    Route::resource(Lang::get("principal.menu.links.userdata"), 'UserdatasController');
     //Route::get(, array('as' => 'profile', 'uses' => 'UserController@showProfile'));
 });
 Route::controller(Lang::get("principal.menu.links.usuario"), 'UsersController');

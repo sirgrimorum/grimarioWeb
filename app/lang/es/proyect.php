@@ -20,6 +20,7 @@ return array(
         "totalcost" => "Presupuesto ejecutado",
         "saves" => "Ahorros",
         "profit" => "Ganancia",
+        "value" => "Valor del proyecto",
         "type" => "Tipo",
         "priority" => "Prioridad",
         "enterprises" => "Empresas",

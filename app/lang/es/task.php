@@ -156,7 +156,7 @@ return array(
             "de_proyecto" => " del proyecto ",
             "evaluar" => "Evaluar la tarea ",
             "solicitud_evaluar" => "Por favor, para terminar el proceso y dar por cerrada la tarea, lo invitamos a que evalue la tarea en el siguiente enlace:",
-            "acaba_de_entregar" => " acaba de rechazar la entrega de su tarea ",
+            "acaba_de_devolver" => " acaba de rechazar la entrega de su tarea ",
             "para_pago_devuelta" => " que servía para el avance para la entrega ",
             "solicitud_retomar" => "La tarea ha sido puesta en pausa, por favor retomar el trabajo para poder ajustar lo que falta y seguir avanzando en este proyecto.",
         )

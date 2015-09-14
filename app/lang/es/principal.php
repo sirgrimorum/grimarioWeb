@@ -51,6 +51,7 @@ return array(
             "comentario" => "comentario",
             "grupo" => "grupo",
             "usuario" => "usuario",
+            "userdata" => "cliente",
             "contacto" => "contacto",
             "admin" => "admin",
             "auth" => "auth",

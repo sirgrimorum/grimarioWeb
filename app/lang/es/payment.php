@@ -45,7 +45,7 @@ return array(
             "cre" => "Creada",
             "pla" => "Planeada",
             "act" => "Activa",
-            "ges" => "En gestión",
+            "ent" => "Entregada",
             "pag" => "Pagada",
         ),
     ),

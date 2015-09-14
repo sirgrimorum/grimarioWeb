@@ -4,10 +4,10 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <h2>Activación</h2>
+        <h2>{{ Lang::get("user.emails.titulos.activacion") }}</h2>
 
         <div>
-            Para activar su usuario, vaya a esta dirección <a href="{{ action("UsersController@getActivation") }}/{{ $id }}?acode={{ $activationCode }}">{{ action("UsersController@getActivation") }}/{{ $id }}?acode={{ $activationCode }}</a>
+            {{ Lang::get("user.emails.textos.paraactivar") }} <a href="{{ action("UsersController@getActivation") }}/{{ $id }}?acode={{ $activationCode }}">{{ action("UsersController@getActivation") }}/{{ $id }}?acode={{ $activationCode }}</a>
         </div>
     </body>
 </html>

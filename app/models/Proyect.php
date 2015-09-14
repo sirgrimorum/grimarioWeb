@@ -24,15 +24,15 @@ class Proyect extends \Eloquent {
         return $this->belongsTo('User');
     }
 
-    public function enterprises() {
-        return $this->belongsToMany('Enterprise', 'enterprise_proyect');
+    public function clients() {
+        return $this->belongsToMany('User', 'proyect_user');
     }
 
      public function enterprises() {
         return $this->belongsToMany('Enterprise', 'enterprise_proyect');
     }
     
-    public function tasks() {
+        public function tasks() {
         return $this->hasMany('Task', 'proyect_id');
     }
 

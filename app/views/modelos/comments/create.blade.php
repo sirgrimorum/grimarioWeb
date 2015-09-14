@@ -20,6 +20,7 @@ if (Input::has('tk')) {
     } elseif ($task->state == 'ter') {
         $config['campos']['redirect']['valor'] .= "?st=ter";
     }
+    $config['campos']['commenttype']['todos'] = $commenttypes;
 } else {
     $config['campos']['redirect'] = [
         'tipo' => 'hidden',

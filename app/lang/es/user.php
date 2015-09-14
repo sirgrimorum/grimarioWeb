@@ -70,6 +70,7 @@ return array(
         "nuevo_password" => "Nueva clave",
         "login" => "Iniciar sesión",
         "index" => "Jugadores",
+        "create" => "Crear cliente",
     ),
     "mensajes" => array(
         "subject_registro" => "Bienvenido!",
@@ -95,6 +96,19 @@ return array(
             "password.exists" => "Clave errada."
         )
     ),
+    "emails" => array(
+        "titulos" => array(
+            "activacion" => "Activación",
+            "activacioncliente" => "Ha sido dado de alta en Grimario como dueño de proyecto",
+        ),
+        "textos" => array(
+            "paractivar" => "Para activar su usuario, vaya a esta dirección ",
+            "paractivarcliente" => "Debido a que ha contratado los servicios de <a href='http://www.grimorum.com' target='_blank'>Grimorum</a>, ha sido registrado como dueño de proyecto en nuestra herramienta de seguimiento <a href='http://grimario.grimorum.com'>Grimario</a>. Lo invitamos a activar su cuenta con los siguientes datos:",
+            "cliente_email" =>"Correo electrónico",
+            "cliente_clave" =>"Contraseña temporal",
+            "cliente_enlace" =>"Enlace",
+        )
+    )
         )
 ?>
 
