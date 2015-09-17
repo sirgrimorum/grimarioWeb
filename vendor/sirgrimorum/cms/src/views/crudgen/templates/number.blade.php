@@ -34,7 +34,7 @@ if ($errores == true) {
             @if (isset($datos["pre"]))
                 <div class="input-group-addon">{{ $datos["pre"] }}</div>
             @endif
-            {{ Form::number($columna, $dato, array('class' => 'form-control ' . $config['class_input'], 'id' => $tabla . '_' . $columna, 'placeholder'=>$datos['placeholder'])) }}
+            {{ Form::number($columna, $dato, array('class' => 'form-control ' . $config['class_input'], 'id' => $tabla . '_' . $columna, 'step' => 'any', 'placeholder'=>$datos['placeholder'])) }}
             @if (isset($datos["post"]))
                 <div class="input-group-addon">{{ $datos["post"] }}</div>
             @endif

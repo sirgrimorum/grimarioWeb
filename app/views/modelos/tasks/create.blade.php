@@ -22,6 +22,12 @@ if (Input::has('pr') && Input::has('py')) {
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
+  <li class="active">{{ Lang::get("task.titulos.create") }}</li>
+</ol>
 <h1>{{ Lang::get("task.titulos.create") }}</h3>
 <p>{{ TransArticle::get("task.prueba2") }}</p>
 @if ($preDatos)

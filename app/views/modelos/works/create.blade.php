@@ -28,6 +28,15 @@ $config["campos"]["sala"] = [
 @extends("layouts.principal")
 
 @section("contenido")
+@if ($preDatos)
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id)) }}">{{ $task->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id)) }}">{{ $task->payments()->first()->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id)) }}">{{ $task->name }}</a></li>
+  <li class="active">{{ Lang::get("work.titulos.create") }}</li>
+</ol>
+@endif
 <h1>{{ Lang::get("work.titulos.create") }}</h3>
 <p>{{ TransArticle::get("work.prueba2") }}</p>
 @if ($preDatos)

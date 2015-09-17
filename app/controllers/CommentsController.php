@@ -22,7 +22,7 @@ class CommentsController extends \BaseController {
         if (Input::has('tk')) {
             $taskId = Input::get('tk');
             $task = Task::find($taskId);
-            $commenttypes = $taks->tasktype->commenttypes()->get();
+            $commenttypes = $task->tasktype->commenttypes()->get();
             $user = Sentry::getUser();
             if (Input::has('wk')) {
                 $workId = Input::get('wk');

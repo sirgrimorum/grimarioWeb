@@ -24,6 +24,13 @@ unset($config["campos"]["difficulty"]["valor"]);
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id)) }}">{{ $task->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id)) }}">{{ $task->payments()->first()->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id)) }}">{{ $task->name }}</a></li>
+  <li class="active">{{ Lang::get("task.titulos.edit") }}</li>
+</ol>
 <h1>{{ Lang::get("task.titulos.edit") }}</h3>
 <p>{{ TransArticle::get("task.prueba2") }}</p>
 <div class="row">

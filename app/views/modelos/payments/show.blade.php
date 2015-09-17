@@ -14,7 +14,11 @@ $configRiesgos['botones'] = $configBotonesRiesgos;
 ?>
 
 @section("contenido")
-
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
+  <li class="active">{{ $payment->name }}</li>
+</ol>
 <h1>{{ Lang::get("payment.titulos.show") }}</h1>
 <div class="row">
     <div class="col-sm-12">

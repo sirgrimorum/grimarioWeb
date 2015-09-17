@@ -5,6 +5,12 @@ $config['campos'] = array_except(Config::get('crudgen.indicator.campos'), array(
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
+  <li class="active">{{ $indicator->name }}</li>
+</ol>
 <h1>{{ Lang::get("indicator.titulos.show") }}</h3>
 <p>{{ TransArticle::get("indicator.prueba2") }}</p>
 <div class="row">

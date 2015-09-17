@@ -12,6 +12,13 @@ if (Input::has('pr')) {
 @extends("layouts.principal")
 
 @section("contenido")
+@if ($preDatos)
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
+  <li class="active">{{ Lang::get("payment.titulos.create") }}</li>
+</ol>
+@endif
 <h1>{{ Lang::get("payment.titulos.create") }}</h3>
 <p>{{ TransArticle::get("payment.prueba2") }}</p>
 @if ($preDatos)

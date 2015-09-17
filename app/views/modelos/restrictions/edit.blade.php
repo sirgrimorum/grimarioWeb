@@ -20,6 +20,12 @@ if (Input::has("tk") && Input::has("st")) {
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array($restriction->id)) }}">{{ $restriction->name }}</a></li>
+  <li class="active">{{ Lang::get("restriction.titulos.edit") }}</li>
+</ol>
 <h1>{{ Lang::get("restriction.titulos.edit") }}</h3>
 <p>{{ TransArticle::get("restriction.prueba2") }}</p>
 <div class="row">

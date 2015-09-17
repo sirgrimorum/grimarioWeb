@@ -105,7 +105,11 @@ if (isset($config['render'])){
                         @if (isset($datos['enlace']))
                             <a href='{{ str_replace("{value}", $registro->{$columna}, $datos['enlace'] ) }}' target="_blank">
                         @endif
-                            <img class ='img-thumbnail' src='{{ asset('/images/' . $datos['pathImage'] . $registro->{$columna}) }}' />
+                        @if (preg_match('/(\.jpg|\.png|\.bmp)$/', $registro->{$columna}))
+                            <image class="img-thumbnail" src="{{ asset('/images/' . $datos['pathImage'] . $registro->{$columna} ) }}" alt="{{ $columna }}"/>
+                        @else
+                            <image class="img-thumbnail" src="{{ asset('/images/img/file.png' ) }}" alt="{{ $columna }}"/>
+                        @endif
                         @if (isset($datos['enlace']))
                             </a>
                         @endif

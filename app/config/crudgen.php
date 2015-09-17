@@ -1,6 +1,74 @@
 <?php
 
 return array(
+    'enterprise' => [
+        "modelo" => "Enterprise",
+        "tabla" => "enterprises",
+        "nombre" => "nickname",
+        "id" => "id",
+        "url" => action('EnterprisesController@store'),
+        "botones" => Lang::get("enterprise.labels.create"),
+        "campos" => [
+            "nickname" => [
+                "tipo" => "text",
+                "label" => Lang::get("enterprise.labels.nickname"),
+                "placeholder" => Lang::get("enterprise.placeholders.nickname"),
+                "enlace" => URL::route(Lang::get("principal.menu.links.empresa") . '.show', array("{ID}")),
+            ],
+            "fullname" => [
+                "tipo" => "text",
+                "label" => Lang::get("enterprise.labels.fullname"),
+                "placeholder" => Lang::get("enterprise.placeholders.fullname"),
+            ],
+            "logo" => [
+                "tipo" => "file",
+                "label" => Lang::get("enterprise.labels.logo"),
+                "pathImage" => 'enterprises/mid/',
+                "enlace" => asset("images/enterprises/{value}"),
+                "placeholder" => Lang::get("enterprise.placeholders.logo"),
+            ],
+            "description" => [
+                "tipo" => "html",
+                "label" => Lang::get("enterprise.labels.description"),
+                "description" => Lang::get("enterprise.descriptions.description"),
+            ],
+            "type" => [
+                "tipo" => "select",
+                "label" => Lang::get("enterprise.labels.type"),
+                "opciones" => Lang::get("enterprise.selects.type")
+            ],
+            "state" => [
+                "tipo" => "select",
+                "label" => Lang::get("enterprise.labels.state"),
+                "opciones" => Lang::get("enterprise.selects.state"),
+                "valor" => "pla",
+            ],
+            "difficulty" => [
+                "tipo" => "number",
+                "label" => Lang::get("enterprise.labels.difficulty"),
+                "placeholder" => Lang::get("enterprise.placeholders.difficulty"),
+                "valor" => 50,
+                "description" => Lang::get("enterprise.descriptions.difficulty"),
+            ],
+            "scale" => [
+                "tipo" => "number",
+                "label" => Lang::get("enterprise.labels.scale"),
+                "placeholder" => Lang::get("enterprise.placeholders.scale"),
+                "valor" => 200,
+                "description" => Lang::get("enterprise.descriptions.scale"),
+            ],
+            "url" => [
+                "tipo" => "text",
+                "label" => Lang::get("enterprise.labels.url"),
+                "placeholder" => Lang::get("enterprise.placeholders.url"),
+            ],
+            "linkedin" => [
+                "tipo" => "text",
+                "label" => Lang::get("enterprise.labels.linkedin"),
+                "placeholder" => Lang::get("enterprise.placeholders.linkedin"),
+            ],
+        ],
+    ],
     'game' => [
         "modelo" => "Game",
         "tabla" => "games",

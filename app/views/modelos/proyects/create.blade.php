@@ -15,6 +15,13 @@ if (Input::has('en')) {
 @extends("layouts.principal")
 
 @section("contenido")
+@if ($preDatos)
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.empresa") . '.show', array($enterprise->id)) }}">{{ $enterprise->nickname }}</a></li>
+  <li class="active">{{ Lang::get("proyect.titulos.create") }}</li>
+</ol>
+@endif
 <h1>{{ Lang::get("proyect.titulos.create") }}</h3>
 <p>{{ TransArticle::get("proyect.prueba2") }}</p>
 @if ($preDatos)
@@ -41,7 +48,7 @@ if (Input::has('en')) {
     <div class="col-sm-6 col-sm-height">
         <div class="panel panel-default">
             <div class="panel-body">
-                <img class="img-responsive img-rounded" src="{{ asset("images/enterprises/" . $enterprise->logo) }}"
+                <img class="img-responsive img-rounded" src="{{ asset("images/enterprises/mid/" . $enterprise->logo) }}"
             </div>
         </div>
     </div>

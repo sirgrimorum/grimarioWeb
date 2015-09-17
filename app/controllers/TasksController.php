@@ -137,6 +137,7 @@ class TasksController extends \BaseController {
                 'usuarios' => $task->users()->get(),
                 'proyect' => $task->proyect,
                 'payment' => $task->payments()->first(),
+                'user' => $userSen
             ];
             if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
                 $messages = new Illuminate\Support\MessageBag;
@@ -259,7 +260,7 @@ class TasksController extends \BaseController {
      */
     public function update($id) {
         $task = Task::findOrFail($id);
-
+        $userSen = Sentry::getUser();
         $paraEntrega = false;
         $pasa = false;
         if (Input::has('act_equipo')) {
@@ -290,7 +291,7 @@ class TasksController extends \BaseController {
             } else {
                 
             }
-        } elseif ($task->state == 'pau' || ( $task->state == 'des' && !($task->works()->where('user_id', '=', $user->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first()))) {
+        } elseif ($task->state == 'pau' || ( $task->state == 'des' && !($task->works()->where('user_id', '=', $userSen->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first()))) {
             $data['state'] = 'ter';
             $pasa = true;
         } else {
@@ -372,6 +373,7 @@ class TasksController extends \BaseController {
                     $work = Work::findOrFail(Input::get('work_id'));
                     $datosWork = $work->getAttributes();
                     $datosWork['end'] = Input::get('end');
+                    $datosWork['start'] = Input::get('start');
                     $validator = Validator::make($datosWork, Work::$rules);
                     if ($validator->fails()) {
                         return Redirect::back()->withErrors($validator)->withInput();

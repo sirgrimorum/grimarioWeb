@@ -1,6 +1,6 @@
 <?php
 $configShow = array_except(Config::get('crudgen.task'), array('campos'));
-$configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('end', 'users','dcuantity'));
+$configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('end', 'users', 'dcuantity'));
 $configComments = array_except(Config::get('crudgen.comment'), array('campos'));
 $configComments['campos'] = array_except(Config::get('crudgen.comment.campos'), array('task_id'));
 $configComments['botones'] = [
@@ -15,11 +15,17 @@ $configCosts['botones'] = [
     "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.costo") . '.edit', array("{ID}")) . "'>" . Lang::get("cost.labels.editar") . "</a>",
     "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.costo") . '.destroy', array("{ID}")) . "'>" . Lang::get("cost.labels.eliminar") . "</a>",
 ];
-
 ?>
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id)) }}">{{ $task->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id)) }}">{{ $task->payments()->first()->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id)) }}">{{ $task->name }}</a></li>
+  <li class="active">{{ Lang::get("task.titulos.actualizar") }}</li>
+</ol>
 <h1>{{ Lang::get("task.titulos.actualizar") }}</h1>
 <p>{{ TransArticle::get("task.prueba2") }}</p>
 <div class="row">
@@ -80,6 +86,17 @@ $configCosts['botones'] = [
     <div class="form-group ">
         <div class='row-sm-height'>
             <div class="col-xs-12 col-sm-6 col-sm-height">
+                {{ Form::label('start', Lang::get('work.labels.date'), array('class'=>'')) }}
+                <div class="">
+                    @if ($errors->has("start"))
+                    <div class="alert alert-danger">
+                        {{ HTML::ul($errors->get("start")) }}
+                    </div>
+                    @endif
+                    {{ Form::hidden('start', $work->start, array('class' => 'form-control', 'id' => 'work_start')) }}
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-sm-height">
                 {{ Form::label('end', Lang::get('work.labels.end'), array('class'=>'')) }}
                 <div class="">
                     @if ($errors->has("end"))
@@ -90,6 +107,10 @@ $configCosts['botones'] = [
                     {{ Form::hidden('end', date("Y-m-d H:i:s"), array('class' => 'form-control', 'id' => 'work_end')) }}
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class='row-sm-height'>
             <div class="col-xs-12 col-sm-6 col-sm-height">
                 {{ Form::label('users', Lang::get('work.labels.users'), array('class'=>'')) }}
                 @if ($errors->has("users"))
@@ -122,18 +143,15 @@ $configCosts['botones'] = [
                                 {{ $usuario->pivot->responsability }}
                             </td>
                             <td>
-                                {{ Form::number("work_users_c_" . $usuario->id, "0", array('class' => 'form-control hour_users', 'id' => 'work_users_c_' . $usuario->id, 'readonly')) }}
+                                {{ Form::number("work_users_c_" . $usuario->id, "0", array('class' => 'form-control hour_users', 'id' => 'work_users_c_' . $usuario->id, 'step' => 'any', 'readonly')) }}
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class='row-sm-height'>
-            <div class="col-xs-12 col-sm-6  col-sm-height recursos">
+
+            <div class="col-xs-12 col-sm-3  col-sm-height recursos">
                 {{ Form::label('machines', Lang::get('work.labels.machines'), array('class'=>'')) }}
                 @if ($errors->has("machines"))
                 <div class="alert alert-danger">
@@ -161,14 +179,14 @@ $configCosts['botones'] = [
                                 {{ $maquina->name }}
                             </td>
                             <td>
-                                {{ Form::number("work_machines_c_" . $maquina->id, "0", array('class' => 'form-control hour_machines', 'id' => 'work_machines_c_' . $maquina->id, 'readonly')) }}
+                                {{ Form::number("work_machines_c_" . $maquina->id, "0", array('class' => 'form-control hour_machines', 'id' => 'work_machines_c_' . $maquina->id, 'step' => 'any', 'readonly')) }}
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            <div class="col-xs-12 col-sm-6  col-sm-height recursos">
+            <div class="col-xs-12 col-sm-3  col-sm-height recursos">
                 {{ Form::label('resources', Lang::get('work.labels.resources'), array('class'=>'')) }}
                 @if ($errors->has("resources"))
                 <div class="alert alert-danger">
@@ -197,7 +215,7 @@ $configCosts['botones'] = [
                                 {{ $recurso->name }}
                             </td>
                             <td>
-                                {{ Form::number("work_resources_c_" . $recurso->id, "0", array('class' => 'form-control cant_resources', 'id' => 'work_resources_c_' . $recurso->id,'readonly')) }}
+                                {{ Form::number("work_resources_c_" . $recurso->id, "0", array('class' => 'form-control cant_resources', 'id' => 'work_resources_c_' . $recurso->id, 'step' => 'any','readonly')) }}
                             </td>
                             <td>
                                 {{ $recurso->measure }}
@@ -221,13 +239,13 @@ $configCosts['botones'] = [
     </div>
     <div class="form-group">
         <div class="boton_centrado">
-            @if (Input::get('st')=='ter' && $user->inGroup(Sentry::findGroupByName('Coordinador')))
+            @if (Input::get('st')=='ter' && ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director'))))
             {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
             @else
             {{ Form::submit(Lang::get('task.labels.detener'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
-                @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
-                {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
-                @endif
+            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
+            {{ Form::submit(Lang::get('task.labels.finalizar'), array('class' => 'btn btn-primary', 'name' => 'formaction')) }}
+            @endif
             @endif
         </div>
     </div>
@@ -272,6 +290,12 @@ $configCosts['botones'] = [
 <script>
     $(document).ready(function() {
         //alert(translations.task.error);
+        $('#work_start').datetimepicker({
+            locale: '{{ App::getLocale() }}',
+            inline: true,
+            format: 'YYYY-MM-DD HH:mm:ss',
+            sideBySide: true
+        });
         $('#work_end').datetimepicker({
             locale: '{{ App::getLocale() }}',
             inline: true,
@@ -279,19 +303,19 @@ $configCosts['botones'] = [
             sideBySide: true
         });
         $("input[type=checkbox]").change(function() {
-            var idTemp = "#" + $(this).attr("name").substring(0,$(this).attr("name").indexOf("[")) + "_c_" + $(this).val();
+            var idTemp = "#" + $(this).attr("name").substring(0, $(this).attr("name").indexOf("[")) + "_c_" + $(this).val();
             console.log(idTemp);
             $(idTemp).prop("readonly", !$(this).is(":checked"));
             if ($(idTemp).is("[readonly]")) {
                 $(idTemp).val(0);
             }
         });
-        @if (Input::get('st')!='ter')
-            $('#dpercentage').slider({
-                formatter:function(value){
-                    return value + "%";
-                }
-            });
+        @if (Input::get('st') != 'ter')
+                $('#dpercentage').slider({
+            formatter: function(value) {
+                return value + "%";
+            }
+        });
         @endif
     });
 </script>

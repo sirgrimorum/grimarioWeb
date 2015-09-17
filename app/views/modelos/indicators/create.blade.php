@@ -14,6 +14,14 @@ if (Input::has('py')) {
 @extends("layouts.principal")
 
 @section("contenido")
+@if ($preDatos)
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
+  <li class="active">{{ Lang::get("indicator.titulos.create") }}</li>
+</ol>
+@endif
 <h1>{{ Lang::get("indicator.titulos.create") }}</h3>
 <p>{{ TransArticle::get("indicator.prueba2") }}</p>
 @if ($preDatos)

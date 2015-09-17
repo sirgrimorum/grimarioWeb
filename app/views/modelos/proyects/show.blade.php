@@ -12,7 +12,11 @@ $configRestriccion['botones'] = $configBotonesSupuestos;
 
 
 @section("contenido")
-
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.empresa") . '.show', array($proyect->enterprises()->first()->id)) }}">{{ $proyect->enterprises()->first()->nickname }}</a></li>
+  <li class="active">{{ $proyect->name }}</li>
+</ol>
 <h1>{{ Lang::get("proyect.titulos.show") }}</h1>
 <div class='container'>
     {{ CrudLoader::show($config,$proyect->id,$proyect) }}

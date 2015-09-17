@@ -137,7 +137,8 @@ return array(
         "create" => "Crear una actividad",
         "description" => "Juego, gamification, gerencia de proyectos",
         "show" => "Información de la tarea",
-        "edit" => "Tarea en proceso",
+        "edit" => "Editar tarea",
+        "equipo" => "Detalles del equipo",
         "actualizar" => "Actualizar estado de la tarea",
     ),
     "mensajes" => array(

@@ -23,6 +23,12 @@ if (Input::has('en')) {
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.empresa") . '.show', array($proyect->enterprises()->first()->id)) }}">{{ $proyect->enterprises()->first()->nickname }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
+  <li class="active">{{ Lang::get("proyect.titulos.edit") }}</li>
+</ol>
 <h1>{{ Lang::get("proyect.titulos.edit") }}</h3>
 <p>{{ TransArticle::get("proyect.prueba2") }}</p>
 @if ($preDatos)

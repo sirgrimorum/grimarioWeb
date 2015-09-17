@@ -58,6 +58,12 @@ $configComments['botones'] = [
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id)) }}">{{ $task->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id)) }}">{{ $task->payments()->first()->name }}</a></li>
+  <li class="active">{{ $task->name }}</li>
+</ol>
 <h1>{{ Lang::get("task.titulos.show") }}</h3>
 <div class='container'>
     {{ CrudLoader::show($config,$task->id,$task) }}
@@ -73,7 +79,7 @@ $configComments['botones'] = [
             <div class='col-sm-offset-3 col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
             </div>
-        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
+        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
                 <div class='col-sm-2'>
                     <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
                 </div>
@@ -85,7 +91,7 @@ $configComments['botones'] = [
             <div class='col-sm-offset-3 col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=pau" class='btn btn-default'>{{ Lang::get("task.labels.detener") }}</a>
             </div>
-            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
+            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
                 <div class='col-sm-2'>
                     <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
                 </div>
@@ -134,7 +140,7 @@ $configComments['botones'] = [
                     {{ $task->workedhours($usuario->id) }}
                 </td>
                 <td>
-                    {{ $usuario->pivot->calification }}
+                    {{ Lang::get("task.selects.user_calification")[$usuario->pivot->calification] }}
                 </td>
             </tr>
             @endforeach

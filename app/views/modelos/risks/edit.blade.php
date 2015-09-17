@@ -12,6 +12,13 @@ unset($config["campos"]["state"]["valor"]);
 @extends("layouts.principal")
 
 @section("contenido")
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
+  <li><a href="{{ URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array($risk->id)) }}">{{ $risk->name }}</a></li>
+  <li class="active">{{ Lang::get("risk.titulos.edit") }}</li>
+</ol>
 <h1>{{ Lang::get("risk.titulos.edit") }}</h3>
 <p>{{ TransArticle::get("risk.prueba2") }}</p>
 <div class="row">
