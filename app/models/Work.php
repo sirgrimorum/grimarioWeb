@@ -81,5 +81,25 @@ class Work extends \Eloquent {
             return 0;
         }
     }
+    
+    public function totalworkedhours() {
+        $total = 0;
+        foreach ($this->users()->get() as $user) {
+            $total += $user->pivot->hours;
+        }
+        return $total;
+        
+    }
+    
+    public function elapsedtime(){
+        if ($this->end > 0){
+            $fin = new DateTime($this->end);
+        }else{
+            $fin = new DateTime();
+        }
+        $inicio = new DateTime($this->start);
+        $dif = $inicio->diff($fin);
+        return $dif->h;
+    }
 
 }

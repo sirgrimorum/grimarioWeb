@@ -97,7 +97,7 @@ class PaymentsController extends BaseController {
         $dtTareasPer->addStringColumn(Lang::get("task.labels.tareas"))
                 ->addNumberColumn('percentage');
         foreach ($payment->tasks()->get() as $task) {
-            $dtTareasPer->addRow(array($task->name, $task->percentage/100));
+            $dtTareasPer->addRow(array($task->name, $task->percentage / 100));
         }
         $pieTareasPer = Lava::PieChart("tasks_per")->setOptions(array(
             'datatable' => $dtTareasPer,
@@ -131,8 +131,27 @@ class PaymentsController extends BaseController {
             return Redirect::route("home")->withErrors($messages);
         }
         $payment = Payment::find($id);
-
-        return View::make('modelos.payments.edit', compact('payment'));
+        if (Input::has('st')) {
+            $data = $payment->getAttributes();
+            $data['state'] = Input::get('st');
+            $data['paymentdate']=0;
+            if(Input::get('st') == 'pag'){
+                $data['paymentdate']=date("Y-m-d H:i:s");
+            }
+            $validator = Validator::make($data, array_except(Payment::$rules, 'paymentdate'));
+            if ($validator->fails()) {
+                return Redirect::back()->withErrors($validator)->withInput();
+            }
+            $payment->update($data);
+            if (Input::get('st') == 'ent') {
+                $mensaje = Lang::get("payment.mensajes.entregado");
+            }elseif(Input::get('st') == 'pag'){
+                $mensaje = Lang::get("payment.mensajes.pagado");
+            }
+            return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id))->with('message', $mensaje);
+        } else {
+            return View::make('modelos.payments.edit', compact('payment'));
+        }
     }
 
     /**

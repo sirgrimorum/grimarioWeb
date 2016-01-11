@@ -63,7 +63,8 @@ class BarChart extends Chart
                 'trendlines.n.type',
                 'trendlines.n.visibleInLegend',
                 'vAxis',
-                'vAxis'
+                'vAxis',
+                'bars'
             )
         );
     }
@@ -283,6 +284,26 @@ class BarChart extends Chart
     }
 
     public function orientation($o)
+    {
+        $values = array(
+            'horizontal',
+            'vertical'
+        );
+
+        if (Utils::nonEmptyStringInArray($o, $values)) {
+            $this->addOption(array(__FUNCTION__ => $o));
+        } else {
+            throw $this->invalidConfigValue(
+                __FUNCTION__,
+                'string',
+                'must be one of '.Utils::arrayToPipedString($values)
+            );
+        }
+
+        return $this;
+    }
+    /*para material*/
+    public function bars($o)
     {
         $values = array(
             'horizontal',

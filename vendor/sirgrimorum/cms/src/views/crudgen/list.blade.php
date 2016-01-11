@@ -98,7 +98,19 @@ if (isset($config['render'])){
                         -
                     @endif
                 @elseif ($datos['tipo']=="relationships")
-                    @if (count($value->{$columna}()->get())>0)
+                    @if (count($value->{$datos['modelo']}()->get())>0)
+                        @foreach($value->{$datos['modelo']}()->get() as $sub)
+                                <p>
+                                    @if(array_key_exists('enlace',$datos))
+                                    <a href="{{ str_replace("{ID}",$sub->{$datos['id']},str_replace(urlencode ("{ID}"),$sub->{$datos['id']},$datos['enlace'])) }}">
+                                    @endif
+                                    {{ $sub->{$datos['campo']} }}
+                                    @if(array_key_exists('enlace',$datos))
+                                    </a>
+                                    @endif
+                                </p>
+                        @endforeach
+                    @elseif (count($value->{$columna}()->get())>0)
                         @foreach($value->{$columna}()->get() as $sub)
                                 <p>
                                     @if(array_key_exists('enlace',$datos))
@@ -225,7 +237,10 @@ if (isset($config['render'])){
             dom: 'Rlfrtip',
             tableTools: {
             sSwfPath: "/swf/copy_csv_xls_pdf.swf"
-            }
+            },
+            @if (isset($config['orden']))
+            order : {{ json_encode($config['orden']) }},
+            @endif
         });
         //new $.fn.dataTable.FixedHeader(lista_{{ $tabla }});
     });

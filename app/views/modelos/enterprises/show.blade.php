@@ -6,6 +6,7 @@ $config['campos'] = array_except(Config::get('crudgen.enterprise.campos'), $conf
 $configProyects = array_except(Config::get('crudgen.proyect'), array('campos'));
 $configProyects['campos'] = array_only(Config::get('crudgen.proyect.campos'), $configCampos);
 $configProyects['botones'] = $configBotones;
+$configProyects['orden']=[[3,'asc']];
 ?>
 
 

@@ -127,6 +127,36 @@ return array(
             ],
         ],
     ],
+    'user' => [
+        "modelo" => "User",
+        "tabla" => "users",
+        "nombre" => "email",
+        "id" => "id",
+        "url" => "",
+        "botones" => Lang::get("user.labels.create"),
+        "campos" => [
+            "name" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.name"),
+                "placeholder" => Lang::get("user.placeholders.name"),
+            ],
+            "first_name" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.first_name"),
+                "placeholder" => Lang::get("user.placeholders.first_name"),
+            ],
+            "last_name" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.last_name"),
+                "placeholder" => Lang::get("user.placeholders.last_name"),
+            ],
+            "email" => [
+                "tipo" => "text",
+                "label" => Lang::get("user.labels.email"),
+                "placeholder" => Lang::get("user.placeholders.email"),
+            ],
+        ],
+    ],
     'userdata' => [
         "modelo" => "Userdatum",
         "tabla" => "userdatas",
@@ -204,12 +234,12 @@ return array(
                 "tipo" => "text",
                 "label" => Lang::get("proyect.labels.name"),
                 "enlace" => URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array("{ID}")),
-                "placeholder" => Lang::get("task.placeholders.name"),
+                "placeholder" => Lang::get("proyect.placeholders.name"),
             ],
             "code" => [
                 "tipo" => "text",
                 "label" => Lang::get("proyect.labels.code"),
-                "placeholder" => Lang::get("task.placeholders.code"),
+                "placeholder" => Lang::get("proyect.placeholders.code"),
             ],
             "description" => [
                 "tipo" => "html",
@@ -692,7 +722,7 @@ return array(
             "payments" => [
                 "label" => Lang::get("task.labels.payments"),
                 "tipo" => "relationships",
-                "modelo" => "Payment",
+                "modelo" => "payments",
                 "id" => "id",
                 "campo" => "name",
                 "todos" => "",

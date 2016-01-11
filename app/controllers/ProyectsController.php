@@ -18,7 +18,7 @@ class ProyectsController extends \BaseController {
             return Redirect::route("home")->withErrors($messages);
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
-            $proyects = $usuario->proyects()->get();
+            $proyects = $usuario->proyects()->where("state", "<>", "ter")->get();
             $botonCrear = false;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan'];
             $configBotones = [
@@ -27,7 +27,7 @@ class ProyectsController extends \BaseController {
             ];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
-            $proyects = Proyect::all();
+            $proyects = Proyect::where("state", "<>", "ter")->get();
             $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan', 'user'];
             $configBotones = [
@@ -161,23 +161,55 @@ class ProyectsController extends \BaseController {
         if ($userSen->inGroup(Sentry::findGroupByName('Jugador'))) {
             $botonCrearEntregables = false;
             $botonCrearSupuestos = false;
+            $botonCrearClientes = false;
             $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit'];
             $configBotonesEntregables = "";
             $configBotonesSupuestos = "";
+            $configBotonesClientes = "";
+            $botonCrearIndicadores = false;
+            $botonCrearRiesgos = false;
+            $botonCrearActividades = false;
+            $configBotonesIndicadores = "";
+            $configBotonesRiesgos = "";
+            $configBotonesActividades = "";
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $botonCrearEntregables = false;
             $botonCrearSupuestos = true;
+            $botonCrearClientes = true;
             $configCampos = ['satisfaction', 'experience', 'value', 'profit'];
             $configBotonesEntregables = "";
             $configBotonesSupuestos = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array("{ID}")) . "'>" . Lang::get("restriction.labels.ver") . "</a>",
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
             ];
+            $configBotonesClientes = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.show', array("{ID}")) . "'>" . Lang::get("userdata.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.edit', array("{ID}")) . "'>" . Lang::get("userdata.labels.editar") . "</a>",
+            ];
+            $botonCrearIndicadores = true;
+            $botonCrearRiesgos = true;
+            $botonCrearActividades = true;
+            $configBotonesIndicadores = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.show', array("{ID}")) . "'>" . Lang::get("indicator.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.edit', array("{ID}")) . "'>" . Lang::get("indicator.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.destroy', array("{ID}")) . "'>" . Lang::get("indicator.labels.eliminar") . "</a>",
+            ];
+            $configBotonesRiesgos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array("{ID}")) . "'>" . Lang::get("risk.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.edit', array("{ID}")) . "'>" . Lang::get("risk.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.destroy', array("{ID}")) . "'>" . Lang::get("risk.labels.eliminar") . "</a>",
+            ];
+            $configBotonesActividades = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")) . "'>" . Lang::get("task.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array("{ID}")) . "'>" . Lang::get("task.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
+            ];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
             $botonCrearEntregables = true;
             $botonCrearSupuestos = true;
+            $botonCrearClientes = true;
             $configCampos = [ 'value', 'profit'];
             $configBotonesEntregables = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.pago") . '.show', array("{ID}")) . "'>" . Lang::get("payment.labels.ver") . "</a>",
@@ -187,6 +219,28 @@ class ProyectsController extends \BaseController {
             $configBotonesSupuestos = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.show', array("{ID}")) . "'>" . Lang::get("restriction.labels.ver") . "</a>",
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
+            ];
+            $configBotonesClientes = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.show', array("{ID}")) . "'>" . Lang::get("userdata.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.edit', array("{ID}")) . "'>" . Lang::get("userdata.labels.editar") . "</a>",
+            ];
+            $botonCrearIndicadores = true;
+            $botonCrearRiesgos = true;
+            $botonCrearActividades = true;
+            $configBotonesIndicadores = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.show', array("{ID}")) . "'>" . Lang::get("indicator.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.edit', array("{ID}")) . "'>" . Lang::get("indicator.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.destroy', array("{ID}")) . "'>" . Lang::get("indicator.labels.eliminar") . "</a>",
+            ];
+            $configBotonesRiesgos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array("{ID}")) . "'>" . Lang::get("risk.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.edit', array("{ID}")) . "'>" . Lang::get("risk.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.destroy', array("{ID}")) . "'>" . Lang::get("risk.labels.eliminar") . "</a>",
+            ];
+            $configBotonesActividades = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")) . "'>" . Lang::get("task.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array("{ID}")) . "'>" . Lang::get("task.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
             ];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
@@ -203,29 +257,117 @@ class ProyectsController extends \BaseController {
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.edit', array("{ID}")) . "'>" . Lang::get("restriction.labels.editar") . "</a>",
                 "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.restriccion") . '.destroy', array("{ID}")) . "'>" . Lang::get("restriction.labels.eliminar") . "</a>",
             ];
+            $configBotonesClientes = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.show', array("{ID}")) . "'>" . Lang::get("userdata.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.userdata") . '.edit', array("{ID}")) . "'>" . Lang::get("userdata.labels.editar") . "</a>",
+            ];
+            $botonCrearIndicadores = true;
+            $botonCrearRiesgos = true;
+            $botonCrearActividades = true;
+            $configBotonesIndicadores = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.show', array("{ID}")) . "'>" . Lang::get("indicator.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.edit', array("{ID}")) . "'>" . Lang::get("indicator.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.indicador") . '.destroy', array("{ID}")) . "'>" . Lang::get("indicator.labels.eliminar") . "</a>",
+            ];
+            $configBotonesRiesgos = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.show', array("{ID}")) . "'>" . Lang::get("risk.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.edit', array("{ID}")) . "'>" . Lang::get("risk.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.riesgo") . '.destroy', array("{ID}")) . "'>" . Lang::get("risk.labels.eliminar") . "</a>",
+            ];
+            $configBotonesActividades = [
+                "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.show', array("{ID}")) . "'>" . Lang::get("task.labels.ver") . "</a>",
+                "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array("{ID}")) . "'>" . Lang::get("task.labels.editar") . "</a>",
+                "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
+            ];
         }
         $proyect = Proyect::findOrFail($id);
 
+        /* $dtEntregasPer = Lava::DataTable();
+          $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
+          ->addNumberColumn(Lang::get("payment.labels.value"));
+          foreach ($proyect->payments()->get() as $payment) {
+          $dtEntregasPer->addRow(array($payment->name, $payment->value));
+          }
+          $pieEntregasPer = Lava::PieChart("payments_per")
+          ->setOptions(array(
+          'datatable' => $dtEntregasPer,
+          'title' => Lang::get("payment.labels.pagos"),
+          'is3D' => true,
+          )); */
         $dtEntregasPer = Lava::DataTable();
-        $dtEntregasPer->addStringColumn(Lang::get("payment.labels.pagos"))
-                ->addNumberColumn('percentage');
+        $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
+                ->addNumberColumn(Lang::get("payment.labels.value"))
+                ->addNumberColumn(Lang::get("payment.labels.plan"))
+                ->addNumberColumn(Lang::get("payment.labels.totalcost"))
+                ->addNumberColumn(Lang::get("payment.labels.profit"));
         foreach ($proyect->payments()->get() as $payment) {
-            $dtEntregasPer->addRow(array($payment->name, $payment->percentage / 100));
+            $dtEntregasPer->addRow(array($payment->name, $payment->value, $payment->plan, $payment->totalcost(), $payment->profit()));
         }
-        $pieEntregasPer = Lava::PieChart("payments_per")
+        $pieEntregasPer = Lava::ComboChart("payments_per")
                 ->setOptions(array(
             'datatable' => $dtEntregasPer,
             'title' => Lang::get("payment.labels.pagos"),
-            'is3D' => true,
+            'legend' => Lava::Legend(array(
+                'position' => 'in'
+            )),
+            'seriesType' => 'bars',
+            'series' => array(
+                3 => Lava::Series(array(
+                    'type' => 'line'
+                ))
+            )
+        ));
+        $dtEntregasAv = Lava::DataTable();
+        $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"))
+                ->addNumberColumn(Lang::get("payment.labels.percentage"))
+                ->addNumberColumn(Lang::get("payment.labels.advance"));
+        foreach ($proyect->payments()->get() as $payment) {
+            $dtEntregasAv->addRow(array($payment->name, $payment->percentage, $payment->contribution()));
+        }
+        $barEntregasAv = Lava::ColumnChart("payments_av")
+                ->setOptions(array(
+            'datatable' => $dtEntregasAv,
+            'title' => Lang::get("payment.labels.advance"),
+            'legend' => Lava::Legend(array(
+                'position' => 'in'
+            )),
+                //'is3D' => true,
+        ));
+
+        $dtPresup = Lava::DataTable();
+        $dtPresup->addStringColumn(Lang::get("proyect.labels.presupuesto"))
+                ->addNumberColumn(Lang::get("proyect.labels.totalplan"))
+                ->addNumberColumn(Lang::get("proyect.labels.totalcost"))
+                ->addRow(array("COP", $proyect->totalplan(), $proyect->totalcost()));
+        $barPresup = Lava::BarChart("proyect_presup")
+                ->setOptions(array(
+            'datatable' => $dtPresup,
+            //'theme' => 'maximized',
+            'hAxis' => Lava::HorizontalAxis([
+                'format' => 'decimal',
+            ]),
+            //'title' => Lang::get("proyect.labels.presupuesto"),
+            'legend' => Lava::Legend([
+                'position' => 'none',
+            ]),
+            'bars' => 'horizontal',
         ));
 
         return View::make('modelos.proyects.show', [
                     "proyect" => $proyect,
                     "botonCrearEntregables" => $botonCrearEntregables,
                     "botonCrearSupuestos" => $botonCrearSupuestos,
+                    "botonCrearClientes" => $botonCrearClientes,
                     "configCampos" => $configCampos,
                     "configBotonesEntregables" => $configBotonesEntregables,
                     "configBotonesSupuestos" => $configBotonesSupuestos,
+                    "configBotonesClientes" => $configBotonesClientes,
+                    "configBotonesIndicadores" => $configBotonesIndicadores,
+                    "configBotonesRiesgos" => $configBotonesRiesgos,
+                    "configBotonesActividades" => $configBotonesActividades,
+                    "botonCrearIndicadores" => $botonCrearIndicadores,
+                    "botonCrearRiesgos" => $botonCrearRiesgos,
+                    "botonCrearActividades" => $botonCrearActividades,
         ]);
     }
 

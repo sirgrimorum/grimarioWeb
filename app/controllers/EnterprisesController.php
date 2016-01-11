@@ -55,7 +55,7 @@ class EnterprisesController extends \BaseController {
             return Redirect::route("home")->withErrors($messages);
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
-            $proyects = $usuario->proyects()->get();
+            $proyects = $usuario->proyects()->where("state","!=","ter")->get();
             $botonCrear = false;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan'];
             $configBotones = [
@@ -64,7 +64,7 @@ class EnterprisesController extends \BaseController {
             ];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
-            $proyects = $enterprise->proyects()->get();
+            $proyects = $enterprise->proyects()->where("state","!=","ter")->get();
             $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan', 'user'];
             $configBotones = [
@@ -73,7 +73,7 @@ class EnterprisesController extends \BaseController {
             ];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
-            $proyects = $enterprise->proyects()->get();
+            $proyects = $enterprise->proyects()->where("state","!=","ter")->get();
             $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'value', 'saves', 'profit', 'user'];
             $configBotones = [

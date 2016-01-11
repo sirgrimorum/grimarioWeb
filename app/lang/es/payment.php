@@ -22,6 +22,8 @@ return array(
         "eliminar" => "eliminar",
         "create" => "Crear entregable",
         "edit" => "Actualizar entregable",
+        "entregar" => "Entregado",
+        "pagar" => "Pagado",
     ),
     "descriptions" => array(
         "pago" => "Entregable",
@@ -61,6 +63,8 @@ return array(
     "mensajes" => array(
         "error" => "uyy qué error tan grande",
         "reaml" => "paila parcero",
+        "entregado" => "El entregable ha sido entregado al cliente",
+        "pagado" => "El entregable ha sido pagado",
     ),
         )
 ?>

@@ -27,10 +27,12 @@ return array(
         "resources_unit" => "Unidad",
         "resources_cost" => "Costo del recurso",
         "totalcost" => "Costo total",
+        "totalworkedhours" => "Horas/hombre de trabajo",
         "task_id" => "Tarea",
         "start" => "Comienzo",
         "ver" => "Detalles",
         "create" => "Planear joranada",
+        "h" => "h",
     ),
     "descriptions" => array(
         "trabajo" => "Trabajo",

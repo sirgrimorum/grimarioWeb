@@ -3,6 +3,7 @@
 return array(
     "labels" => array(
         "titulo_home" => "Grimario",
+        "mas_info" => "Más información"
     ),
     "metadata" => array(
         "author" => "SirGrimorum",

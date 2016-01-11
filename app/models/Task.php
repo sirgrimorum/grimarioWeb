@@ -144,5 +144,31 @@ class Task extends \Eloquent {
         }
         return $points;
     }
+    
+    public function elapsedtime(){
+        if ($this->end > 0){
+            $fin = new DateTime($this->end);
+        }else{
+            $fin = new DateTime();
+        }
+        $inicio = new DateTime($this->start);
+        $dif = $inicio->diff($fin);
+        return ($dif->days * 24) + $dif->h;
+    }
+    
+    public function timeleft(){
+        if ($this->state != 'des' && $this->state != 'pau' && $this->state != 'pla' && $this->end > 0){
+            $fin = new DateTime($this->end);
+        }else{
+            $fin = new DateTime();
+        }
+        $inicio = new DateTime($this->plan);
+        $dif = $fin->diff($inicio,false);
+        if ($dif->format("%r") == "-"){
+            return $dif->days * -1;
+        }else{
+            return $dif->days;
+        }
+    }
 
 }

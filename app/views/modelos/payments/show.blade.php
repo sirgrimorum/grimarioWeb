@@ -15,9 +15,9 @@ $configRiesgos['botones'] = $configBotonesRiesgos;
 
 @section("contenido")
 <ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
-  <li class="active">{{ $payment->name }}</li>
+    <li><a href="/">Home</a></li>
+    <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id)) }}">{{ $payment->proyect->name }}</a></li>
+    <li class="active">{{ $payment->name }}</li>
 </ol>
 <h1>{{ Lang::get("payment.titulos.show") }}</h1>
 <div class="row">
@@ -44,17 +44,34 @@ $configRiesgos['botones'] = $configBotonesRiesgos;
 <div class='container'>
     {{ CrudLoader::show($config,$payment->id,$payment) }}
 </div>
+@if ($payment->state == 'act' && $payment->advance()>=100)
+<div class='container botones'>
+    <div class='row'>
+        <div class='col-sm-offset-4 col-sm-4'>
+            <a href="{{ URL::route(Lang::get("principal.menu.links.pago"). '.edit', array($payment->id)) }}?st=ent" class='btn btn-default'>{{ Lang::get("payment.labels.entregar") }}</a>
+        </div>
+    </div>
+</div>
+@elseif ($payment->state == 'ent')
+<div class='container botones'>
+    <div class='row'>
+        <div class='col-sm-offset-4 col-sm-4'>
+            <a href="{{ URL::route(Lang::get("principal.menu.links.pago"). '.edit', array($payment->id)) }}?st=pag" class='btn btn-default'>{{ Lang::get("payment.labels.pagar") }}</a>
+        </div>
+    </div>
+</div>
+@endif
 <div class='container'>
     <h2>{{ Lang::get("indicator.titulos.index") }}</h2>
     @if ($botonCrearIndicadores)
-        <a href='{{ action('IndicatorsController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("indicator.labels.create") }}</a>
+    <a href='{{ action('IndicatorsController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("indicator.labels.create") }}</a>
     @endif
     {{ CrudLoader::lists($configIndicadores,$payment->indicators()->get()) }}
 </div>
 <div class='container'>
-    <h2>{{ Lang::get("risk.titulos.index") }}</h2>
+        <h2>{{ Lang::get("risk.titulos.index") }}</h2>
     @if ($botonCrearRiesgos)
-        <a href='{{ action('RisksController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("risk.labels.create") }}</a>
+    <a href='{{ action('RisksController@create') }}?py={{ $payment->id }}' class='btn btn-info' >{{ Lang::get("risk.labels.create") }}</a>
     @endif
     {{ CrudLoader::lists($configRiesgos,$payment->risks()->get()) }}
 </div>
@@ -63,7 +80,7 @@ $configRiesgos['botones'] = $configBotonesRiesgos;
     <div id='pie_tasks_per'></div>
     @piechart('tasks_per', 'pie_tasks_per')
     @if ($botonCrearActividades)
-        <a href='{{ action('TasksController@create') }}?py={{ $payment->id }}&pr={{ $payment->proyect_id }}' class='btn btn-info' >{{ Lang::get("task.labels.create") }}</a>
+    <a href='{{ action('TasksController@create') }}?py={{ $payment->id }}&pr={{ $payment->proyect_id }}' class='btn btn-info' >{{ Lang::get("task.labels.create") }}</a>
     @endif
     {{ CrudLoader::lists($configTareas,$payment->tasks()->get()) }}
 </div>

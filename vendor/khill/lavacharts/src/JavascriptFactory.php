@@ -178,13 +178,20 @@ class JavascriptFactory
             '$this.options = %s;',
             $this->chart->optionsToJson()
         ).PHP_EOL.PHP_EOL;
-
-        $out .= sprintf(
-            '$this.chart = new google.visualization.%s(document.getElementById("%s"));',
-            $this->getChartPackageData('jsObj'),
-            $this->elementId
-        ).PHP_EOL.PHP_EOL;
-
+        
+        /*para material*/
+        if ($this->getChartPackageData('jsObj') == 'BarChart'){
+            $out .= sprintf(
+                '$this.chart = new google.charts.Bar(document.getElementById("%s"));',
+                $this->elementId
+            ).PHP_EOL.PHP_EOL;
+        }else{
+            $out .= sprintf(
+                '$this.chart = new google.visualization.%s(document.getElementById("%s"));',
+                $this->getChartPackageData('jsObj'),
+                $this->elementId
+            ).PHP_EOL.PHP_EOL;
+        }
         if ($this->chart->datatable->hasFormats()) {
             $out .= $this->buildFormatters();
         }
@@ -192,8 +199,13 @@ class JavascriptFactory
         if ($this->chart->hasEvents()) {
             $out .= $this->buildEventCallbacks();
         }
-
-        $out .= '$this.chart.draw($this.data, $this.options);'.PHP_EOL;
+        
+        /*para material*/
+        if ($this->getChartPackageData('jsObj') == 'BarChart'){
+            $out .= '$this.chart.draw($this.data, google.charts.Bar.convertOptions($this.options));'.PHP_EOL;
+        }else{
+            $out .= '$this.chart.draw($this.data, $this.options);'.PHP_EOL;
+        }
 
         $out .= "};".PHP_EOL.PHP_EOL;
 
@@ -221,12 +233,21 @@ class JavascriptFactory
             $this->chart->label
         ).PHP_EOL;
 
-        $out .= sprintf(
-            "google.load('visualization', '%s', {'packages':['%s']});",
-            $this->getChartPackageData('version'),
-            $this->getChartPackageData('type')
-        ).PHP_EOL;
-
+        /*para material*/
+        if ($this->getChartPackageData('jsObj') == 'BarChart'){
+            $out .= sprintf(
+                "google.load('visualization', '%s', {'packages':['%s']});",
+                '1.1',
+                'bar'
+            ).PHP_EOL;
+        }else{
+            $out .= sprintf(
+                "google.load('visualization', '%s', {'packages':['%s']});",
+                $this->getChartPackageData('version'),
+                $this->getChartPackageData('type')
+            ).PHP_EOL;
+        }
+        
         $out .= sprintf(
             'google.setOnLoadCallback(lava.charts.%s["%s"].init);',
             $this->chart->type,

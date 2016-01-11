@@ -53,6 +53,12 @@ return array(
         "evaluar" => "Evaluar y cerrar la tarea",
         "edit_equipo" => "Detalles del equipo",
         "actualizar_equipo" => "Actualizar el equipo",
+        "faltan" => "Faltan ",
+        "retrasado" => "Retrasado ",
+        "dias" => " días",
+        "entregado" => "Entregado ",
+        "dias_antes" => " días antes",
+        "dias_despues" => " días despues"
     ),
     "descriptions" => array(
         "tarea" => "Tarea",
