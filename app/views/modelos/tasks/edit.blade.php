@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.task'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.task.campos'), array('start', 'end', 'dcuantity', 'contribution'));
+$config['campos'] = array_except(Config::get('crudgen.task.campos'), array( 'dcuantity', 'contribution')); //array('start', 'end', 'dcuantity', 'contribution'));
 $config['botones'] = [
     Form::submit(Lang::get('task.labels.edit'), array('class' => 'btn btn-primary', 'name' => 'formaction'))
 ];

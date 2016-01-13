@@ -43,6 +43,7 @@ if (Input::has("py")) {
     </li>
     @endforeach
 </ul>
+@if ($payment)
 <div class="panel panel-default">
     <div class="panel-body">
         <div id="avancepybar"><div class="progress-label">{{ Lang::get("payment.labels.advance") }}: {{ $payment->advance() }}%</div></div>
@@ -123,3 +124,4 @@ if (Input::has("py")) {
     });
 </script>
 @stop
+@endif

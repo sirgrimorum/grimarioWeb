@@ -46,11 +46,11 @@
 		module.exports = factory(jQuery);
 	}
 	else {
-		root.Slider = factory(root.jQuery);
+		root.SliderB = factory(root.jQuery);
 	}
 }(this, function($) {
 	// Reference to Slider constructor
-	var Slider;
+	var SliderB;
 
 
 	(function( $ ) {
@@ -297,7 +297,7 @@
 							CONSTRUCTOR
 
 		**************************************************/
-		Slider = function(element, options) {
+		SliderB = function(element, options) {
 			createNewSlider.call(this, element, options);
 			return this;
 		};
@@ -673,10 +673,10 @@
 		part of the plugin's `public` interface
 
 		**************************************************/
-		Slider.prototype = {
+		SliderB.prototype = {
 			_init: function() {}, // NOTE: Must exist to support bridget
 
-			constructor: Slider,
+			constructor: SliderB,
 
 			defaultOptions: {
 				id: "",
@@ -790,7 +790,7 @@
 				// Remove JQuery handlers/data
 				if($) {
 					this._unbindJQueryEventHandlers();
-					this.$element.removeData('slider');
+					this.$element.removeData('sliderb');
 				}
 			},
 
@@ -850,7 +850,7 @@
 				createNewSlider.call(this, this.element, this.options);
 				if($) {
 					// Bind new instance of slider to the element
-					$.data(this.element, 'slider', this);
+					$.data(this.element, 'sliderb', this);
 				}
 				return this;
 			},
@@ -1453,11 +1453,11 @@
 
 		*********************************/
 		if($) {
-			var namespace = $.fn.slider ? 'bootstrapSlider' : 'slider';
-			$.bridget(namespace, Slider);
+			var namespace = $.fn.sliderb ? 'bootstrapSlider' : 'sliderb';
+			$.bridget(namespace, SliderB);
 		}
 
 	})( $ );
 
-	return Slider;
+	return SliderB;
 }));

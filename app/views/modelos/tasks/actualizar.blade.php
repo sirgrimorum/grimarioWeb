@@ -311,7 +311,7 @@ $configCosts['botones'] = [
             }
         });
         @if (Input::get('st') != 'ter')
-                $('#dpercentage').slider({
+                $('#dpercentage').sliderb({
             formatter: function(value) {
                 return value + "%";
             }

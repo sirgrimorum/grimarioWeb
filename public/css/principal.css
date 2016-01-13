@@ -4,6 +4,10 @@ body{
     position: relative;
 }
 
+.jumbotron p {
+    font-weight:normal;
+}
+
 /* menu */
 #menu_principal img.foto_profile{
     max-height: 42px;

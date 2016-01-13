@@ -76,7 +76,7 @@ if (isset($datos["pre"])){
 {{ HTML::script("js/bootstrap-slider.js") }}
 <script>
     $(document).ready(function() {
-        $('#{{ $tabla . "_" . $columna }}').slider({
+        $('#{{ $tabla . "_" . $columna }}').sliderb({
             formatter:function(value){
                 return "{{ $pre }}" + value + "{{ $post }}";
             }

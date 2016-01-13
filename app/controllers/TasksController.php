@@ -292,6 +292,7 @@ class TasksController extends \BaseController {
                 
             }
         } elseif ($task->state == 'pau' || ( $task->state == 'des' && !($task->works()->where('user_id', '=', $userSen->id)->whereRaw("YEAR(end) = 0 and start < NOW()")->orderBy('start', 'desc')->first()))) {
+            $data = $task->getAttributes();
             $data['state'] = 'ter';
             $pasa = true;
         } else {
@@ -301,6 +302,7 @@ class TasksController extends \BaseController {
                     $data['state'] = 'pau';
                 } elseif (Input::get('formaction') == Lang::get('task.labels.finalizar')) {
                     $data['state'] = 'ter';
+                    $data['dpercentage'] = 100;
                 } else {
                     $data['state'] = Input::get('state');
                 }
@@ -309,7 +311,12 @@ class TasksController extends \BaseController {
             }
 
             if ($data['state'] == 'ent') {
-                $data['end'] = date("Y-m-d H:i:s");
+                $data['dpercentage'] = 100;
+                if (Input::has('end')){
+                    $data['end'] = Input::get('end');
+                }else{
+                    $data['end'] = date("Y-m-d H:i:s");
+                }
                 foreach ($task->users()->get() as $worker) {
                     if (Input::has("work_users_c_" . $worker->id)) {
                         //$user_task = $task->users()->find($worker->id);
@@ -406,6 +413,7 @@ class TasksController extends \BaseController {
         }
         if ($pasa) {
             $validator = Validator::make($data, Task::$rules);
+            //return "<pre>" . print_r($data,true) . "</pre><p>Otro</p><pre>" . print_r($task->getAttributes(),true) . "</pre>";
             if ($validator->fails()) {
                 return Redirect::back()->withErrors($validator)->withInput();
             }
