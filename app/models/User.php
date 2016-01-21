@@ -53,7 +53,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function tasks() {
-        return $this->belongsToMany('Task', 'task_user')->withPivot(array('valueph', 'calification', 'responsability'));
+        return $this->belongsToMany('Task', 'task_user')->withPivot(array('valueph', 'hours', 'calification', 'responsability'));
     }
 
     public function works() {
@@ -69,7 +69,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function teams() {
-        return $this->belongsToMany('Team', 'team_user');
+        return $this->belongsToMany('Team', 'team_user')->withPivot(array('valueph'));
     }
 
     public function enterprises() {

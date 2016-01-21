@@ -33,12 +33,15 @@ $configCosts['botones'] = [
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>{{ $proyect->name }}</h3> <h6>{{ $proyect->code }}</h6>
+                <h4>{{ $payment->name }}</h4>
             </div>
             <div class="panel-body">
-                <strong>{{ Lang::get("proyect.selects.priority.".$proyect->priority) }}</strong>
+                <strong>{{ Lang::get("payment.labels.percentage") }}:</strong> {{ $payment->percentage }}
                 <br>
-                <strong>{{ Lang::get("proyect.labels.state") }}:</strong> {{ Lang::get("proyect.selects.state.".$proyect->state) }}
-                <p>{{ $proyect->description }}</p>
+                <strong>{{ Lang::get("payment.labels.value") }}:</strong> {{ $payment->value }}
+                <br>
+                <strong>{{ Lang::get("payment.labels.state") }}:</strong> {{ Lang::get("payment.selects.state.".$payment->state) }}
+                <p>{{ $payment->conditions }}</p>
                 <strong>{{ Lang::get("proyect.labels.teams") }}:</strong>
                 <p>
                     @foreach ($proyect->teams()->get() as $team)
@@ -51,21 +54,20 @@ $configCosts['botones'] = [
     <div class="col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3>{{ $payment->name }}</h3>
+                <h3>{{ $task->name }}</h3> <h6>{{ $task->code }}</h6>
             </div>
             <div class="panel-body">
-                <strong>{{ Lang::get("payment.labels.percentage") }}:</strong> {{ $payment->percentage }}
+                <strong>{{ Lang::get("task.labels.description") }}:</strong><br>
+                {{ $task->description }}
+                <strong>{{ Lang::get("task.labels.result") }}:</strong><br>
+                {{ $task->result }}
                 <br>
-                <strong>{{ Lang::get("payment.labels.value") }}:</strong> {{ $payment->value }}
-                <br>
-                <strong>{{ Lang::get("payment.labels.state") }}:</strong> {{ Lang::get("payment.selects.state.".$payment->state) }}
-                <p>{{ $payment->conditions }}</p>
+                <strong>{{ Lang::get("task.labels.state") }}:</strong> {{ Lang::get("task.selects.state.".$task->state) }}<br>
+                <strong>{{ Lang::get("task.labels.dpercentage") }}:</strong> {{ $task->dpercentage }} %<br>
+                <strong>{{ Lang::get("task.labels.plan") }}:</strong> {{ $task->plan }} <br>
             </div>
         </div>
     </div>
-</div>
-<div class='container'>
-    {{ CrudLoader::show($configShow,$task->id,$task) }}
 </div>
 <div class='container'>
     <?php $errores = false ?>
@@ -236,6 +238,13 @@ $configCosts['botones'] = [
             {{ Form::text("dpercentage", $task->dpercentage, array('class' => 'form-control ', 'id' => 'dpercentage', 'data-slider-id'=>'dpercentageSlider', 'data-slider-min'=>"0", 'data-slider-max'=>"100", 'data-slider-step'=>"5", 'data-slider-value'=>$task->dpercentage)) }}
             @endif
         </div>
+    </div>
+    <div class="form-group">
+        {{ Form::label('name', Lang::get('work.labels.name'), array('class'=>'col-xs-12 col-sm-offset-2 col-sm-1')) }}
+        <div class="col-xs-12 col-sm-7">
+            {{ Form::text("name", $work->name, array('class' => 'form-control ', 'id' => 'workname','placeholder' => Lang::get("work.placeholders.name"))) }}
+        </div>
+        <hr>
     </div>
     <div class="form-group">
         <div class="boton_centrado">

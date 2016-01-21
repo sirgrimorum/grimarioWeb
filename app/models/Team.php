@@ -30,7 +30,7 @@ class Team extends \Eloquent {
     }
 
     public function users() {
-        return $this->belongsToMany('User', 'team_user');
+        return $this->belongsToMany('User', 'team_user')->withPivot(array('valueph'));
     }
 
     public function gametasks($game) {

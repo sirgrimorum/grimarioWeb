@@ -31,6 +31,7 @@ return array(
         "users_hours" => "Horas trabajadas",
         "users_responsability" => "Responsabilidades",
         "users_valueph" => "Valor por hora trabajada",
+        "users_hourse" => "Dedicación estimada (horas)",
         "users_calification" => "Calificación",
         "teams" => "Equipos",
         "works" => "Jornadas de trabajo",
@@ -40,7 +41,7 @@ return array(
         "profit" => "Rentabilidad otros gastos",
         "totalcost" => "Costo total de la tarea",
         "ver" => "ver",
-        "editar" => "editar",
+        "editar" => "Editar",
         "eliminar" => "eliminar",
         "create" => "Nueva tarea",
         "edit" => "Editar tarea",
@@ -150,6 +151,7 @@ return array(
     "mensajes" => array(
         "no_actualizado" => "No fue posible actualizar la tarea",
         "comenzado" => "Se ha comenzado a trabajar en la tarea",
+        "actualizado" => "Se ha actualizado la tarea",
         "reaml" => "paila parcero",
     ),
     "emails" => array(

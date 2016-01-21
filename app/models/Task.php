@@ -31,7 +31,7 @@ class Task extends \Eloquent {
     }
 
     public function users() {
-        return $this->belongsToMany('User', 'task_user')->withPivot(array('valueph', 'calification', 'responsability'));
+        return $this->belongsToMany('User', 'task_user')->withPivot(array('valueph', 'hours', 'calification', 'responsability'));
     }
 
     public function comments() {

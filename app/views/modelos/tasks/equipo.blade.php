@@ -19,12 +19,15 @@ $configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>{{ $proyect->name }}</h3> <h6>{{ $proyect->code }}</h6>
+                <h4>{{ $payment->name }}</h4>
             </div>
             <div class="panel-body">
-                <strong>{{ Lang::get("proyect.selects.priority.".$proyect->priority) }}</strong>
+                <strong>{{ Lang::get("payment.labels.percentage") }}:</strong> {{ $payment->percentage }}
                 <br>
-                <strong>{{ Lang::get("proyect.labels.state") }}:</strong> {{ Lang::get("proyect.selects.state.".$proyect->state) }}
-                <p>{{ $proyect->description }}</p>
+                <strong>{{ Lang::get("payment.labels.value") }}:</strong> {{ $payment->value }}
+                <br>
+                <strong>{{ Lang::get("payment.labels.state") }}:</strong> {{ Lang::get("payment.selects.state.".$payment->state) }}
+                <p>{{ $payment->conditions }}</p>
                 <strong>{{ Lang::get("proyect.labels.teams") }}:</strong>
                 <p>
                     @foreach ($proyect->teams()->get() as $team)
@@ -37,21 +40,20 @@ $configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('
     <div class="col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3>{{ $payment->name }}</h3>
+                <h3>{{ $task->name }}</h3> <h6>{{ $task->code }}</h6>
             </div>
             <div class="panel-body">
-                <strong>{{ Lang::get("payment.labels.percentage") }}:</strong> {{ $payment->percentage }}
+                <strong>{{ Lang::get("task.labels.description") }}:</strong><br>
+                {{ $task->description }}
+                <strong>{{ Lang::get("task.labels.result") }}:</strong><br>
+                {{ $task->result }}
                 <br>
-                <strong>{{ Lang::get("payment.labels.value") }}:</strong> {{ $payment->value }}
-                <br>
-                <strong>{{ Lang::get("payment.labels.state") }}:</strong> {{ Lang::get("payment.selects.state.".$payment->state) }}
-                <p>{{ $payment->conditions }}</p>
+                <strong>{{ Lang::get("task.labels.state") }}:</strong> {{ Lang::get("task.selects.state.".$task->state) }}<br>
+                <strong>{{ Lang::get("task.labels.dpercentage") }}:</strong> {{ $task->dpercentage }} %<br>
+                <strong>{{ Lang::get("task.labels.plan") }}:</strong> {{ $task->plan }} <br>
             </div>
         </div>
     </div>
-</div>
-<div class='container'>
-    {{ CrudLoader::show($configShow,$task->id,$task) }}
 </div>
 <div class='container'>
     <?php $errores = false ?>
@@ -85,22 +87,46 @@ $configShow['campos'] = array_except(Config::get('crudgen.task.campos'), array('
                             <td>{{ Lang::get('task.labels.user') }}</td>
                             <td>{{ Lang::get('task.labels.users_responsability') }}</td>
                             @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
-                            <td>{{ Lang::get('task.labels.users_valueph') }}</td>
+                            <td>{{ Lang::get('task.labels.users_hourse') }}</td>
                             @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($usuarios as $usuario)
+                        <?php
+                            if ($usuario->pivot->valueph>0){
+                                $valueph_us = $usuario->pivot->valueph;
+                            }else{
+                                $pasavph = false;
+                                $valueph_us="";
+                                foreach($task->proyect->teams()->get() as $proteam){
+                                    foreach($usuario->teams()->where("teams.id", "=", $proteam->id)->get() as $userteam){
+                                        if ($userteam->pivot->valueph>0){
+                                            $valueph_us = $userteam->pivot->valueph;
+                                            $pasavph=true;
+                                            break;
+                                        }
+                                    }
+                                    if ($pasavph){
+                                        break;
+                                    }
+                                }
+                                if (!$pasavph){
+                                    $valueph_us = $usuario->valueph;
+                                }
+                            }
+                        ?>
                         <tr>
                             <td>
                                 {{ $usuario->name }}
                             </td>
                             <td>
-                                {{ Form::text("task_users_r_" . $usuario->id, $usuario->pivot->responsability, array('class' => 'form-control hour_users', 'id' => 'work_users_r_' . $usuario->id)) }}
+                                {{ Form::text("task_users_r_" . $usuario->id, $usuario->pivot->responsability, array('class' => 'form-control hour_users', 'id' => 'task_users_r_' . $usuario->id)) }}
                             </td>
                             @if ($user->inGroup(Sentry::findGroupByName('Coordinador')))
                             <td>
-                                {{ Form::number("task_users_v_" . $usuario->id, $usuario->pivot->valueph, array('class' => 'form-control hour_users', 'id' => 'work_users_v_' . $usuario->id)) }}
+                                {{ Form::number("task_users_h_" . $usuario->id, $usuario->pivot->hours, array('class' => 'form-control hour_users', 'id' => 'task_users_h_' . $usuario->id)) }}
+                                {{ Form::hidden("task_users_v_" . $usuario->id, $valueph_us, array('class' => 'form-control', 'id' => "task_users_v_" . $usuario->id)) }}
                             </td>
                             @endif
                         </tr>

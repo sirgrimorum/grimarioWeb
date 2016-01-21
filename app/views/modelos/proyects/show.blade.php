@@ -68,6 +68,11 @@ if (Input::has("py")) {
 <h1>
     {{ $proyect->name }} 
     <small class="estado">{{ Lang::get("proyect.selects.state." . $proyect->state) }}</small>
+    @if ($botonCrearEntregables)
+    <a class="btn btn-warning pull-right" href='{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.edit', array($proyect->id)) }}' >
+        {{ Lang::get("proyect.labels.editar") }}
+    </a>
+    @endif
     <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseMasinfo" aria-expanded="false" aria-controls="collapseMasinfo">
         {{ Lang::get("principal.labels.mas_info") }}
     </button>
@@ -90,6 +95,20 @@ if (Input::has("py")) {
 </div>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="LabTimeline">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabTimeline" aria-expanded="false" aria-controls="TabSupuestos">
+                    {{ Lang::get("proyect.labels.timeline") }}
+                </a>
+            </h4>
+        </div>
+        <div id="TabTimeline" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabTimeline">
+            <div class="panel-body vtl-supercontainer">
+                
+            </div>
+        </div>
+    </div>
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="LabSupuestos">
             <h4 class="panel-title">

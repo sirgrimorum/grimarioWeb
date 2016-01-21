@@ -173,7 +173,8 @@ class TasksController extends \BaseController {
                     $proyect->state = 'act';
                     $proyect->save();
                 }
-                return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id))->with('message', Lang::get("task.mensajes.comenzado"));
+                return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.comenzado"));
+                //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id))->with('message', Lang::get("task.mensajes.comenzado"));
             } else {
                 $state = Input::get('st');
 
@@ -265,24 +266,19 @@ class TasksController extends \BaseController {
         $pasa = false;
         if (Input::has('act_equipo')) {
             foreach ($task->users()->get() as $worker) {
-                if (Input::has("task_users_r_" . $worker->id) && Input::has("task_users_v_" . $worker->id)) {
+                if (Input::has("task_users_r_" . $worker->id) && Input::has("task_users_v_" . $worker->id) && Input::has("task_users_h_" . $worker->id)) {
                     //$user_task = $task->users()->find($worker->id);
                     //$user_task->pivot->calification = Input::get("work_users_c_" . $worker->id);
                     //$user_task->pivot->save();
-                    if (Input::has("task_users_v_" . $worker->id)) {
-                        $task->users()->updateExistingPivot($worker->id, [
-                            'valueph' => Input::get("task_users_v_" . $worker->id),
-                            'responsability' => Input::get("task_users_r_" . $worker->id)
-                        ]);
-                    } else {
-                        $task->users()->updateExistingPivot($worker->id, [
-                            'valueph' => Input::get("task_users_v_" . $worker->id),
-                            'responsability' => Input::get("task_users_r_" . $worker->id)
-                        ]);
-                    }
+                    $task->users()->updateExistingPivot($worker->id, [
+                        'valueph' => Input::get("task_users_v_" . $worker->id),
+                        'responsability' => Input::get("task_users_r_" . $worker->id),
+                        'hours' => Input::get("task_users_h_" . $worker->id)
+                    ]);
                 }
             }
-            return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
+            return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+            //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } elseif (Input::has('st')) {
             if (Input::get('st') == 'ch') {
                 $data = $task->getAttributes();
@@ -312,9 +308,9 @@ class TasksController extends \BaseController {
 
             if ($data['state'] == 'ent') {
                 $data['dpercentage'] = 100;
-                if (Input::has('end')){
+                if (Input::has('end')) {
                     $data['end'] = Input::get('end');
-                }else{
+                } else {
                     $data['end'] = date("Y-m-d H:i:s");
                 }
                 foreach ($task->users()->get() as $worker) {
@@ -363,7 +359,7 @@ class TasksController extends \BaseController {
                     $validator = Validator::make($data, Task::$rules);
 
                     if ($validator->fails()) {
-                        return "<pre>" . print_r($validator->messages, true) . "</pre>";
+                        //return "<pre>" . print_r($validator->messages, true) . "</pre>";
                         return Redirect::back()->withErrors($validator)->withInput();
                     }
                     $data = Input::except('_token', 'payments', 'users', 'tasktype', 'formaction');
@@ -373,12 +369,13 @@ class TasksController extends \BaseController {
                         $usuarios = Input::get('users');
                         $task->users()->sync($usuarios);
                     }
-
-                    return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
+                    return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+                    //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
                 } else {
                     $data['dpercentage'] = Input::get('dpercentage');
                     $work = Work::findOrFail(Input::get('work_id'));
                     $datosWork = $work->getAttributes();
+                    $datosWork['name'] = Input::get('name');
                     $datosWork['end'] = Input::get('end');
                     $datosWork['start'] = Input::get('start');
                     $validator = Validator::make($datosWork, Work::$rules);
@@ -430,7 +427,8 @@ class TasksController extends \BaseController {
                     $proyect->save();
                 }
             }
-            return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
+            return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+            //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } else {
             return Redirect::back()->with('message', Lang::get("task.mensajes.no_actualizado"));
         }

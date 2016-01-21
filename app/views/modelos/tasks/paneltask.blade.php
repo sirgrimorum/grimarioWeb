@@ -192,6 +192,7 @@ if ($work && $task->state == 'pau') {
                         <tr>
                             <td>{{ Lang::get('task.labels.user') }}</td>
                             <td>{{ Lang::get('task.labels.users_responsability') }}</td>
+                            <td>{{ Lang::get('task.labels.users_hourse') }}</td>
                             <td>{{ Lang::get('task.labels.users_hours') }}</td>
                             <td>{{ Lang::get('task.labels.users_calification') }}</td>
                         </tr>
@@ -204,6 +205,9 @@ if ($work && $task->state == 'pau') {
                             </td>
                             <td>
                                 {{ $usuario->pivot->responsability }}
+                            </td>
+                            <td>
+                                {{ $usuario->pivot->hours }}
                             </td>
                             <td>
                                 {{ $task->workedhours($usuario->id) }}

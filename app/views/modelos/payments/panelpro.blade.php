@@ -2,7 +2,7 @@
 $config = array_except(Config::get('crudgen.payment'), array('campos'));
 $config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('paymentdate'));
 $configTareas = array_except(Config::get('crudgen.task'), array('campos', 'botones'));
-$configTareas['campos'] = array_only(Config::get('crudgen.task.campos'), array('priority', 'name', 'code', 'state', 'contribution', 'dpercentage', 'game_id', 'tasktype', 'description', 'dificulty', 'start', 'end'));
+$configTareas['campos'] = array_only(Config::get('crudgen.task.campos'), array('priority', 'name', 'code', 'state', 'dpercentage','tasktype'));
 $configTareas['botones'] = $configBotonesActividades;
 $configIndicadores = array_except(Config::get('crudgen.indicator'), array('campos', 'botones'));
 $configIndicadores['campos'] = array_only(Config::get('crudgen.indicator.campos'), array('priority', 'name', 'type', 'state', 'description', 'fuente', 'user_id'));
@@ -51,6 +51,11 @@ if (Input::has("py")) {
         <h1>
             {{ $payment->name }} 
             <small class="estado">{{ Lang::get("payment.selects.state." . $payment->state) }}</small>
+            @if ($botonCrearEntregables)
+            <a class="btn btn-warning pull-right" href='{{ URL::route(Lang::get("principal.menu.links.pago") . '.edit', array($payment->id)) }}' >
+                {{ Lang::get("payment.labels.editar") }}
+            </a>
+            @endif
             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseMasinfoPy" aria-expanded="false" aria-controls="collapseMasinfoPy">
                 {{ Lang::get("principal.labels.mas_info") }}
             </button>

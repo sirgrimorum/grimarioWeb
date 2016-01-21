@@ -847,7 +847,7 @@ return array(
     'work' => [
         "modelo" => "Work",
         "tabla" => "works",
-        "nombre" => "id",
+        "nombre" => "name",
         "id" => "id",
         "url" => action('WorksController@store'),
         "botones" => Lang::get("work.labels.create"),

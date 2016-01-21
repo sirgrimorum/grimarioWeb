@@ -15,6 +15,7 @@ class CreateTaskUserTable extends Migration {
             $table->increments('id');
             $table->double('calification')->default(2);
             $table->double('valueph');
+            $table->double('hours');
             $table->integer('task_id')->unsigned()->index();
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();

@@ -36,6 +36,7 @@ return array(
         "eliminar" => "eliminar",
         "create" => "Crear un proyecto",
         "edit" => "Actualizar proyecto",
+        "timeline" => "Línea de tiempo",
     ),
     "descriptions" => array(
         "proyecto" => "Proyecto",

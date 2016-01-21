@@ -32,6 +32,11 @@ if (Input::has("tk")) {
             </div>
             <h1>
                 {{ $task->name }} 
+                @if ($botonCrearActividades)
+                <a class="btn btn-warning pull-right" href='{{ URL::route(Lang::get("principal.menu.links.tarea") . '.edit', array($task->id)) }}' >
+                    {{ Lang::get("task.labels.editar") }}
+                </a>
+                @endif
                 <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" data-target="#collapseMasinfoTk" aria-expanded="false" aria-controls="collapseMasinfoTk">
                     {{ Lang::get("principal.labels.mas_info") }}
                 </button>
