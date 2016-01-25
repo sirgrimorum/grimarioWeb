@@ -442,6 +442,22 @@ class ProyectsController extends \BaseController {
         } else {
             $data = Input::except('_token', 'pop_nue', 'teams', 'enterprises');
         }
+        
+        if (Input::has('teams')) {
+            if (is_array(Input::get('teams'))) {
+                $ides = array();
+                foreach (Input::get('teams') as $team_id) {
+                    array_push($ides,$team_id);
+                    //$team = Team::find($team_id);
+                    //$proyect->teams()->attach($team);
+                }
+                $proyect->teams()->sync($ides);
+                
+            } else {
+                $team = Team::find(Input::get('teams'));
+                $proyect->teams()->sync($team);
+            }
+        }
 
 
         $proyect->update($data);

@@ -92,7 +92,8 @@ class TasksController extends \BaseController {
                 $task->users()->save($usuario);
             }
         }
-        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id));
+        return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id))->with('message', Lang::get("task.mensajes.creada"));
+        //return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id));
 
         //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.index');
     }

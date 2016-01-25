@@ -22,6 +22,7 @@ class CreateTasksTable extends Migration {
 			$table->integer('type')->unsigned()->index();
 			$table->string('state',3)->default(0);
 			$table->dateTime('plan');
+			$table->dateTime('planstart');
 			$table->double('expenses')->default(0);
 			$table->double('difficulty')->default(2);
 			$table->dateTime('start');

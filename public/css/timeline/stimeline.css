@@ -134,13 +134,37 @@ header h1 {
     margin-left: -12px;
     margin-top: -12px;
 }
-.vtl-timeline-img.vtl-picture {
+.vtl-timeline-img.vtl-1 {
     background: #75ce66;
 }
-.vtl-timeline-img.vtl-movie {
+.vtl-timeline-img.vtl-2 {
     background: #c03b44;
 }
-.vtl-timeline-img.vtl-location {
+.vtl-timeline-img.vtl-3 {
+    background: #f0ca45;
+}
+.vtl-timeline-img.vtl-4 {
+    background: #75ce66;
+}
+.vtl-timeline-img.vtl-5 {
+    background: #c03b44;
+}
+.vtl-timeline-img.vtl-6 {
+    background: #f0ca45;
+}
+.vtl-timeline-img.vtl-7 {
+    background: #75ce66;
+}
+.vtl-timeline-img.vtl-8 {
+    background: #c03b44;
+}
+.vtl-timeline-img.vtl-9 {
+    background: #f0ca45;
+}
+.vtl-timeline-img.vtl-11 {
+    background: #c03b44;
+}
+.vtl-timeline-img.vtl-12 {
     background: #f0ca45;
 }
 @media only screen and (min-width: 1170px) {

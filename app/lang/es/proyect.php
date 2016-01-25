@@ -37,6 +37,8 @@ return array(
         "create" => "Crear un proyecto",
         "edit" => "Actualizar proyecto",
         "timeline" => "Línea de tiempo",
+        "gantt" => "Cronograma",
+        "estats" => "Estadísticas",
     ),
     "descriptions" => array(
         "proyecto" => "Proyecto",

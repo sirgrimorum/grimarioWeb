@@ -81,32 +81,59 @@ if (Input::has("py")) {
     <label>{{ Lang::get("proyect.labels.user_id") }}:</label> 
     {{ $proyect->User->name }}
 </h5>
-<div id='bar_proyect_presup'></div>
-<div class="row estadistica">
-    <div class="col-sm-6 col-xs-6">
-        <div id='pie_payments_per'></div>
-    </div>
-    <div class="col-sm-6 col-xs-6">
-        <div id='bar_payments_av'></div>
-    </div>
-</div>
 <div class="collapse" id="collapseMasinfo">
     {{ CrudLoader::show($config,$proyect->id,$proyect) }}
 </div>
-
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="LabEstats">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabEstats" aria-expanded="false" aria-controls="TabEstats">
+                    {{ Lang::get("proyect.labels.estats") }}
+                </a>
+            </h4>
+        </div>
+        @if ($botonCrearEntregables)
+        <div id="TabEstats" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LabEstats">
+            <div class="panel-body vtl-supercontainer">
+                <div id='bar_proyect_presup'></div>
+                <div class="row estadistica">
+                    <div class="col-sm-6 col-xs-6">
+                        <div id='pie_payments_per'></div>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                        <div id='bar_payments_av'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="LabGantt">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabGantt" aria-expanded="false" aria-controls="TabGantt">
+                    {{ Lang::get("proyect.labels.gantt") }}
+                </a>
+            </h4>
+        </div>
+        <div id="TabGantt" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabGantt">
+            <div class="panel-body vtl-supercontainer">
+                <div id="ganttpro" class="gantt"></div>
+                <button id="btnExport" class="btn btn-info">{{ Lang::get("proyect.labels.export") }}</button>
+            </div>
+        </div>
+    </div>
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="LabTimeline">
             <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabTimeline" aria-expanded="false" aria-controls="TabSupuestos">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabTimeline" aria-expanded="false" aria-controls="TabTimeline">
                     {{ Lang::get("proyect.labels.timeline") }}
                 </a>
             </h4>
         </div>
         <div id="TabTimeline" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabTimeline">
-            <div class="panel-body vtl-supercontainer">
-                
-            </div>
+            @include("modelos.proyects.stimeline")
         </div>
     </div>
     <div class="panel panel-default">
@@ -166,15 +193,76 @@ if (Input::has("py")) {
 
 @stop
 
+@section("selfcss")
+@parent
+{{ HTML::style("css/gantt/gantt.css") }}
+@stop
+
 @section("selfjs")
-@barchart('proyect_presup', 'bar_proyect_presup')
-@combochart('payments_per', 'pie_payments_per')
-@columnchart('payments_av', 'bar_payments_av')
+@if ($botonCrearEntregables)
+    @barchart('proyect_presup', 'bar_proyect_presup')
+    @combochart('payments_per', 'pie_payments_per')
+    @columnchart('payments_av', 'bar_payments_av')
+@endif
+{{ HTML::script("js/jquery.fn.gantt.js") }}
+{{ HTML::script("js/jspdf.min.js") }}
 <script>
+    var doc = new jsPDF();
+    var specialElementHandlers = {
+        '#editor': function (element, renderer) {
+            return true;
+        }
+    };
     $(document).ready(function() {
         $("#avancebar").progressbar({
-        value: {{ $proyect -> advance() }}
-    });
+            value: {{ $proyect -> advance() }}
+        });
+        $("#btnExport").click(function(e) {
+            //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#ganttpro>.fn-gantt>.fn-content').html()));
+            //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#list_restrictions').html()));
+            doc.fromHTML($('#ganttpro>.fn-gantt>.fn-content').html(), 15, 15, {
+                'width': 170,
+                'elementHandlers': specialElementHandlers
+            });
+            doc.save('sample-file.pdf');
+        });
+        $("#ganttpro").gantt({
+            source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
+            scale: "weeks",
+            minScale: "hours",
+            maxScale: "months",
+            itemsPerPage: 15,
+            navigate: "scroll",
+            onRender: function() {
+                console.log("chart rendered");
+            },
+            onItemClick: function(dataObj){
+                console.log("Click en" + dataObj);
+            },
+            months: [
+                "{{ Lang::get('principal.labels.months.january') }}",
+                "{{ Lang::get('principal.labels.months.february') }}",
+                "{{ Lang::get('principal.labels.months.march') }}",
+                "{{ Lang::get('principal.labels.months.april') }}",
+                "{{ Lang::get('principal.labels.months.may') }}",
+                "{{ Lang::get('principal.labels.months.june') }}",
+                "{{ Lang::get('principal.labels.months.july') }}",
+                "{{ Lang::get('principal.labels.months.august') }}",
+                "{{ Lang::get('principal.labels.months.september') }}",
+                "{{ Lang::get('principal.labels.months.october') }}",
+                "{{ Lang::get('principal.labels.months.november') }}",
+                "{{ Lang::get('principal.labels.months.december') }}"
+            ],
+            dow:[
+                "{{ Lang::get('principal.labels.dow.s') }}",
+                "{{ Lang::get('principal.labels.dow.m') }}",
+                "{{ Lang::get('principal.labels.dow.t') }}",
+                "{{ Lang::get('principal.labels.dow.w') }}",
+                "{{ Lang::get('principal.labels.dow.t') }}",
+                "{{ Lang::get('principal.labels.dow.f') }}",
+                "{{ Lang::get('principal.labels.dow.s') }}"
+            ]
+        });
     });
 </script>
 @stop

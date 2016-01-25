@@ -34,6 +34,7 @@ Route::group(array('before' => 'loged'), function() {
     Route::resource(Lang::get("principal.menu.links.restriccion"), 'RestrictionsController');
     Route::resource(Lang::get("principal.menu.links.userdata"), 'UserdatasController');
     //Route::get(, array('as' => 'profile', 'uses' => 'UserController@showProfile'));
+    Route::controller(Lang::get("principal.menu.links.jsons"), 'JsonsController');
 });
 Route::controller(Lang::get("principal.menu.links.usuario"), 'UsersController');
 Route::controller(Lang::get("principal.menu.links.auth"), 'OauthController');

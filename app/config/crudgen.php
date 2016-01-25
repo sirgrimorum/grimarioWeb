@@ -793,6 +793,12 @@ return array(
                 "valor" => 3,
                 "description" => Lang::get("task.descriptions.difficulty"),
             ],
+            "planstart" => [
+                "tipo" => "datetime",
+                "label" => Lang::get("task.labels.planstart"),
+                "placeholder" => Lang::get("task.placeholders.planstart"),
+                "description" => Lang::get("task.descriptions.planstart"),
+            ],
             "plan" => [
                 "tipo" => "datetime",
                 "label" => Lang::get("task.labels.plan"),

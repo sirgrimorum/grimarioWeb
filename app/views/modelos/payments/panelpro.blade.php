@@ -19,7 +19,7 @@ if (Input::has("py")) {
 ?>
 
 <ul class="nav nav-pills">
-    @foreach ($proyect->payments()->get() as $paymentList)
+    @foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $paymentList)
     @if ($payment->id == $paymentList->id)
     <li role="presentation" class="active">
         @else

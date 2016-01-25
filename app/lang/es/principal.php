@@ -3,7 +3,30 @@
 return array(
     "labels" => array(
         "titulo_home" => "Grimario",
-        "mas_info" => "Más información"
+        "mas_info" => "Más información",
+        "months" => array(
+            "january" => "Enero",
+            "february" => "Febrero",
+            "march" => "Marzo",
+            "april" => "Abril",
+            "may" => "Mayo",
+            "june" => "Junio",
+            "july" => "Julio",
+            "august" => "Agosto",
+            "september" => "Septiembre",
+            "october" => "Octubre",
+            "november" => "Noviembre",
+            "december" => "Diciembre",
+        ),
+        "dow" => array(
+            "s" => "D",
+            "m" => "L",
+            "t" => "M",
+            "w" => "M",
+            "t" => "J",
+            "f" => "V",
+            "s" => "S",
+        )
     ),
     "metadata" => array(
         "author" => "SirGrimorum",
@@ -56,6 +79,7 @@ return array(
             "contacto" => "contacto",
             "admin" => "admin",
             "auth" => "auth",
+            "jsons" => "json",
         ),
     )
         )

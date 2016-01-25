@@ -236,6 +236,12 @@ table th:first-child {
     color: #778461 !important;
 }
 
+.fn-gantt .ganttGrey {
+    background-color: #CCC;
+}
+.fn-gantt .ganttGrey .fn-label {
+    color: #333 !important;
+}
 .fn-gantt .ganttOrange {
     background-color: #FCD29A;
 }
