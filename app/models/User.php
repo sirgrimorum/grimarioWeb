@@ -161,5 +161,26 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         );
         return $proyects;
     }
-
+    
+    public function workedhours($timestamp1, $timestamp2){
+        $whereQuery = " works.start >= '" . date("Y-m-d H:i:s", $timestamp1) . "' and works.start < '" . date("Y-m-d H:i:s", $timestamp2) . "' ";
+        $total = 0;
+        foreach ($this->works()->whereRaw($whereQuery)->get() as $work){
+            $total += $work->workedhours($this->id);
+        }
+        return $total;
+    }
+    
+    public function monthworkedhours(){
+        $timestamp1 = mktime(0, 0, 0, date("n"), 1, date("Y"));
+        $timestamp2 = mktime(0, 0, 0, date("n")+1, 1, date("Y"));
+        return $this->workedhours($timestamp1, $timestamp2);
+    }
+    
+    public function lastmonthworkedhours(){
+        $timestamp1 = mktime(0, 0, 0, date("n")-1, 1, date("Y"));
+        $timestamp2 = mktime(0, 0, 0, date("n"), 1, date("Y"));
+        return $this->workedhours($timestamp1, $timestamp2);
+    }
+    
 }

@@ -38,10 +38,10 @@ $config['campos'] = array_except(Config::get('crudgen.proyect.campos'), "");
                     {{ $payment->name }}
                 </td>
                 <td>
-                    {{ $payment->percentage }}
+                    {{ $payment->percentage }}%
                 </td>
                 <td>
-                    {{ number_format($payment->value,0,".",".") }}
+                    ${{ number_format($payment->value,0,".",".") }}
                 </td>
                 <td>
                     {{ $payment->conditions }}

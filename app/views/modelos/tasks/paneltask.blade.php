@@ -10,7 +10,7 @@ if ($task->state == 'des' || $task->state == 'pau') {
     ];
     $config['campos']['dcuantity']['tipo'] = "hidden";
 }
-if ($task->state == 'ent' || $task->state == 'ter' || $task->state == 'cer') {
+if ($task->state == 'ent' || $task->state == 'ter' || $task->state == 'cer' || $task->state == 'des' || $task->state == 'pau') {
     $config['campos']['othercosts'] = [
         "tipo" => "function",
         "label" => Lang::get("task.labels.othercosts"),
@@ -215,7 +215,9 @@ if ($work && $task->state == 'pau') {
                         @foreach($task->users()->get() as $usuario)
                         <tr>
                             <td>
-                                {{ $usuario->name }}
+                                <a href='{{ action('UsersController@getProfile', $usuario->id) }}'>
+                                    {{ $usuario->name }}
+                                </a>
                             </td>
                             <td>
                                 {{ $usuario->pivot->responsability }}

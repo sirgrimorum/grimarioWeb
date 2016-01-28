@@ -19,9 +19,10 @@ class UsersController extends BaseController {
      * @return Response
      */
     public function getProfile($id) {
-        $user = User::findOrFail($user_id);
+        $user = User::findOrFail($id);
+        $userSen = Sentry::getUser();
         
-        return View::make('hello', ["user"=>$user]);
+        return View::make('modelos.users.profile', ["user"=>$user]);
     }
 
     /**
@@ -447,5 +448,7 @@ class UsersController extends BaseController {
 
         return Redirect::route('users.index');
     }
+    
+    
 
 }

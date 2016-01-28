@@ -1,7 +1,7 @@
 <?php
-$config = array_except(Config::get('crudgen.team'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.team.campos'), array());
-if ($team->state == 'des' || $team->state == 'pau') {
+$config = array_except(Config::get('crudgen.user'), array('campos'));
+$config['campos'] = array_except(Config::get('crudgen.user.campos'), array());
+if ($user->state == 'des' || $user->state == 'pau') {
     $config['campos']['start'] = [
         "tipo" => "date",
         "label" => Lang::get("task.labels.start"),
@@ -16,13 +16,13 @@ if ($team->state == 'des' || $team->state == 'pau') {
 @section("contenido")
 <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
-    <li class="active">{{ $team->name }}</li>
+    <li class="active">{{ $user->name }}</li>
 </ol>
-<h1>{{ Lang::get("team.titulos.show") }}</h3>
+<h1>{{ Lang::get("user.titulos.show") }}</h3>
 <div class='container'>
-    {{ CrudLoader::show($config,$team->id,$team) }}
+    {{ CrudLoader::show($config,$user->id,$user) }}
 </div>
-<div id="ganttteam" class="gantt"></div>
+<div id="ganttuser" class="gantt"></div>
 @stop
 
 @section("selfjs")
@@ -30,8 +30,8 @@ if ($team->state == 'des' || $team->state == 'pau') {
 <script>
     $(document).ready(function() {
         //alert(translations.task.error);
-        $("#ganttteam").gantt({
-            source: "{{ action('JsonsController@getGanttteam', $team->id); }}",
+        $("#ganttuser").gantt({
+            source: "{{ action('JsonsController@getGanttuser', $user->id); }}",
             scale: "days",
             minScale: "hours",
             maxScale: "weeks",

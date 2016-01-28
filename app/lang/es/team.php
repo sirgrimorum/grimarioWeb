@@ -45,6 +45,7 @@ return array(
         "description" => "Juego, gamification, gerencia de proyectos",
         "index" => "Equipos de trabajo",
         "propios" => "Mis equipos de trabajo",
+        "show" => "Equipo de trabajo",
     ),
     "mensajes" => array(
         "error" => "uyy qué error tan grande",

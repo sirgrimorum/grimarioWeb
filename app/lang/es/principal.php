@@ -36,7 +36,7 @@ return array(
             "su" => "D",
             "mo" => "L",
             "tu" => "M",
-            "wq" => "M",
+            "we" => "M",
             "th" => "J",
             "fr" => "V",
             "sa" => "S",

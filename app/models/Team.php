@@ -69,9 +69,9 @@ class Team extends \Eloquent {
             if ($strWhere != "") {
                 $strWhere .= ")";
                 if ($strWherePri != ""){
-                    $preTask = Task::whereRaw($strWherePri)->get();
+                    $preTask = Task::whereRaw($strWherePri)->orderBy("proyect_id", "DESC")->orderBy("planstart", "ASC")->get();
                 }else{
-                    $preTask = Task::all();
+                    $preTask = Task::orderBy("proyect_id", "DESC")->orderBy("planstart", "ASC")->get();
                 }
                 $tasks = $preTask->filter(function($task) use ($strWhere) {
                     if (!$task->users()->whereRaw($strWhere)->get()->isEmpty()) {

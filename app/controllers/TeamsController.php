@@ -53,7 +53,7 @@ class TeamsController extends \BaseController {
 	{
 		$team = Team::findOrFail($id);
 
-		return View::make('teams.show', compact('team'));
+		return View::make('modelos.teams.show', compact('team'));
 	}
 
 	/**
