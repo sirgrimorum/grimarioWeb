@@ -48,7 +48,7 @@ header {
 header h1 {
     color: white;
     font-size: 18px;
-    font-size: 1.125rem;
+    /*font-size: 1.125rem;*/
 }
 @media only screen and (min-width: 1170px) {
     header {
@@ -57,7 +57,7 @@ header h1 {
     }
     header h1 {
         font-size: 24px;
-        font-size: 1.5rem;
+        /*font-size: 1.5rem;*/
     }
 }
 
@@ -260,10 +260,13 @@ header h1 {
 }
 .vtl-timeline-content h2 {
     color: #303e49;
+    font-family: "Open Sans", sans-serif;
 }
 .vtl-timeline-content p, .vtl-timeline-content .vtl-read-more, .vtl-timeline-content .vtl-date {
     font-size: 13px;
-    font-size: 0.8125rem;
+    /*font-size: 0.8125rem;*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .vtl-timeline-content .vtl-read-more, .vtl-timeline-content .vtl-date {
     display: inline-block;
@@ -300,15 +303,17 @@ header h1 {
 @media only screen and (min-width: 768px) {
     .vtl-timeline-content h2 {
         font-size: 20px;
-        font-size: 1.25rem;
+        /*font-size: 1.25rem;*/
+        margin-top: 10px;
+        font-weight: bold;
     }
-    .vtl-timeline-content p {
+    .vtl-timeline-content, .vtl-timeline-content ul, .vtl-timeline-content a, .vtl-timeline-content li{
         font-size: 16px;
-        font-size: 1rem;
+        /*font-size: 1rem;*/
     }
     .vtl-timeline-content .vtl-read-more, .vtl-timeline-content .vtl-date {
         font-size: 14px;
-        font-size: 0.875rem;
+        /*font-size: 0.875rem;*/
     }
 }
 @media only screen and (min-width: 1170px) {
@@ -332,7 +337,7 @@ header h1 {
         left: 122%;
         top: 6px;
         font-size: 16px;
-        font-size: 1rem;
+        /*font-size: 1rem;*/
     }
     .vtl-timeline-block:nth-child(even) .vtl-timeline-content {
         float: right;

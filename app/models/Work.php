@@ -99,7 +99,7 @@ class Work extends \Eloquent {
         }
         $inicio = new DateTime($this->start);
         $dif = $inicio->diff($fin);
-        return $dif->h;
+        return $dif->h + ($dif->format("%a") * 24);
     }
 
 }

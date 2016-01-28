@@ -28,7 +28,7 @@ if (Input::has('tk')) {
 } else {
     $config['campos']['redirect'] = [
         'tipo' => 'hidden',
-        'valor' => URL::route(Lang::get("principal.menu.links.comentario") . '.index')
+        'valor' => URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("comment.mensajes.creado"))
     ];
 }
 ?>

@@ -51,6 +51,11 @@ if (Input::has("py")) {
         <h1>
             {{ $payment->name }} 
             <small class="estado">{{ Lang::get("payment.selects.state." . $payment->state) }}</small>
+            @if (($userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))))
+            <a class="btn btn-danger pull-right" href='{{ URL::route(Lang::get("principal.menu.links.pago") . '.edit', array($payment->id)) }}?pre=1' >
+                {{ Lang::get("payment.labels.editarpre") }}
+            </a>
+            @endif
             @if ($botonCrearEntregables)
             <a class="btn btn-warning pull-right" href='{{ URL::route(Lang::get("principal.menu.links.pago") . '.edit', array($payment->id)) }}' >
                 {{ Lang::get("payment.labels.editar") }}

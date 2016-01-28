@@ -23,7 +23,7 @@ class PaymentsController extends BaseController {
      */
     public function create() {
         $userSen = Sentry::getUser();
-        if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+        if (!$userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $messages = new Illuminate\Support\MessageBag;
             $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
             return Redirect::route("home")->withErrors($messages);
@@ -71,7 +71,7 @@ class PaymentsController extends BaseController {
             $configBotonesRiesgos = "";
             $configBotonesActividades = "";
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador')) || $userSen->inGroup(Sentry::findGroupByName('Director'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Lider')) || $userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $botonCrearIndicadores = true;
             $botonCrearRiesgos = true;
             $botonCrearActividades = true;
@@ -125,18 +125,18 @@ class PaymentsController extends BaseController {
      */
     public function edit($id) {
         $userSen = Sentry::getUser();
-        if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
-            $messages = new Illuminate\Support\MessageBag;
-            $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
-            return Redirect::route("home")->withErrors($messages);
-        }
         $payment = Payment::find($id);
         if (Input::has('st')) {
+            if (!($userSen->inGroup(Sentry::findGroupByName('Lider')) or $userSen->inGroup(Sentry::findGroupByName('Coordinador')) or $userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin')))) {
+                $messages = new Illuminate\Support\MessageBag;
+                $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                return Redirect::route("home")->withErrors($messages);
+            }
             $data = $payment->getAttributes();
             $data['state'] = Input::get('st');
-            $data['paymentdate']=0;
-            if(Input::get('st') == 'pag'){
-                $data['paymentdate']=date("Y-m-d H:i:s");
+            $data['paymentdate'] = 0;
+            if (Input::get('st') == 'pag') {
+                $data['paymentdate'] = date("Y-m-d H:i:s");
             }
             $validator = Validator::make($data, array_except(Payment::$rules, 'paymentdate'));
             if ($validator->fails()) {
@@ -145,11 +145,23 @@ class PaymentsController extends BaseController {
             $payment->update($data);
             if (Input::get('st') == 'ent') {
                 $mensaje = Lang::get("payment.mensajes.entregado");
-            }elseif(Input::get('st') == 'pag'){
+            } elseif (Input::get('st') == 'pag') {
                 $mensaje = Lang::get("payment.mensajes.pagado");
             }
             return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id))->with('message', $mensaje);
+        } elseif (Input::has('pre')) {
+            if (!($userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin')))) {
+                $messages = new Illuminate\Support\MessageBag;
+                $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                return Redirect::route("home")->withErrors($messages);
+            }
+            return View::make('modelos.payments.updatepresup', compact('payment'));
         } else {
+            if (!($userSen->inGroup(Sentry::findGroupByName('Coordinador')) or $userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin')))) {
+                $messages = new Illuminate\Support\MessageBag;
+                $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                return Redirect::route("home")->withErrors($messages);
+            }
             return View::make('modelos.payments.edit', compact('payment'));
         }
     }
@@ -163,17 +175,25 @@ class PaymentsController extends BaseController {
     public function update($id) {
         $payment = Payment::findOrFail($id);
 
-        $validator = Validator::make($data = Input::all(), Payment::$rules);
+        if (Input::has('pre')) {
+            $data = $payment->getAttributes();
+            $payment->plan=Input::get("plan");
+            $payment->planh=Input::get("planh");
+            $payment->save();
+            return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id, 'py' => $payment->id))->with('message', Lang::get("payment.mensajes.actualizado"));
+        } else {
+            $validator = Validator::make($data = Input::all(), Payment::$rules);
 
-        if ($validator->fails()) {
-            return Redirect::back()->withErrors($validator)->withInput();
+            if ($validator->fails()) {
+                return Redirect::back()->withErrors($validator)->withInput();
+            }
+
+            $data = Input::except('_token');
+
+            $payment->update($data);
         }
-
-        $data = Input::except('_token');
-
-        $payment->update($data);
-
-        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id));
+        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id, 'py' => $payment->id))->with('message', Lang::get("payment.mensajes.actualizado"));
+        //return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id));
     }
 
     /**

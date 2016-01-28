@@ -17,7 +17,7 @@ class ProyectsController extends \BaseController {
             $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
             return Redirect::route("home")->withErrors($messages);
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $proyects = $usuario->proyects()->where("state", "<>", "ter")->get();
             $botonCrear = false;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan'];
@@ -26,7 +26,7 @@ class ProyectsController extends \BaseController {
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.proyecto") . '.edit', array("{ID}")) . "'>" . Lang::get("proyect.labels.editar") . "</a>",
             ];
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $proyects = Proyect::where("state", "<>", "ter")->get();
             $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan', 'user'];
@@ -158,22 +158,25 @@ class ProyectsController extends \BaseController {
     public function show($id) {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
-        if ($userSen->inGroup(Sentry::findGroupByName('Jugador'))) {
-            $botonCrearEntregables = false;
-            $botonCrearSupuestos = false;
-            $botonCrearClientes = false;
+        $botonVerInterno = true;
+        $botonCrearEntregables = false;
+        $botonCrearSupuestos = false;
+        $botonCrearClientes = false;
+        $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit'];
+        $configBotonesEntregables = "";
+        $configBotonesSupuestos = "";
+        $configBotonesClientes = "";
+        $botonCrearIndicadores = false;
+        $botonCrearRiesgos = false;
+        $botonCrearActividades = false;
+        $configBotonesIndicadores = "";
+        $configBotonesRiesgos = "";
+        $configBotonesActividades = "";
+        if ($userSen->inGroup(Sentry::findGroupByName('Cliente'))) {
+            $botonVerInterno = false;
             $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit'];
-            $configBotonesEntregables = "";
-            $configBotonesSupuestos = "";
-            $configBotonesClientes = "";
-            $botonCrearIndicadores = false;
-            $botonCrearRiesgos = false;
-            $botonCrearActividades = false;
-            $configBotonesIndicadores = "";
-            $configBotonesRiesgos = "";
-            $configBotonesActividades = "";
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $botonCrearEntregables = false;
             $botonCrearSupuestos = true;
             $botonCrearClientes = true;
@@ -206,7 +209,7 @@ class ProyectsController extends \BaseController {
                 "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.tarea") . '.destroy', array("{ID}")) . "'>" . Lang::get("task.labels.eliminar") . "</a>",
             ];
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $botonCrearEntregables = true;
             $botonCrearSupuestos = true;
             $botonCrearClientes = true;
@@ -282,79 +285,88 @@ class ProyectsController extends \BaseController {
         }
         $proyect = Proyect::findOrFail($id);
 
-        /* $dtEntregasPer = Lava::DataTable();
-          $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
-          ->addNumberColumn(Lang::get("payment.labels.value"));
-          foreach ($proyect->payments()->get() as $payment) {
-          $dtEntregasPer->addRow(array($payment->name, $payment->value));
-          }
-          $pieEntregasPer = Lava::PieChart("payments_per")
-          ->setOptions(array(
-          'datatable' => $dtEntregasPer,
-          'title' => Lang::get("payment.labels.pagos"),
-          'is3D' => true,
-          )); */
-        $dtEntregasPer = Lava::DataTable();
-        $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
-                ->addNumberColumn(Lang::get("payment.labels.value"))
-                ->addNumberColumn(Lang::get("payment.labels.plan"))
-                ->addNumberColumn(Lang::get("payment.labels.totalcost"))
-                ->addNumberColumn(Lang::get("payment.labels.profit"));
-        foreach ($proyect->payments()->get() as $payment) {
-            $dtEntregasPer->addRow(array($payment->name, $payment->value, $payment->plan, $payment->totalcost(), $payment->profit()));
-        }
-        $pieEntregasPer = Lava::ComboChart("payments_per")
-                ->setOptions(array(
-            'datatable' => $dtEntregasPer,
-            'title' => Lang::get("payment.labels.pagos"),
-            'legend' => Lava::Legend(array(
-                'position' => 'in'
-            )),
-            'seriesType' => 'bars',
-            'series' => array(
-                3 => Lava::Series(array(
-                    'type' => 'line'
-                ))
-            )
-        ));
-        $dtEntregasAv = Lava::DataTable();
-        $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"))
-                ->addNumberColumn(Lang::get("payment.labels.percentage"))
-                ->addNumberColumn(Lang::get("payment.labels.advance"));
-        foreach ($proyect->payments()->get() as $payment) {
-            $dtEntregasAv->addRow(array($payment->name, $payment->percentage, $payment->contribution()));
-        }
-        $barEntregasAv = Lava::ColumnChart("payments_av")
-                ->setOptions(array(
-            'datatable' => $dtEntregasAv,
-            'title' => Lang::get("payment.labels.advance"),
-            'legend' => Lava::Legend(array(
-                'position' => 'in'
-            )),
-                //'is3D' => true,
-        ));
+        if ($botonVerInterno) {
+            /* $dtEntregasPer = Lava::DataTable();
+              $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
+              ->addNumberColumn(Lang::get("payment.labels.value"));
+              foreach ($proyect->payments()->get() as $payment) {
+              $dtEntregasPer->addRow(array($payment->name, $payment->value));
+              }
+              $pieEntregasPer = Lava::PieChart("payments_per")
+              ->setOptions(array(
+              'datatable' => $dtEntregasPer,
+              'title' => Lang::get("payment.labels.pagos"),
+              'is3D' => true,
+              )); */
+            $dtEntregasPer = Lava::DataTable();
+            $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
+                    ->addNumberColumn(Lang::get("payment.labels.value"))
+                    ->addNumberColumn(Lang::get("payment.labels.plan"))
+                    ->addNumberColumn(Lang::get("payment.labels.totalcost"))
+                    ->addNumberColumn(Lang::get("payment.labels.profit"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasPer->addRow(array($payment->name, $payment->value, $payment->plan, $payment->totalcost(), $payment->profit()));
+            }
+            $pieEntregasPer = Lava::ComboChart("payments_per", $dtEntregasPer, [
+                        'title' => Lang::get("payment.labels.pagos"),
+                        'legend' => [
+                            'position' => 'in'
+                        ],
+                        'vAxis' => [
+                            'format' => 'currency',
+                        ],
+                        'seriesType' => 'bars',
+                        'height' => 350,
+                        'series' => array(
+                            3 => [
+                                'type' => 'line'
+                            ]
+                        )
+            ]);
+            $dtEntregasAv = Lava::DataTable();
+            $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"));
+            $arrPercentage = array(Lang::get("payment.labels.percentage"));
+            $arrAdvance = array(Lang::get("payment.labels.advance"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasAv->addNumberColumn($payment->name);
+                array_push($arrPercentage, $payment->percentage);
+                array_push($arrAdvance, $payment->contribution());
+            }
+            $dtEntregasAv->addRow($arrPercentage);
+            $dtEntregasAv->addRow($arrAdvance);
+            $barEntregasAv = Lava::ColumnChart("payments_av", $dtEntregasAv, [
+                        'title' => Lang::get("payment.labels.advance"),
+                        'legend' => [
+                            'position' => 'in'
+                        ],
+                        'isStacked' => true,
+                        'height' => 350,
+                            //'is3D' => true,
+            ]);
 
-        $dtPresup = Lava::DataTable();
-        $dtPresup->addStringColumn(Lang::get("proyect.labels.presupuesto"))
-                ->addNumberColumn(Lang::get("proyect.labels.totalplan"))
-                ->addNumberColumn(Lang::get("proyect.labels.totalcost"))
-                ->addRow(array("COP", $proyect->totalplan(), $proyect->totalcost()));
-        $barPresup = Lava::BarChart("proyect_presup")
-                ->setOptions(array(
-            'datatable' => $dtPresup,
-            //'theme' => 'maximized',
-            'hAxis' => Lava::HorizontalAxis([
-                'format' => 'decimal',
-            ]),
-            //'title' => Lang::get("proyect.labels.presupuesto"),
-            'legend' => Lava::Legend([
-                'position' => 'none',
-            ]),
-            'bars' => 'horizontal',
-        ));
 
+            $dtPresup = Lava::DataTable();
+            $dtPresup->addStringColumn(Lang::get("proyect.labels.presupuesto"))
+                    ->addNumberColumn(Lang::get("proyect.labels.totalplan"))
+                    ->addNumberColumn(Lang::get("proyect.labels.totalcost"))
+                    ->addRow(array("COP", $proyect->totalplan(), $proyect->totalcost()));
+            $barPresup = Lava::BarChart("proyect_presup", $dtPresup, [
+                        //'theme' => 'maximized',
+                        'hAxis' => [
+                            'format' => 'currency',
+                        ],
+                        //'title' => Lang::get("proyect.labels.presupuesto"),
+                        'legend' => [
+                            'position' => 'none',
+                        ],
+                        'theme' => 'maximized',
+                            //'orientation' => 'horizontal',
+            ]);
+        }
         return View::make('modelos.proyects.show', [
                     "proyect" => $proyect,
+                    "userSen" => $userSen,
+                    "botonVerInterno" => $botonVerInterno,
                     "botonCrearEntregables" => $botonCrearEntregables,
                     "botonCrearSupuestos" => $botonCrearSupuestos,
                     "botonCrearClientes" => $botonCrearClientes,
@@ -390,7 +402,14 @@ class ProyectsController extends \BaseController {
             $enterpriseId = Input::get('en');
             $enterpise = Enterprise::find($enterpriseId);
             return View::make('modelos.proyects.edit', ['proyect' => $proyect, 'enterprise' => $enterpise]);
-        } else {
+        } elseif (Input::has('pre')) {
+            if (!($userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin')))) {
+                $messages = new Illuminate\Support\MessageBag;
+                $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
+                return Redirect::route("home")->withErrors($messages);
+            }
+            return View::make('modelos.proyects.updatepresup', ['proyect' => $proyect]);
+        }else {
             return View::make('modelos.proyects.edit', ['proyect' => $proyect]);
         }
     }
@@ -403,66 +422,79 @@ class ProyectsController extends \BaseController {
      */
     public function update($id) {
         $proyect = Proyect::findOrFail($id);
-
-        $validator = Validator::make($data = Input::except('pop_nue'), array_except(Proyect::$rules, [ 'name', 'code']));
-
-        if ($validator->fails()) {
-            return Redirect::back()->withErrors($validator)->withInput();
-        }
-
-        $file = Input::file('pop_nue');
-
-        if ($file) {
-            if (substr($file->getMimeType(), 0, 5) == 'image') {
-                $esImagen = true;
-            } else {
-                $esImagen = false;
-            }
-            $destinationPath = public_path() . '/images/proyects/';
-            $filename = $file->getClientOriginalName();
-            $filename = str_random(20) . "." . $file->getClientOriginalExtension();
-
-
-            $upload_success = $file->move($destinationPath, $filename);
-
-            if ($upload_success) {
-
-                if ($esImagen) {
-                    // resizing an uploaded file
-                    Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    })->save($destinationPath . "thumb/" . $filename, 100);
+        if (Input::has('act_presup')) {
+            foreach ($proyect->payments()->orderBy('paymentdate','DESC')->get() as $payment) {
+                if (Input::has("proyect_payments_p_" . $payment->id) && Input::has("proyect_payments_h_" . $payment->id)) {
+                    //$user_task = $task->users()->find($worker->id);
+                    //$user_task->pivot->calification = Input::get("work_users_c_" . $worker->id);
+                    //$user_task->pivot->save();
+                    $payment->plan=Input::get("proyect_payments_p_" . $payment->id);
+                    $payment->planh=Input::get("proyect_payments_h_" . $payment->id);
+                    $payment->save();
                 }
-                //return Response::json('success', 200);
-            } else {
-                return Response::json('error', 400);
             }
-            $data = Input::except('_token', 'pop', 'pop_nue', 'teams', 'enterprises');
-            $data['pop'] = $filename;
+            return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id))->with('message', Lang::get("task.mensajes.actualizadopresup"));
+            //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } else {
-            $data = Input::except('_token', 'pop_nue', 'teams', 'enterprises');
-        }
-        
-        if (Input::has('teams')) {
-            if (is_array(Input::get('teams'))) {
-                $ides = array();
-                foreach (Input::get('teams') as $team_id) {
-                    array_push($ides,$team_id);
-                    //$team = Team::find($team_id);
-                    //$proyect->teams()->attach($team);
-                }
-                $proyect->teams()->sync($ides);
-                
-            } else {
-                $team = Team::find(Input::get('teams'));
-                $proyect->teams()->sync($team);
+            $validator = Validator::make($data = Input::except('pop_nue'), array_except(Proyect::$rules, [ 'name', 'code']));
+
+            if ($validator->fails()) {
+                return Redirect::back()->withErrors($validator)->withInput();
             }
+
+            $file = Input::file('pop_nue');
+
+            if ($file) {
+                if (substr($file->getMimeType(), 0, 5) == 'image') {
+                    $esImagen = true;
+                } else {
+                    $esImagen = false;
+                }
+                $destinationPath = public_path() . '/images/proyects/';
+                $filename = $file->getClientOriginalName();
+                $filename = str_random(20) . "." . $file->getClientOriginalExtension();
+
+
+                $upload_success = $file->move($destinationPath, $filename);
+
+                if ($upload_success) {
+
+                    if ($esImagen) {
+                        // resizing an uploaded file
+                        Image::make($destinationPath . $filename)->resize(50, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        })->save($destinationPath . "thumb/" . $filename, 100);
+                    }
+                    //return Response::json('success', 200);
+                } else {
+                    return Response::json('error', 400);
+                }
+                $data = Input::except('_token', 'pop', 'pop_nue', 'teams', 'enterprises');
+                $data['pop'] = $filename;
+            } else {
+                $data = Input::except('_token', 'pop_nue', 'teams', 'enterprises');
+            }
+
+            if (Input::has('teams')) {
+                if (is_array(Input::get('teams'))) {
+                    $ides = array();
+                    foreach (Input::get('teams') as $team_id) {
+                        array_push($ides, $team_id);
+                        //$team = Team::find($team_id);
+                        //$proyect->teams()->attach($team);
+                    }
+                    $proyect->teams()->sync($ides);
+                } else {
+                    $team = Team::find(Input::get('teams'));
+                    $proyect->teams()->sync($team);
+                }
+            }
+
+
+            $proyect->update($data);
+
+            return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.index');
         }
-
-
-        $proyect->update($data);
-
-        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.index');
     }
 
     /**

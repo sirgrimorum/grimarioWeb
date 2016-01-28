@@ -1,153 +1,97 @@
-<?php namespace Khill\Lavacharts\Charts;
+<?php
+
+namespace Khill\Lavacharts\Charts;
+
+use \Khill\Lavacharts\Values\Label;
+use \Khill\Lavacharts\Options;
+use \Khill\Lavacharts\DataTables\DataTable;
 
 /**
- * Column Chart Class
+ * ColumnChart Class
  *
  * A vertical bar chart that is rendered within the browser using SVG or VML.
  * Displays tips when hovering over bars. For a horizontal version of this
  * chart, see the Bar Chart.
  *
  *
- * @package    Lavacharts
+ * @package    Khill\Lavacharts
  * @subpackage Charts
- * @since      v1.0.0
+ * @since      1.0.0
  * @author     Kevin Hill <kevinkhill@gmail.com>
  * @copyright  (c) 2015, KHill Designs
  * @link       http://github.com/kevinkhill/lavacharts GitHub Repository Page
  * @link       http://lavacharts.com                   Official Docs Site
  * @license    http://opensource.org/licenses/MIT MIT
  */
-
-use Khill\Lavacharts\Utils;
-use Khill\Lavacharts\Configs\HorizontalAxis;
-use Khill\Lavacharts\Configs\VerticalAxis;
-
 class ColumnChart extends Chart
 {
-    public $type = 'ColumnChart';
-
-    public function __construct($chartLabel)
-    {
-        parent::__construct($chartLabel);
-
-        $this->defaults = array_merge(
-            $this->defaults,
-            array(
-            //                'animation',
-                'axisTitlesPosition',
-                'barGroupWidth',
-                'focusTarget',
-                'hAxis',
-                'isHtml',
-            //                'vAxes',
-                'vAxis'
-            )
-        );
-    }
+    /**
+     * Common methods
+     */
+    use \Khill\Lavacharts\Traits\AxisTitlesPositionTrait;
+    use \Khill\Lavacharts\Traits\BarGroupWidthTrait;
+    use \Khill\Lavacharts\Traits\HorizontalAxisTrait;
+    use \Khill\Lavacharts\Traits\IsStackedTrait;
+    use \Khill\Lavacharts\Traits\TrendlinesTrait;
+    use \Khill\Lavacharts\Traits\VerticalAxesTrait;
+    use \Khill\Lavacharts\Traits\VerticalAxisTrait;
 
     /**
-     * Where to place the axis titles, compared to the chart area. Supported values:
-     * in - Draw the axis titles inside the the chart area.
-     * out - Draw the axis titles outside the chart area.
-     * none - Omit the axis titles.
+     * Javascript chart type.
      *
-     * @param  string      $position
-     * @return ColumnChart
+     * @var string
      */
-    public function axisTitlesPosition($position)
-    {
-        $values = array(
-            'in',
-            'out',
-            'none'
-        );
-
-        if (is_string($position) && in_array($position, $values)) {
-            $this->addOption(array('axisTitlesPosition' => $position));
-        } else {
-            throw $this->invalidConfigValue(
-                __FUNCTION__,
-                'string',
-                'with a value of '.Utils::arrayToPipedString($values)
-            );
-        }
-
-        return $this;
-    }
+    const TYPE = 'ColumnChart';
 
     /**
-     * The width of a group of bars, specified in either of these formats:
-     * - Pixels (e.g. 50).
-     * - Percentage of the available width for each group (e.g. '20%'),
-     *   where '100%' means that groups have no space between them.
+     * Javascript chart version.
      *
-     * @param  mixed       $barGroupWidth
-     * @return ColumnChart
+     * @var string
      */
-    public function barGroupWidth($barGroupWidth)
-    {
-        if (Utils::isIntOrPercent($barGroupWidth)) {
-            $this->addOption(array('bar' => array('groupWidth' => $barGroupWidth)));
-        } else {
-            throw $this->invalidConfigValue(
-                __FUNCTION__,
-                'string | int',
-                'must be a valid int or percent [ 50 | 65% ]'
-            );
-        }
-
-        return $this;
-    }
+    const VERSION = '1';
 
     /**
-     * An object with members to configure various horizontal axis elements. To
-     * specify properties of this property, create a new hAxis() object, set
-     * the values then pass it to this function or to the constructor.
+     * Javascript chart package.
      *
-     * @param  Lavacharts\Configs\HorizontalAxis $hAxis
-     * @throws InvalidConfigValue
-     * @return ColumnChart
+     * @var string
      */
-    public function hAxis(HorizontalAxis $hAxis)
-    {
-        $this->addOption($hAxis->toArray('hAxis'));
-
-        return $this;
-    }
+    const VIZ_PACKAGE = 'corechart';
 
     /**
-     * If set to true, series elements are stacked.
+     * Google's visualization class name.
      *
-     * @param  bool        $isStacked
-     * @return ColumnChart
+     * @var string
      */
-    public function isStacked($isStacked)
-    {
-        if (is_bool($isStacked)) {
-            $this->addOption(array('isStacked' => $isStacked));
-        } else {
-            throw $this->invalidConfigValue(
-                __FUNCTION__,
-                'bool'
-            );
-        }
-
-        return $this;
-    }
+    const VIZ_CLASS = 'google.visualization.ColumnChart';
 
     /**
-     * An object with members to configure various vertical axis elements. To
-     * specify properties of this property, create a new vAxis() object, set
-     * the values then pass it to this function or to the constructor.
+     * Default configuration options for the chart.
      *
-     * @param  Lavacharts\Configs\VerticalAxis $vAxis
-     * @throws InvalidConfigValue
-     * @return ColumnChart
+     * @var array
      */
-    public function vAxis(VerticalAxis $vAxis)
-    {
-        $this->addOption($vAxis->toArray('vAxis'));
+    private $columnDefaults = [
+        'axisTitlesPosition',
+        'barGroupWidth',
+        'focusTarget',
+        'hAxis',
+        'isHtml',
+        'isStacked',
+        'trendlines',
+        'vAxes',
+        'vAxis'
+    ];
 
-        return $this;
+    /**
+     * Builds a new ColumnChart with the given label, datatable and options.
+     *
+     * @param  \Khill\Lavacharts\Values\Label         $chartLabel Identifying label for the chart.
+     * @param  \Khill\Lavacharts\DataTables\DataTable $datatable DataTable used for the chart.
+     * @param array                                   $config
+     */
+    public function __construct(Label $chartLabel, DataTable $datatable, $config = [])
+    {
+        $options = new Options($this->columnDefaults);
+
+        parent::__construct($chartLabel, $datatable, $options, $config);
     }
 }

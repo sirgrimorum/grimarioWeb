@@ -3,11 +3,13 @@ $arrComments = array();
 foreach ($proyect->payments()->get() as $paymenta) {
     foreach ($paymenta->tasks()->get() as $taska) {
         foreach ($taska->comments()->get() as $commenta) {
-            $item = array(
-                "unix" => strtotime($commenta->date),
-                "comment" => $commenta
-            );
-            array_push($arrComments, $item);
+            if (($botonVerInterno == false && $commenta->public == true) || $botonVerInterno == true) {
+                $item = array(
+                    "unix" => strtotime($commenta->date),
+                    "comment" => $commenta
+                );
+                array_push($arrComments, $item);
+            }
         }
     }
 }
@@ -22,7 +24,7 @@ $arrComments = array_values(array_sort($arrComments, function($value) {
 <section id="pr-timeline" class="vtl-container">
     @foreach ($arrComments as $sngComment)
     <div class="vtl-timeline-block">
-        <div class="vtl-timeline-img vtl-{{ $sngComment["comment"]->task->tasktype->id }}">
+        <div class="vtl-timeline-img vtl-{{ $sngComment["comment"]->task->tasktype->id }}" data-toggle="tooltip" data-placement="top" title="{{ Lang::get("principal.labels.months." . date("M",$sngComment["unix"])) . date(" j, g:i a",$sngComment["unix"]) }}">
             <img src="{{ asset('/images/img/tipoact/tipo' . $sngComment["comment"]->commenttype->id . '.svg' ) }}" alt="{{ $sngComment["comment"]->commenttype->name . ", " . $sngComment["comment"]->task->tasktype->name }}">
         </div>
 
@@ -30,7 +32,6 @@ $arrComments = array_values(array_sort($arrComments, function($value) {
             <h2>{{ $sngComment["comment"]->task->tasktype->name . " - " . $sngComment["comment"]->commenttype->name }}</h2>
             @if ($sngComment["comment"]->image == "" )
             @if ($sngComment["comment"]->url == "" )
-            -
             @else
             @if (strpos($sngComment["comment"]->url,"youtube")===false)
             <a href='{{ $sngComment["comment"]->url }}' target="_blank">
@@ -56,8 +57,8 @@ $arrComments = array_values(array_sort($arrComments, function($value) {
             @endif
             <p>{{ $sngComment["comment"]->comment }}</p>
 
-            <a href="#0" class="vtl-read-more">Read more</a>
-            <span class="vtl-date">{{ $sngComment["comment"]->date }}</span>
+            <!--a href="#0" class="vtl-read-more">Read more</a-->
+            <span class="vtl-date" >{{ Lang::get("principal.labels.monthsshort." . date("M",$sngComment["unix"])) . date(" j",$sngComment["unix"]) }}</span>
         </div> <!-- vtl-timeline-content -->
     </div> <!-- vtl-timeline-block -->
     @endforeach
@@ -75,7 +76,7 @@ $arrComments = array_values(array_sort($arrComments, function($value) {
 {{ HTML::script("js/stimeline.js") }}
 <script>
     $(document).ready(function() {
-
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
 @stop

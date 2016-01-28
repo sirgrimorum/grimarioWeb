@@ -44,6 +44,7 @@ return array(
         "title" => "Grimario, juega a controlar tu tiempo",
         "description" => "Juego, gamification, gerencia de proyectos",
         "index" => "Equipos de trabajo",
+        "propios" => "Mis equipos de trabajo",
     ),
     "mensajes" => array(
         "error" => "uyy qué error tan grande",

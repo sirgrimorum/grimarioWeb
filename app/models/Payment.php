@@ -56,5 +56,20 @@ class Payment extends \Eloquent {
     public function contribution(){
         return ($this->percentage * $this->advance())/100;
     }
+    
+    public function workedhours($userId){
+        $total = 0;
+        foreach ($this->tasks()->get() as $task) {
+            $total += $task->workedhours($userId);
+        }
+        return $total;
+    }
 
+    public function totalhours(){
+        $total = 0;
+        foreach ($this->tasks()->get() as $task) {
+            $total += $task->totalhours();
+        }
+        return $total;
+    }
 }

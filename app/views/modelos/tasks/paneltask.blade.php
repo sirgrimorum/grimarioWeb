@@ -14,14 +14,29 @@ if ($task->state == 'ent' || $task->state == 'ter' || $task->state == 'cer') {
     $config['campos']['othercosts'] = [
         "tipo" => "function",
         "label" => Lang::get("task.labels.othercosts"),
+        "pre" => "$",
+        "post" => "COP",
+        "format" => [0, ".", "."],
     ];
     $config['campos']['profit'] = [
         "tipo" => "function",
         "label" => Lang::get("task.labels.profit"),
+        "pre" => "$",
+        "post" => "COP",
+        "format" => [0, ".", "."],
     ];
     $config['campos']['totalcost'] = [
         "tipo" => "function",
         "label" => Lang::get("task.labels.totalcost"),
+        "pre" => "$",
+        "post" => "COP",
+        "format" => [0, ".", "."],
+    ];
+    $config['campos']['totalhours'] = [
+        "tipo" => "function",
+        "label" => Lang::get("task.labels.totalhours"),
+        "post" => Lang::get("principal.labels.hours"),
+        "format" => [1, ".", "."],
     ];
 }
 if ($task->state == 'ent' || $task->state == 'cer') {
@@ -76,7 +91,7 @@ if ($work && $task->state == 'pau') {
                                 <span class="sr-only">{{ Lang::get("task.labels.reanudar") }}</span>
                             </a>
                         </li>
-                        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
+                        @if ($user->inGroup(Sentry::findGroupByName('Lider')) || $user->inGroup(Sentry::findGroupByName('Lider')))
                         <li role="presentation">
                             <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" alt="{{ Lang::get("task.labels.finalizar") }}">
                                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 
@@ -103,7 +118,7 @@ if ($work && $task->state == 'pau') {
                                 <span class="sr-only">{{ Lang::get("task.labels.detener") }}</span>
                             </a>
                         </li>
-                        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
+                        @if ($user->inGroup(Sentry::findGroupByName('Lider')) || $user->inGroup(Sentry::findGroupByName('Lider')))
                         <li role="presentation">
                             <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" alt="{{ Lang::get("task.labels.finalizar") }}">
                                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 
@@ -117,14 +132,14 @@ if ($work && $task->state == 'pau') {
                                 <span class="sr-only">{{ Lang::get("task.labels.planear_work") }}</span>
                             </a>
                         </li>
-                        @elseif ($task->state == 'ter' && $user->inGroup(Sentry::findGroupByName('Coordinador')))
+                        @elseif ($task->state == 'ter' && $user->inGroup(Sentry::findGroupByName('Lider')))
                         <li role="presentation" class="active">
                             <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ent" alt="{{ Lang::get("task.labels.entregar") }}">
                                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
                                 <span class="sr-only">{{ Lang::get("task.labels.entregar") }}</span>
                             </a>
                         </li>
-                        @elseif ($task->state == 'ent' && $user->inGroup(Sentry::findGroupByName('Director')))
+                        @elseif ($task->state == 'ent' && $user->inGroup(Sentry::findGroupByName('Lider')))
                         <li role="presentation" class="active">
                             <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=cer" alt="{{ Lang::get("task.labels.evaluar") }}">
                                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 
@@ -153,7 +168,6 @@ if ($work && $task->state == 'pau') {
                         $siend = false;
                         $worklistactive = "";
                     }
-                    
                     ?>
                     <a href='{{ URL::route(Lang::get("principal.menu.links.trabajo") . '.show', array($worklist->id)) }}' class='list-group-item {{ $worklistactive }}'>
                         <h4 class="list-group-item-heading">
@@ -180,7 +194,7 @@ if ($work && $task->state == 'pau') {
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionTk" href="#TabTeam" aria-expanded="false" aria-controls="TabTeam">
                     {{ Lang::get('task.labels.users') }}
                 </a>
-                @if ($user->inGroup(Sentry::findGroupByName('Director')))
+                @if ($user->inGroup(Sentry::findGroupByName('Lider')))
                 <a class='pull-right' href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?equipo=act">{{ Lang::get("task.labels.edit_equipo") }}</a>
                 @endif
             </h4>
@@ -247,8 +261,7 @@ if ($work && $task->state == 'pau') {
                             </a>
                             @else
                             <?php
-                            parse_str( parse_url($comment->url, PHP_URL_QUERY),$arrVariables);
-                            
+                            parse_str(parse_url($comment->url, PHP_URL_QUERY), $arrVariables);
                             ?>
                             <a href='{{ $comment->url }}' target="_blank">
                                 <image src="http://i3.ytimg.com/vi/{{ $arrVariables["v"] }}/default.jpg" alt="image"/>

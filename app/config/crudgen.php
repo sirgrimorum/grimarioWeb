@@ -509,6 +509,20 @@ return array(
                 "post" => "COP",
                 "format" => [0,".","."],
             ],
+            "planh" => [
+                "tipo" => "number",
+                "label" => Lang::get("payment.labels.planh"),
+                "placeholder" => Lang::get("payment.placeholders.planh"),
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1,".","."],
+            ],
+            "totalhours" => [
+                "tipo" => "function",
+                "label" => Lang::get("payment.labels.totalhours"),
+                "placeholder" => Lang::get("payment.placeholders.totalhours"),
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1,".","."],
+            ],
             "plandate" => [
                 "tipo" => "date",
                 "label" => Lang::get("payment.labels.plandate"),

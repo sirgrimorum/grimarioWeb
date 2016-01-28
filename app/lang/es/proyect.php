@@ -33,9 +33,11 @@ return array(
         "tasks" => "Tareas",
         "ver" => "ver",
         "editar" => "editar",
+        "editarpre" => "editar presupuesto",
         "eliminar" => "eliminar",
         "create" => "Crear un proyecto",
         "edit" => "Actualizar proyecto",
+        "editpresup" => "Actualizar presupuesto proyecto",
         "timeline" => "Línea de tiempo",
         "gantt" => "Cronograma",
         "estats" => "Estadísticas",
@@ -90,10 +92,13 @@ return array(
         "show" => "Ficha de proyecto",
         "create" => "Nuevo proyecto",
         "edit" => "Actualizar proyecto",
+        "editpresup" => "Actualizar presupuesto proyecto",
+        "activos" => "Mis proyectos activos",
     ),
     "mensajes" => array(
         "error" => "uyy qué error tan grande",
         "reaml" => "paila parcero",
+        "actualizadopresup" => "Presupuesto actualizado exitosamente",
     ),
     "emails" => array(
         "titulos" => array(

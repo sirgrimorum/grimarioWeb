@@ -43,11 +43,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function profiles() {
         return $this->hasMany('Profile');
     }
-    
+
     public function userdatum() {
         return $this->hasMany('Userdatum');
     }
-    
+
     public function ownerof() {
         return $this->belongsToMany('Proyect', 'proyect_user');
     }
@@ -121,9 +121,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         } else {
             $cuality = 0;
         }
-        if ($team){
+        if ($team) {
             $total = $team->taskpoints($task, $game) * $cuality;
-        }else{
+        } else {
             $total = 0;
         }
         return $total;
@@ -142,6 +142,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             $multp = 1;
         }
         return $total * $multp;
+    }
+
+    public function userPros($wherePro = "") {
+        $user_id = $this->id;
+        if ($wherePro == ""){
+            $proQuery = Proyect::all();
+        }else{
+            $proQuery = Proyect::whereRaw($wherePro)->get();
+        }
+        $proyects = $proQuery->filter(function($proyect) use ($user_id) {
+        foreach ($proyect->teams()->get() as $team) {
+            if (!$team->users()->whereRaw(" users.id = '" . $user_id . "' ")->get()->isEmpty()) {
+                return true;
+            }
+        }
+        }
+        );
+        return $proyects;
     }
 
 }

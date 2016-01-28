@@ -11,7 +11,6 @@ class Proyect extends \Eloquent {
         'priority' => 'required',
         'user_id' => 'required|integer|exists:users,id',
     ];
-
     // Don't forget to fill this array
     //protected $fillable = ['name','code','proyect_id',];
     protected $guarded = array();
@@ -19,7 +18,7 @@ class Proyect extends \Eloquent {
     public function teams() {
         return $this->belongsToMany('Team', 'proyect_team');
     }
-    
+
     public function user() {
         return $this->belongsTo('User');
     }
@@ -28,62 +27,61 @@ class Proyect extends \Eloquent {
         return $this->belongsToMany('User', 'proyect_user');
     }
 
-     public function enterprises() {
+    public function enterprises() {
         return $this->belongsToMany('Enterprise', 'enterprise_proyect');
     }
-    
-        public function tasks() {
+
+    public function tasks() {
         return $this->hasMany('Task', 'proyect_id');
     }
 
     public function payments() {
         return $this->hasMany('Payment', 'proyect_id');
     }
-    
+
     public function restrictions() {
         return $this->hasMany('Restriction', 'proyect_id');
     }
-    
-    public function value(){
+
+    public function value() {
         $total = 0;
-        foreach ($this->payments()->get() as $payment){
+        foreach ($this->payments()->get() as $payment) {
             $total += $payment->value;
         }
         return $total;
     }
-    
-    public function totalcost(){
+
+    public function totalcost() {
         $total = 0;
-        foreach ($this->payments()->get() as $payment){
+        foreach ($this->payments()->get() as $payment) {
             $total += $payment->totalcost();
         }
         return $total;
     }
-    
-    public function totalplan(){
+
+    public function totalplan() {
         $total = 0;
-        foreach ($this->payments()->get() as $payment){
+        foreach ($this->payments()->get() as $payment) {
             $total += $payment->plan;
         }
         return $total;
     }
-    
-    public function saves(){
+
+    public function saves() {
         $total = $this->totalplan() - $this->totalcost();
         return $total;
     }
-    
-    public function profit(){
-        $total = $this->value() - $this->totalplan() + $this->totalcost() ;
+
+    public function profit() {
+        $total = $this->value() - $this->totalplan() + $this->totalcost();
         return $total;
     }
-    
-    public function advance(){
+
+    public function advance() {
         $advance = 0;
-        foreach ($this->payments()->get() as $payment){
+        foreach ($this->payments()->get() as $payment) {
             $advance += $payment->contribution();
         }
         return $advance;
     }
-
 }

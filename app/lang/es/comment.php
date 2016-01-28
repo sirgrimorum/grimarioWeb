@@ -51,6 +51,7 @@ return array(
     "mensajes" => array(
         "error" => "uyy qué error tan grande",
         "reaml" => "paila parcero",
+        "creado" => "Comentario creado con éxito",
     ),
         )
 ?>

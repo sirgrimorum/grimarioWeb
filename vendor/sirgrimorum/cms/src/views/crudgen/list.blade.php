@@ -8,6 +8,7 @@
 @endif
 <?php
 $tabla = $config['tabla'];
+$tablaid = $tabla . "_" . str_random(5);
 $campos = $config['campos'];
 if (isset($config['botones'])) {
     if ($config['botones'] != "") {
@@ -35,7 +36,7 @@ if (isset($config['render'])){
     }
 }
 ?>
-<table class="table table-striped table-bordered" id='list_{{ $tabla }}'>
+<table class="table table-striped table-bordered" id='list_{{ $tablaid }}'>
     <thead>
         <tr>
         @if (isset($config['render']))
@@ -232,7 +233,7 @@ if (isset($config['render'])){
 {{ HTML::script("packages/sirgrimorum/cms/js/dataTables.tableTools.min.js") }}
 <script>
     $(document).ready(function() {
-        var lista_{{ $tabla }} = $('#list_{{ $tabla }}').DataTable({
+        var lista_{{ $tabla }} = $('#list_{{ $tablaid }}').DataTable({
             responsive: true,
             dom: 'Rlfrtip',
             tableTools: {

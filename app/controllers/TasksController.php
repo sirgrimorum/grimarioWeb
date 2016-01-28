@@ -92,9 +92,8 @@ class TasksController extends \BaseController {
                 $task->users()->save($usuario);
             }
         }
-        return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id))->with('message', Lang::get("task.mensajes.creada"));
+        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id))->with('message', Lang::get("task.mensajes.creada"));
         //return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($task->payments()->first()->id));
-
         //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.index');
     }
 
@@ -112,8 +111,10 @@ class TasksController extends \BaseController {
             $task->state = 'des';
             $task->save();
         }
+        
+        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("task.mensajes.comenzado"));
 
-        return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
+        //return View::make('modelos.tasks.show', ['task' => $task, 'user' => $user, 'work' => $work]);
     }
 
     /**
@@ -140,7 +141,7 @@ class TasksController extends \BaseController {
                 'payment' => $task->payments()->first(),
                 'user' => $userSen
             ];
-            if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+            if (!$userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
                 $messages = new Illuminate\Support\MessageBag;
                 $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
                 return Redirect::route("home")->withErrors($messages);
@@ -174,7 +175,7 @@ class TasksController extends \BaseController {
                     $proyect->state = 'act';
                     $proyect->save();
                 }
-                return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.comenzado"));
+                return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("task.mensajes.comenzado"));
                 //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id))->with('message', Lang::get("task.mensajes.comenzado"));
             } else {
                 $state = Input::get('st');
@@ -215,7 +216,7 @@ class TasksController extends \BaseController {
                     }
                     $vista = ".entregar";
                 } elseif (Input::get('st') == 'cer') {
-                    if (!$userSen->inGroup(Sentry::findGroupByName('Director'))) {
+                    if (!$userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
                         $messages = new Illuminate\Support\MessageBag;
                         $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
                         return Redirect::route("home")->withErrors($messages);
@@ -278,7 +279,7 @@ class TasksController extends \BaseController {
                     ]);
                 }
             }
-            return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+            return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("task.mensajes.actualizado"));
             //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } elseif (Input::has('st')) {
             if (Input::get('st') == 'ch') {
@@ -370,7 +371,7 @@ class TasksController extends \BaseController {
                         $usuarios = Input::get('users');
                         $task->users()->sync($usuarios);
                     }
-                    return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+                    return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("task.mensajes.actualizado"));
                     //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
                 } else {
                     $data['dpercentage'] = Input::get('dpercentage');
@@ -428,7 +429,7 @@ class TasksController extends \BaseController {
                     $proyect->save();
                 }
             }
-            return Redirect::route(Lang::get("principal.menu.links.proyecto"). '.show', array($task->proyect->id, 'py'=>$task->payments()->first()->id, 'tt'=>$task->tasktype->id, 'tk'=>$task->id))->with('message', Lang::get("task.mensajes.actualizado"));
+            return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($task->proyect->id, 'py' => $task->payments()->first()->id, 'tt' => $task->tasktype->id, 'tk' => $task->id))->with('message', Lang::get("task.mensajes.actualizado"));
             //return Redirect::route(Lang::get("principal.menu.links.tarea") . '.show', array($task->id));
         } else {
             return Redirect::back()->with('message', Lang::get("task.mensajes.no_actualizado"));

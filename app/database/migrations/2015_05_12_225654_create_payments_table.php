@@ -19,6 +19,7 @@ class CreatePaymentsTable extends Migration {
 			$table->integer('percentage');
 			$table->double('value');
 			$table->double('plan');
+			$table->double('planh');
 			$table->text('conditions')->nullable();
 			$table->date('plandate');
 			$table->date('paymentdate');

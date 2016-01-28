@@ -79,7 +79,7 @@ $configComments['botones'] = [
             <div class='col-sm-offset-3 col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=des" class='btn btn-default'>{{ Lang::get("task.labels.reanudar") }}</a>
             </div>
-        @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
+        @if ($user->inGroup(Sentry::findGroupByName('Lider')) || $user->inGroup(Sentry::findGroupByName('Lider')))
                 <div class='col-sm-2'>
                     <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
                 </div>
@@ -91,7 +91,7 @@ $configComments['botones'] = [
             <div class='col-sm-offset-3 col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=pau" class='btn btn-default'>{{ Lang::get("task.labels.detener") }}</a>
             </div>
-            @if ($user->inGroup(Sentry::findGroupByName('Coordinador')) || $user->inGroup(Sentry::findGroupByName('Director')))
+            @if ($user->inGroup(Sentry::findGroupByName('Lider')) || $user->inGroup(Sentry::findGroupByName('Lider')))
                 <div class='col-sm-2'>
                     <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ter" class='btn btn-default'>{{ Lang::get("task.labels.finalizar") }}</a>
                 </div>
@@ -99,11 +99,11 @@ $configComments['botones'] = [
             <div class='col-sm-2'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.trabajo"). '.create') }}?tk={{ $task->id }}" class='btn btn-default'>{{ Lang::get("task.labels.planear_work") }}</a>
             </div>
-        @elseif ($task->state == 'ter' && $user->inGroup(Sentry::findGroupByName('Coordinador')))
+        @elseif ($task->state == 'ter' && $user->inGroup(Sentry::findGroupByName('Lider')))
             <div class='col-sm-offset-4 col-sm-4'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=ent" class='btn btn-default'>{{ Lang::get("task.labels.entregar") }}</a>
             </div>
-        @elseif ($task->state == 'ent' && $user->inGroup(Sentry::findGroupByName('Director')))
+        @elseif ($task->state == 'ent' && $user->inGroup(Sentry::findGroupByName('Lider')))
             <div class='col-sm-offset-4 col-sm-4'>
                 <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?st=cer" class='btn btn-default'>{{ Lang::get("task.labels.evaluar") }}</a>
             </div>
@@ -115,7 +115,7 @@ $configComments['botones'] = [
     <span class="help-block" id="work_end_help">
         {{ Lang::get('task.descriptions.users') }}
     </span>
-    @if ($user->inGroup(Sentry::findGroupByName('Director')))
+    @if ($user->inGroup(Sentry::findGroupByName('Lider')))
         <a href="{{ URL::route(Lang::get("principal.menu.links.tarea"). '.edit', array($task->id)) }}?equipo=act" class='btn btn-info'>{{ Lang::get("task.labels.edit_equipo") }}</a>
     @endif
     <table class="table table-striped table-bordered" id='list_users'>

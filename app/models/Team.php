@@ -57,6 +57,35 @@ class Team extends \Eloquent {
             return false;
         }
     }
+    
+    public function teamtasks($strWherePri = "") {
+        if ($this) {
+            $strWhere = "";
+            $preWhere = "(";
+            foreach ($this->users()->get() as $user) {
+                $strWhere .= $preWhere . " users.id = '" . $user->id . "' ";
+                $preWhere = " or ";
+            }
+            if ($strWhere != "") {
+                $strWhere .= ")";
+                if ($strWherePri != ""){
+                    $preTask = Task::whereRaw($strWherePri)->get();
+                }else{
+                    $preTask = Task::all();
+                }
+                $tasks = $preTask->filter(function($task) use ($strWhere) {
+                    if (!$task->users()->whereRaw($strWhere)->get()->isEmpty()) {
+                        return true;
+                    }
+                });
+                return $tasks;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     public function taskpoints($task, $game) {
         $total = 0;

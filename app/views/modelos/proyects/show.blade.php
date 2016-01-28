@@ -68,6 +68,11 @@ if (Input::has("py")) {
 <h1>
     {{ $proyect->name }} 
     <small class="estado">{{ Lang::get("proyect.selects.state." . $proyect->state) }}</small>
+    @if (($userSen->inGroup(Sentry::findGroupByName('Empresario')) or $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))))
+    <a class="btn btn-danger pull-right" href='{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.edit', array($proyect->id)) }}?pre=1' >
+        {{ Lang::get("proyect.labels.editarpre") }}
+    </a>
+    @endif
     @if ($botonCrearEntregables)
     <a class="btn btn-warning pull-right" href='{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.edit', array($proyect->id)) }}' >
         {{ Lang::get("proyect.labels.editar") }}
@@ -85,6 +90,7 @@ if (Input::has("py")) {
     {{ CrudLoader::show($config,$proyect->id,$proyect) }}
 </div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    @if ($botonVerInterno)
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="LabEstats">
             <h4 class="panel-title">
@@ -95,20 +101,19 @@ if (Input::has("py")) {
         </div>
         @if ($botonCrearEntregables)
         <div id="TabEstats" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LabEstats">
-            <div class="panel-body vtl-supercontainer">
-                <div id='bar_proyect_presup'></div>
-                <div class="row estadistica">
-                    <div class="col-sm-6 col-xs-6">
-                        <div id='pie_payments_per'></div>
-                    </div>
-                    <div class="col-sm-6 col-xs-6">
-                        <div id='bar_payments_av'></div>
-                    </div>
+            <div id='bar_proyect_presup'></div>
+            <div class="row estadistica">
+                <div class="col-sm-6 col-xs-6">
+                    <div id='pie_payments_per'></div>
+                </div>
+                <div class="col-sm-6 col-xs-6">
+                    <div id='bar_payments_av'></div>
                 </div>
             </div>
         </div>
         @endif
     </div>
+    @endif
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="LabGantt">
             <h4 class="panel-title">
@@ -118,10 +123,8 @@ if (Input::has("py")) {
             </h4>
         </div>
         <div id="TabGantt" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabGantt">
-            <div class="panel-body vtl-supercontainer">
-                <div id="ganttpro" class="gantt"></div>
-                <button id="btnExport" class="btn btn-info">{{ Lang::get("proyect.labels.export") }}</button>
-            </div>
+            <div id="ganttpro" class="gantt"></div>
+            <button id="btnExport" class="btn btn-info">{{ Lang::get("proyect.labels.export") }}</button>
         </div>
     </div>
     <div class="panel panel-default">
@@ -133,9 +136,12 @@ if (Input::has("py")) {
             </h4>
         </div>
         <div id="TabTimeline" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabTimeline">
-            @include("modelos.proyects.stimeline")
+            <div class="panel-body vtl-supercontainer">
+                @include("modelos.proyects.stimeline")
+            </div>
         </div>
     </div>
+    @if ($botonVerInterno)
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="LabSupuestos">
             <h4 class="panel-title">
@@ -188,6 +194,7 @@ if (Input::has("py")) {
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 
@@ -200,69 +207,70 @@ if (Input::has("py")) {
 
 @section("selfjs")
 @if ($botonCrearEntregables)
-    @barchart('proyect_presup', 'bar_proyect_presup')
-    @combochart('payments_per', 'pie_payments_per')
-    @columnchart('payments_av', 'bar_payments_av')
+@barchart('proyect_presup', 'bar_proyect_presup')
+@combochart('payments_per', 'pie_payments_per')
+@columnchart('payments_av', 'bar_payments_av')
 @endif
 {{ HTML::script("js/jquery.fn.gantt.js") }}
 {{ HTML::script("js/jspdf.min.js") }}
 <script>
     var doc = new jsPDF();
     var specialElementHandlers = {
-        '#editor': function (element, renderer) {
+        '#editor': function(element, renderer) {
             return true;
         }
     };
     $(document).ready(function() {
         $("#avancebar").progressbar({
-            value: {{ $proyect -> advance() }}
+        value: {{ $proyect -> advance() }}
+    });
+    $("#btnExport").click(function(e) {
+        //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#ganttpro>.fn-gantt>.fn-content').html()));
+        //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#list_restrictions').html()));
+        doc.fromHTML($('#ganttpro>.fn-gantt>.fn-content').html(), 15, 15, {
+            'width': 170,
+            'elementHandlers': specialElementHandlers
         });
-        $("#btnExport").click(function(e) {
-            //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#ganttpro>.fn-gantt>.fn-content').html()));
-            //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#list_restrictions').html()));
-            doc.fromHTML($('#ganttpro>.fn-gantt>.fn-content').html(), 15, 15, {
-                'width': 170,
-                'elementHandlers': specialElementHandlers
-            });
-            doc.save('sample-file.pdf');
-        });
-        $("#ganttpro").gantt({
-            source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
+        doc.save('sample-file.pdf');
+    });
+    $("#ganttpro").gantt({
+    source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
             scale: "weeks",
             minScale: "hours",
             maxScale: "months",
             itemsPerPage: 15,
             navigate: "scroll",
+            scrollToToday: false,
             onRender: function() {
                 console.log("chart rendered");
             },
-            onItemClick: function(dataObj){
+            onItemClick: function(dataObj) {
                 console.log("Click en" + dataObj);
             },
             months: [
-                "{{ Lang::get('principal.labels.months.january') }}",
-                "{{ Lang::get('principal.labels.months.february') }}",
-                "{{ Lang::get('principal.labels.months.march') }}",
-                "{{ Lang::get('principal.labels.months.april') }}",
-                "{{ Lang::get('principal.labels.months.may') }}",
-                "{{ Lang::get('principal.labels.months.june') }}",
-                "{{ Lang::get('principal.labels.months.july') }}",
-                "{{ Lang::get('principal.labels.months.august') }}",
-                "{{ Lang::get('principal.labels.months.september') }}",
-                "{{ Lang::get('principal.labels.months.october') }}",
-                "{{ Lang::get('principal.labels.months.november') }}",
-                "{{ Lang::get('principal.labels.months.december') }}"
+                    "{{ Lang::get('principal.labels.months.Jan') }}",
+                    "{{ Lang::get('principal.labels.months.Feb') }}",
+                    "{{ Lang::get('principal.labels.months.Mar') }}",
+                    "{{ Lang::get('principal.labels.months.Apr') }}",
+                    "{{ Lang::get('principal.labels.months.May') }}",
+                    "{{ Lang::get('principal.labels.months.Jun') }}",
+                    "{{ Lang::get('principal.labels.months.Jul') }}",
+                    "{{ Lang::get('principal.labels.months.Aug') }}",
+                    "{{ Lang::get('principal.labels.months.Sep') }}",
+                    "{{ Lang::get('principal.labels.months.Oct') }}",
+                    "{{ Lang::get('principal.labels.months.Nov') }}",
+                    "{{ Lang::get('principal.labels.months.Dec') }}"
             ],
             dow:[
-                "{{ Lang::get('principal.labels.dow.s') }}",
-                "{{ Lang::get('principal.labels.dow.m') }}",
-                "{{ Lang::get('principal.labels.dow.t') }}",
-                "{{ Lang::get('principal.labels.dow.w') }}",
-                "{{ Lang::get('principal.labels.dow.t') }}",
-                "{{ Lang::get('principal.labels.dow.f') }}",
-                "{{ Lang::get('principal.labels.dow.s') }}"
+                    "{{ Lang::get('principal.labels.dow.su') }}",
+                    "{{ Lang::get('principal.labels.dow.mo') }}",
+                    "{{ Lang::get('principal.labels.dow.tu') }}",
+                    "{{ Lang::get('principal.labels.dow.we') }}",
+                    "{{ Lang::get('principal.labels.dow.th') }}",
+                    "{{ Lang::get('principal.labels.dow.fr') }}",
+                    "{{ Lang::get('principal.labels.dow.sa') }}"
             ]
-        });
+    });
     });
 </script>
 @stop
