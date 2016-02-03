@@ -119,7 +119,7 @@ class JsonsController extends \BaseController {
                                     "label" => $task->name,
                                     "desc" => "<h3>" . $task->name . "</h3><strong>" . Lang::get("task.labels.planstart") . ":</strong> " . $task->planstart . "<br/><strong>" . Lang::get("task.labels.plan") . ":</strong> " . $task->plan . "<br/><strong>" . Lang::get("task.labels.description") . ":</strong>" . $task->description . "<strong>" . Lang::get("task.labels.result") . ":</strong>" . $task->result . "<br/><strong>" . Lang::get("task.labels.state") . ":</strong> " . Lang::get("task.selects.state." . $task->state),
                                     "customClass" => "ganttBlue",
-                                    "dataObj" => $payment->id
+                                    "dataObj" => $task->id
                                 ))
                         );
                         array_push($resultado, $item);
@@ -138,7 +138,7 @@ class JsonsController extends \BaseController {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
         $user = User::findOrFail($id);
-        $timestamp1 = mktime(0, 0, 0, date("n")-1, 1, date("Y"));
+        $timestamp1 = mktime(0, 0, 0, date("n") - 1, 1, date("Y"));
         $whereQuery = " tasks.planstart >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.plan >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.start >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.end >= '" . date("Y-m-d H:i:s", $timestamp1) . "' ";
         $resultado = [];
         $actual = time();
@@ -251,7 +251,7 @@ class JsonsController extends \BaseController {
                             "label" => $task->name,
                             "desc" => "<h3>" . $task->name . "</h3><strong>" . Lang::get("task.labels.planstart") . ":</strong> " . $task->planstart . "<br/><strong>" . Lang::get("task.labels.plan") . ":</strong> " . $task->plan . "<br/><strong>" . Lang::get("task.labels.description") . ":</strong>" . $task->description . "<strong>" . Lang::get("task.labels.result") . ":</strong>" . $task->result . "<br/><strong>" . Lang::get("task.labels.state") . ":</strong> " . Lang::get("task.selects.state." . $task->state),
                             "customClass" => "ganttBlue",
-                            "dataObj" => $payment->id
+                            "dataObj" => $task->id
                         ))
                 );
                 array_push($resultado, $item);
@@ -268,7 +268,7 @@ class JsonsController extends \BaseController {
         $userSen = Sentry::getUser();
         $usuario = User::findOrFail($userSen->id);
         $team = Team::findOrFail($id);
-        $timestamp1 = mktime(0, 0, 0, date("n")-1, 1, date("Y"));
+        $timestamp1 = mktime(0, 0, 0, date("n") - 1, 1, date("Y"));
         $whereQuery = " tasks.planstart >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.plan >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.start >= '" . date("Y-m-d H:i:s", $timestamp1) . "' or tasks.end >= '" . date("Y-m-d H:i:s", $timestamp1) . "' ";
         $resultado = [];
         $actual = time();
@@ -393,4 +393,134 @@ class JsonsController extends \BaseController {
         return json_encode($resultado);
         //return Response::json($resultado);
     }
+
+    public function getChartProAdvance($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->hasAccess('proyects')) {
+            $proyect = Proyect::findOrFail($id);
+            $dtEntregasAv = Lava::DataTable();
+            $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"));
+            $arrPercentage = array(Lang::get("payment.labels.percentage"));
+            $arrAdvance = array(Lang::get("payment.labels.advance"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasAv->addNumberColumn($payment->name);
+                array_push($arrPercentage, $payment->percentage);
+                array_push($arrAdvance, $payment->contribution());
+            }
+            $dtEntregasAv->addRow($arrPercentage);
+            $dtEntregasAv->addRow($arrAdvance);
+            return $dtEntregasAv->toJson();
+        } else {
+            return json_encode(Array());
+        }
+    }
+
+    public function getChartProPresup($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->hasAccess('proyects')) {
+            $proyect = Proyect::findOrFail($id);
+            $dtEntregasAv = Lava::DataTable();
+            $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"));
+            $arrValue = array(Lang::get("proyect.labels.value"));
+            $arrTotalplan = array(Lang::get("proyect.labels.totalplan"));
+            $arrSaves = array(Lang::get("proyect.labels.saves"));
+            $arrTotalcost = array(Lang::get("proyect.labels.totalcost"));
+            $arrProfit = array(Lang::get("proyect.labels.profit"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasAv->addNumberColumn($payment->name);
+                array_push($arrValue, $payment->value);
+                array_push($arrTotalplan, $payment->plan);
+                array_push($arrSaves, $payment->saves());
+                array_push($arrTotalcost, $payment->totalcost());
+                array_push($arrProfit, $payment->profit());
+            }
+            if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+                $dtEntregasAv->addRow($arrValue);
+            }
+            $dtEntregasAv->addRow($arrTotalplan);
+            $dtEntregasAv->addRow($arrSaves);
+            $dtEntregasAv->addRow($arrTotalcost);
+            if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+                $dtEntregasAv->addRow($arrProfit);
+            }
+            return $dtEntregasAv->toJson();
+        } else {
+            return json_encode(Array());
+        }
+    }
+
+    public function getChartProHours($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->hasAccess('proyects')) {
+            $proyect = Proyect::findOrFail($id);
+            $dtEntregasAv = Lava::DataTable();
+            $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"));
+            $arrTotalplanhours = array(Lang::get("proyect.labels.totalplanhours"));
+            $arrTotalhours = array(Lang::get("proyect.labels.totalhours"));
+            $arrSaveshours = array(Lang::get("proyect.labels.saveshours"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasAv->addNumberColumn($payment->name);
+                array_push($arrTotalplanhours, $payment->planh);
+                array_push($arrTotalhours, $payment->totalhours());
+                array_push($arrSaveshours, $payment->saveshours());
+            }
+            $dtEntregasAv->addRow($arrTotalplanhours);
+            $dtEntregasAv->addRow($arrTotalhours);
+            $dtEntregasAv->addRow($arrSaveshours);
+            return $dtEntregasAv->toJson();
+        } else {
+            return json_encode(Array());
+        }
+    }
+
+    public function getChartProPayPresup($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->hasAccess('proyects')) {
+            $proyect = Proyect::findOrFail($id);
+            $dtEntregasPer = Lava::DataTable();
+            $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"));
+            if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+                $dtEntregasPer->addNumberColumn(Lang::get("payment.labels.value"));
+            }
+            $dtEntregasPer->addNumberColumn(Lang::get("payment.labels.plan"))
+                    ->addNumberColumn(Lang::get("payment.labels.totalcost"));
+            if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+                $dtEntregasPer->addNumberColumn(Lang::get("payment.labels.profit"));
+            }
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                if ($userSen->inGroup(Sentry::findGroupByName('Empresario')) || $userSen->inGroup(Sentry::findGroupByName('SuperAdmin'))) {
+                    $dtEntregasPer->addRow(array($payment->name, $payment->value, $payment->plan, $payment->totalcost(), $payment->profit()));
+                } else {
+                    $dtEntregasPer->addRow(array($payment->name, $payment->plan, $payment->totalcost()));
+                }
+            }
+            return $dtEntregasPer->toJson();
+        } else {
+            return json_encode(Array());
+        }
+    }
+
+    public function getChartProPayHours($id) {
+        $userSen = Sentry::getUser();
+        $usuario = User::findOrFail($userSen->id);
+        if ($userSen->hasAccess('proyects')) {
+            $proyect = Proyect::findOrFail($id);
+            $dtEntregasPer = Lava::DataTable();
+            $dtEntregasPer->addStringColumn(Lang::get("payment.labels.saveshours") . " " . Lang::get("payment.labels.pagos"))
+                    ->addNumberColumn(Lang::get("payment.labels.planh"))
+                    ->addNumberColumn(Lang::get("payment.labels.totalhours"))
+                    ->addNumberColumn(Lang::get("payment.labels.saveshours"));
+            foreach ($proyect->payments()->orderBy("plandate", "ASC")->get() as $payment) {
+                $dtEntregasPer->addRow(array($payment->name, $payment->planh, $payment->totalhours(), $payment->saveshours()));
+            }
+            return $dtEntregasPer->toJson();
+        } else {
+            return json_encode(Array());
+        }
+    }
+
 }

@@ -40,8 +40,13 @@ class Payment extends \Eloquent {
         return $total;
     }
     
-    public function profit(){
+    public function saves() {
         $total = $this->plan - $this->totalcost();
+        return $total;
+    }
+
+    public function profit(){
+        $total = $this->value - $this->plan + $this->totalcost();
         return $total;
     }
     
@@ -70,6 +75,11 @@ class Payment extends \Eloquent {
         foreach ($this->tasks()->get() as $task) {
             $total += $task->totalhours();
         }
+        return $total;
+    }
+    
+    public function saveshours(){
+        $total = $this->planh - $this->totalhours();
         return $total;
     }
 }

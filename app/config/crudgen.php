@@ -350,6 +350,30 @@ return array(
                 "placeholder" => Lang::get("proyect.placeholders.advance"),
                 "post" => "%",
             ],
+            "totalplanhours" => [
+                "tipo" => "function",
+                "label" => Lang::get("proyect.labels.totalplanhours"),
+                "placeholder" => Lang::get("proyect.placeholders.totalplanhours"),
+                "pre" => "",
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1, ".", "."],
+            ],
+            "totalhours" => [
+                "tipo" => "function",
+                "label" => Lang::get("proyect.labels.totalhours"),
+                "placeholder" => Lang::get("proyect.placeholders.totalhours"),
+                "pre" => "",
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1, ".", "."],
+            ],
+            "saveshours" => [
+                "tipo" => "function",
+                "label" => Lang::get("proyect.labels.saveshours"),
+                "placeholder" => Lang::get("proyect.placeholders.saveshours"),
+                "pre" => "",
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1, ".", "."],
+            ],
             "totalplan" => [
                 "tipo" => "function",
                 "label" => Lang::get("proyect.labels.totalplan"),
@@ -551,7 +575,7 @@ return array(
                 "post" => "COP",
                 "format" => [0, ".", "."],
             ],
-            "profit" => [
+            "saves" => [
                 "tipo" => "function",
                 "label" => Lang::get("payment.labels.profit"),
                 "placeholder" => Lang::get("payment.placeholders.profit"),
@@ -570,6 +594,13 @@ return array(
                 "tipo" => "function",
                 "label" => Lang::get("payment.labels.totalhours"),
                 "placeholder" => Lang::get("payment.placeholders.totalhours"),
+                "post" => Lang::get("principal.labels.hours"),
+                "format" => [1, ".", "."],
+            ],
+            "saveshours" => [
+                "tipo" => "function",
+                "label" => Lang::get("payment.labels.saveshours"),
+                "placeholder" => Lang::get("payment.placeholders.saveshours"),
                 "post" => Lang::get("principal.labels.hours"),
                 "format" => [1, ".", "."],
             ],

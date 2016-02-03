@@ -99,17 +99,22 @@ if (Input::has("py")) {
                 </a>
             </h4>
         </div>
-        @if ($botonCrearEntregables)
-        <div id="TabEstats" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LabEstats">
-            <div id='bar_proyect_presup'></div>
-            <div class="row estadistica">
+        @if ($botonCrearEntregables or $userSen->inGroup(Sentry::findGroupByName('Lider')))
+        <div id="TabEstats" class="panel-collapse collapse " role="tabpanel" aria-labelledby="LabEstats">
+            <div id='bar_payments_av'></div>
+            <!--div class="row estadistica">
                 <div class="col-sm-6 col-xs-6">
                     <div id='pie_payments_per'></div>
                 </div>
                 <div class="col-sm-6 col-xs-6">
-                    <div id='bar_payments_av'></div>
+                    <div id='bar_proyect_presup'></div>
                 </div>
-            </div>
+            </div-->
+            <button id="btnStatsAdvance" class="btn btn-info">{{ Lang::get("payment.labels.advance") }}</button>
+            <button id="btnStatsPayPresup" class="btn btn-info">{{ Lang::get("payment.labels.value") . ' x ' . Lang::get('payment.labels.pagos') }}</button>
+            <button id="btnStatsPayHours" class="btn btn-info">{{ Lang::get("payment.labels.saveshours") . ' x ' . Lang::get('payment.labels.pagos') }}</button>
+            <button id="btnStatsPresup" class="btn btn-info">{{ Lang::get("proyect.labels.presupuesto") . ' ' . Lang::get('proyect.labels.proyecto') }}</button>
+            <button id="btnStatsHours" class="btn btn-info">{{ Lang::get("proyect.labels.saveshours") . ' ' . Lang::get('proyect.labels.proyecto') }}</button>
         </div>
         @endif
     </div>
@@ -207,8 +212,6 @@ if (Input::has("py")) {
 
 @section("selfjs")
 @if ($botonCrearEntregables)
-@barchart('proyect_presup', 'bar_proyect_presup')
-@combochart('payments_per', 'pie_payments_per')
 @columnchart('payments_av', 'bar_payments_av')
 @endif
 {{ HTML::script("js/jquery.fn.gantt.js") }}
@@ -222,7 +225,7 @@ if (Input::has("py")) {
     };
     $(document).ready(function() {
         $("#avancebar").progressbar({
-        value: {{ $proyect -> advance() }}
+        value: {{ $proyect->advance() }}
     });
     $("#btnExport").click(function(e) {
         //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#ganttpro>.fn-gantt>.fn-content').html()));
@@ -233,6 +236,71 @@ if (Input::has("py")) {
         });
         doc.save('sample-file.pdf');
     });
+    $("#btnStatsPayHours").click(function(e) {
+        lava.getChart('payments_av', function (googleChart, lavaChart) {
+            lavaChart.options.title = "{{ Lang::get('payment.labels.saveshours') . ' x ' . Lang::get('payment.labels.pagos') }}";
+            lavaChart.options.vAxis.format = "decimal";
+            lavaChart.options.isStacked = false;
+            //console.log("lavachart",lavaChart);
+            $.getJSON('{{ action('JsonsController@getChartProPayHours', $proyect->id); }}', function(dataTableJson) {
+                lava.loadData('payments_av', dataTableJson, function(chart) {
+                    //console.log(chart);
+                });
+            });
+        });
+    });
+    $("#btnStatsPayPresup").click(function(e) {
+        lava.getChart('payments_av', function (googleChart, lavaChart) {
+            lavaChart.options.title = "{{ Lang::get('payment.labels.value') . ' x ' . Lang::get('payment.labels.pagos') }}";
+            lavaChart.options.vAxis.format = "currency";
+            lavaChart.options.isStacked = false;
+            //console.log("lavachart",lavaChart);
+            $.getJSON('{{ action('JsonsController@getChartProPayPresup', $proyect->id); }}', function(dataTableJson) {
+                lava.loadData('payments_av', dataTableJson, function(chart) {
+                    //console.log(chart);
+                });
+            });
+        });
+    });
+    $("#btnStatsAdvance").click(function(e) {
+        lava.getChart('payments_av', function (googleChart, lavaChart) {
+            lavaChart.options.title = "{{ Lang::get('payment.labels.advance') }}";
+            lavaChart.options.vAxis.format = "percent";
+            lavaChart.options.isStacked = true;
+            console.log("lavachart",lavaChart);
+            $.getJSON('{{ action('JsonsController@getChartProAdvance', $proyect->id); }}', function(dataTableJson) {
+                lava.loadData('payments_av', dataTableJson, function(chart) {
+                    //console.log(chart);
+                });
+            });
+        });
+    });
+    $("#btnStatsPresup").click(function(e) {
+        lava.getChart('payments_av', function (googleChart, lavaChart) {
+            lavaChart.options.title = "{{ Lang::get('proyect.labels.presupuesto') . ' ' . Lang::get('proyect.labels.proyecto') }}";
+            lavaChart.options.vAxis.format = "currency";
+            lavaChart.options.isStacked = true;
+            console.log("lavachart",lavaChart);
+            $.getJSON('{{ action('JsonsController@getChartProPresup', $proyect->id); }}', function(dataTableJson) {
+                lava.loadData('payments_av', dataTableJson, function(chart) {
+                    //console.log(chart);
+                });
+            });
+        });
+    });
+    $("#btnStatsHours").click(function(e) {
+        lava.getChart('payments_av', function (googleChart, lavaChart) {
+            lavaChart.options.title = "{{ Lang::get('proyect.labels.saveshours') . ' ' . Lang::get('proyect.labels.proyecto') }}";
+            lavaChart.options.vAxis.format = "decimal";
+            lavaChart.options.isStacked = true;
+            console.log("lavachart",lavaChart);
+            $.getJSON('{{ action('JsonsController@getChartProHours', $proyect->id); }}', function(dataTableJson) {
+                lava.loadData('payments_av', dataTableJson, function(chart) {
+                    //console.log(chart);
+                });
+            });
+        });
+    });
     $("#ganttpro").gantt({
     source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
             scale: "weeks",
@@ -242,7 +310,7 @@ if (Input::has("py")) {
             navigate: "scroll",
             scrollToToday: false,
             onRender: function() {
-                console.log("chart rendered");
+                //console.log("chart rendered");
             },
             onItemClick: function(dataObj) {
                 console.log("Click en" + dataObj);

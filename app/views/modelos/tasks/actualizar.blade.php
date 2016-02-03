@@ -261,7 +261,7 @@ $configCosts['botones'] = [
 </div>
 {{ Form::close() }}
 
-<div class="container">
+<!--div class="container">
     {{ Form::label('comments', Lang::get('work.labels.comments'), array('class'=>'')) }}
     <span class="help-block" id="work_end_help">
         {{ Lang::get('work.descriptions.comments') }}
@@ -277,7 +277,7 @@ $configCosts['botones'] = [
     </span>
     <a href='{{ action('CostsController@create') }}?wk={{ $work->id }}&tk={{ $task->id }}' class='btn btn-info' >{{ Lang::get("cost.labels.create") }}</a>
     {{ CrudLoader::lists($configCosts,$costs) }}
-</div>
+</div-->
 
 @stop
 

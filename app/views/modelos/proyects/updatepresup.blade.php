@@ -24,6 +24,7 @@ $config['campos'] = array_except(Config::get('crudgen.proyect.campos'), "");
         <thead>
             <tr>
                 <td>{{ Lang::get('payment.labels.name') }}</td>
+                <td>{{ Lang::get('payment.labels.plandate') }}</td>
                 <td>{{ Lang::get('payment.labels.percentage') }}</td>
                 <td>{{ Lang::get('payment.labels.value') }}</td>
                 <td>{{ Lang::get('payment.labels.conditions') }}</td>
@@ -32,10 +33,13 @@ $config['campos'] = array_except(Config::get('crudgen.proyect.campos'), "");
             </tr>
         </thead>
         <tbody>
-            @foreach($proyect->payments()->orderBy('paymentdate','DESC')->get() as $payment)
+            @foreach($proyect->payments()->orderBy('plandate','ASC')->get() as $payment)
             <tr>
                 <td>
                     {{ $payment->name }}
+                </td>
+                <td>
+                    {{ date("j M Y",strtotime($payment->plandate)) }}
                 </td>
                 <td>
                     {{ $payment->percentage }}%

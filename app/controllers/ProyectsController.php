@@ -298,7 +298,7 @@ class ProyectsController extends \BaseController {
               'title' => Lang::get("payment.labels.pagos"),
               'is3D' => true,
               )); */
-            $dtEntregasPer = Lava::DataTable();
+            /*$dtEntregasPer = Lava::DataTable();
             $dtEntregasPer->addStringColumn(Lang::get("payment.labels.value") . " " . Lang::get("payment.labels.pagos"))
                     ->addNumberColumn(Lang::get("payment.labels.value"))
                     ->addNumberColumn(Lang::get("payment.labels.plan"))
@@ -322,7 +322,7 @@ class ProyectsController extends \BaseController {
                                 'type' => 'line'
                             ]
                         )
-            ]);
+            ]);*/
             $dtEntregasAv = Lava::DataTable();
             $dtEntregasAv->addStringColumn(Lang::get("payment.labels.pagos"));
             $arrPercentage = array(Lang::get("payment.labels.percentage"));
@@ -339,12 +339,15 @@ class ProyectsController extends \BaseController {
                         'legend' => [
                             'position' => 'in'
                         ],
+                        'vAxis' => [
+                            'format' => 'percent',
+                        ],
                         'isStacked' => true,
                         'height' => 350,
                             //'is3D' => true,
             ]);
 
-
+            /*
             $dtPresup = Lava::DataTable();
             $dtPresup->addStringColumn(Lang::get("proyect.labels.presupuesto"))
                     ->addNumberColumn(Lang::get("proyect.labels.totalplan"))
@@ -362,6 +365,8 @@ class ProyectsController extends \BaseController {
                         'theme' => 'maximized',
                             //'orientation' => 'horizontal',
             ]);
+             *
+             */
         }
         return View::make('modelos.proyects.show', [
                     "proyect" => $proyect,

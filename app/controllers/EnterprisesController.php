@@ -54,7 +54,7 @@ class EnterprisesController extends \BaseController {
             $messages->add('no_permission', Lang::get("user.mensaje.no_permission"));
             return Redirect::route("home")->withErrors($messages);
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $proyects = $usuario->proyects()->where("state","!=","ter")->get();
             $botonCrear = false;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan'];
@@ -63,7 +63,7 @@ class EnterprisesController extends \BaseController {
                 "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.proyecto") . '.edit', array("{ID}")) . "'>" . Lang::get("proyect.labels.editar") . "</a>",
             ];
         }
-        if ($userSen->inGroup(Sentry::findGroupByName('Director'))) {
+        if ($userSen->inGroup(Sentry::findGroupByName('Coordinador'))) {
             $proyects = $enterprise->proyects()->where("state","!=","ter")->get();
             $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan', 'user'];

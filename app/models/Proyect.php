@@ -67,8 +67,21 @@ class Proyect extends \Eloquent {
         return $total;
     }
 
+    public function totalplanhours() {
+        $total = 0;
+        foreach ($this->payments()->get() as $payment) {
+            $total += $payment->planh;
+        }
+        return $total;
+    }
+    
     public function saves() {
         $total = $this->totalplan() - $this->totalcost();
+        return $total;
+    }
+
+    public function saveshours() {
+        $total = $this->totalplanhours() - $this->totalhours();
         return $total;
     }
 
@@ -83,5 +96,21 @@ class Proyect extends \Eloquent {
             $advance += $payment->contribution();
         }
         return $advance;
+    }
+    
+    public function workedhours($userId){
+        $total = 0;
+        foreach ($this->payments()->get() as $payment) {
+            $total += $payment->workedhours($userId);
+        }
+        return $total;
+    }
+    
+    public function totalhours() {
+        $total = 0;
+        foreach ($this->payments()->get() as $payment) {
+            $total += $payment->totalhours();
+        }
+        return $total;
     }
 }

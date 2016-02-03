@@ -71,7 +71,8 @@ class Work extends \Eloquent {
     }
 
     public function totalcost() {
-        return $this->resourcescost() + $this->userscost() + $this->machinescost() + $this->othercost();
+        //return $this->resourcescost() + $this->userscost() + $this->machinescost() + $this->othercost();
+        return $this->resourcescost() + $this->machinescost() + $this->othercost();
     }
 
     public function workedhours($userId) {
