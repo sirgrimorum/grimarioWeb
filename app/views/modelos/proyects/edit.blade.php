@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.proyect'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'value', 'profit'));
+$config['campos'] = array_except(Config::get('crudgen.proyect.campos'), array('satisfaction','experience','advance', 'totalplan', 'totalcost', 'saves', 'value', 'profit', 'totalplanhours', 'totalhours', 'saveshours'));
 $config['botones'] = Lang::get("proyect.labels.edit");
 $config['url'] = action('ProyectsController@update', [$proyect->id]);
 unset($config["campos"]["state"]["valor"]);

@@ -38,3 +38,4 @@ Route::group(array('before' => 'loged'), function() {
 });
 Route::controller(Lang::get("principal.menu.links.usuario"), 'UsersController');
 Route::controller(Lang::get("principal.menu.links.auth"), 'OauthController');
+Route::controller(Lang::get("principal.menu.links.api"), 'ApiController');

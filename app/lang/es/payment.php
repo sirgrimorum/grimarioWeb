@@ -15,9 +15,9 @@ return array(
         "saveshours" => "Ahorro horas",
         "totalhours" => "Horas totales",
         "conditions" => "Condiciones",
-        "plandate" => "Fecha esperada de pago",
+        "plandate" => "Fecha esperada de entrega",
         "advance" => "Avance",
-        "paymentdate" => "Fecha de pago",
+        "paymentdate" => "Fecha de entrega",
         "state" => "Estado",
         "proyect_id" => "Proyecto",
         "tasks" => "Tareas",
@@ -75,6 +75,7 @@ return array(
         "entregado" => "El entregable ha sido entregado al cliente",
         "pagado" => "El entregable ha sido pagado",
         "actualizado" => "El entregable ha sido actualizado",
+        "creado" => "El entregable ha sido creado",
     ),
         )
 ?>

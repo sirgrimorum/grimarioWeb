@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.payment'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('paymentdate', 'totalcost', 'profit', 'advance'));
+$config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('paymentdate', 'totalcost', 'profit', 'advance', 'saves', 'totalhours', 'saveshours', 'planh', 'plan'));
 $config["campos"]["state"]["tipo"] = "hidden";
 $preDatos = false;
 if (Input::has('pr')) {

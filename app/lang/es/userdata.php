@@ -47,12 +47,17 @@ return array(
     "emails" => array(
         "titulos" => array(
             "nuevo_cliente" => "Se ha creado un nuevo cliente",
+            "nuevo_proyecto" => "Su nuevo proyecto en Grimorum",
         ),
         "textos" => array(
             "acaba_de_crear" => " esta es la confirmación de la creación del nuevo usuario tipo cliente con los datos:",
+            "nuevo_proyecto" => " ya está lista el registro de su nuevo proyecto con Grimorum: ",
+            "nuevo_proyecto2" => "A continuación están los datos con los que podrá ingresar a Grimario, nuestra herramienta de seguimiento en tiempo real a proyectos:",
+            "enlace" => "Dirección",
             "nombre" => "Nombre",
             "email" => "Email",
             "password" => "Clave",
+            "contactese" => "No dude en contactarse con el responsable de su proyecto para solucionar cualquier duda que tenga:",
             "enviar_datos" => "El usuario ya ha sido activado y dependerá de usted asociarlo a uno o varios proyectos. Le recomendamos enviar los datos de acceso al cliente y solicitarle cambiar su contraseña.",
         )
     )

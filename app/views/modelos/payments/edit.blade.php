@@ -1,6 +1,6 @@
 <?php
 $config = array_except(Config::get('crudgen.payment'), array('campos'));
-$config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('totalcost', 'profit', 'paymentdate', 'advance'));
+$config['campos'] = array_except(Config::get('crudgen.payment.campos'), array('totalcost', 'profit', 'paymentdate', 'advance', 'saves', 'totalhours', 'saveshours'));
 $proyect = $payment->proyect;
 $config['botones'] = Lang::get("payment.labels.edit");
 $config['url'] = action('PaymentsController@update', [$payment->id]);

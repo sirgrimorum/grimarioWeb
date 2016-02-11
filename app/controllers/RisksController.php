@@ -52,8 +52,9 @@ class RisksController extends BaseController {
         $data = Input::except('_token');
 
         $risk = Risk::create($data);
-
-        return Redirect::route(Lang::get("principal.menu.links.pago"). '.show', array($risk->payment->id));
+        
+        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($risk->payment->proyect->id, 'py' => $risk->payment->id))->with('message', Lang::get("risk.mensajes.creado"));
+        //return Redirect::route(Lang::get("principal.menu.links.pago"). '.show', array($risk->payment->id));
     }
 
     /**

@@ -43,16 +43,23 @@ class PaymentsController extends BaseController {
      * @return Response
      */
     public function store() {
-        $validator = Validator::make(Input::all(), Payment::$rules);
+        $data = Input::all();
+        if (!Input::has("plan")) {
+            $data['plan'] = 0;
+        }
+        $validator = Validator::make($data, Payment::$rules);
 
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput();
         }
         $data = Input::except('_token');
+        if (!Input::has("plan")) {
+            $data['plan'] = 0;
+        }
 
         $payment = Payment::create($data);
 
-        return Redirect::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id));
+        return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id, 'py' => $payment->id))->with('message', Lang::get("payment.mensajes.creado"));
     }
 
     /**
@@ -177,8 +184,8 @@ class PaymentsController extends BaseController {
 
         if (Input::has('pre')) {
             $data = $payment->getAttributes();
-            $payment->plan=Input::get("plan");
-            $payment->planh=Input::get("planh");
+            $payment->plan = Input::get("plan");
+            $payment->planh = Input::get("planh");
             $payment->save();
             return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array($payment->proyect->id, 'py' => $payment->id))->with('message', Lang::get("payment.mensajes.actualizado"));
         } else {

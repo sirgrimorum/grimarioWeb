@@ -174,7 +174,7 @@ class ProyectsController extends \BaseController {
         $configBotonesActividades = "";
         if ($userSen->inGroup(Sentry::findGroupByName('Cliente'))) {
             $botonVerInterno = false;
-            $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit'];
+            $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit','planh', 'totalhours', 'saveshours', 'priority'];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $botonCrearEntregables = false;

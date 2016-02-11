@@ -84,6 +84,13 @@ class UserdatasController extends BaseController {
             $message->from(Lang::get("email.from_email"), Lang::get("email.from_name"));
             $message->to($user->email, $user->name)->subject(Lang::get("userdata.emails.titulos.nuevo_cliente"));
         });
+        $proyect = Proyect::find(Input::get("proyect_id"));
+        Session::put('userTo', $user->id);
+        Mail::send(array('emails.html.userdatas.creadocli', 'emails.html.userdatas.creadocli'), array('clave' => $password, 'user' => $user, 'proyect' => $proyect), function($message) {
+            $user = User::find(Session::get('userTo'));
+            $message->from(Lang::get("email.from_email"), Lang::get("email.from_name"));
+            $message->to($user->email, $user->name)->subject(Lang::get("userdata.emails.titulos.nuevo_proyecto"));
+        });
 
         if (Input::has("proyect_id")) {
             return Redirect::route(Lang::get("principal.menu.links.proyecto") . '.show', array(Input::get("proyect_id")));

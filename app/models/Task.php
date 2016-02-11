@@ -17,6 +17,7 @@ class Task extends \Eloquent {
     ];
     //protected $fillable = ['name','code','proyect_id',];
     protected $guarded = array();
+    protected $visible = array('id', 'name', 'result', 'state', 'percentage', 'type', 'proyect_id', 'totalhours');
 
     public function proyect() {
         return $this->belongsTo('Proyect');
@@ -144,29 +145,29 @@ class Task extends \Eloquent {
         }
         return $points;
     }
-    
-    public function elapsedtime(){
-        if ($this->end > 0){
+
+    public function elapsedtime() {
+        if ($this->end > 0) {
             $fin = new DateTime($this->end);
-        }else{
+        } else {
             $fin = new DateTime();
         }
         $inicio = new DateTime($this->start);
         $dif = $inicio->diff($fin);
         return ($dif->days * 24) + $dif->h;
     }
-    
-    public function timeleft(){
-        if ($this->state != 'des' && $this->state != 'pau' && $this->state != 'pla' && $this->end > 0){
+
+    public function timeleft() {
+        if ($this->state != 'des' && $this->state != 'pau' && $this->state != 'pla' && $this->end > 0) {
             $fin = new DateTime($this->end);
-        }else{
+        } else {
             $fin = new DateTime();
         }
         $inicio = new DateTime($this->plan);
-        $dif = $fin->diff($inicio,false);
-        if ($dif->format("%r") == "-"){
+        $dif = $fin->diff($inicio, false);
+        if ($dif->format("%r") == "-") {
             return $dif->days * -1;
-        }else{
+        } else {
             return $dif->days;
         }
     }

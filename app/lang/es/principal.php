@@ -95,6 +95,7 @@ return array(
             "admin" => "admin",
             "auth" => "auth",
             "jsons" => "json",
+            "api" => "api",
         ),
     )
         )
