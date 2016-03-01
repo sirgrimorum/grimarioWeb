@@ -226,7 +226,7 @@ if (Input::has("py")) {
     $(document).ready(function() {
         $("#avancebar").progressbar({
         value: {{ $proyect->advance() }}
-    });
+        });
     $("#btnExport").click(function(e) {
         //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#ganttpro>.fn-gantt>.fn-content').html()));
         //window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#list_restrictions').html()));

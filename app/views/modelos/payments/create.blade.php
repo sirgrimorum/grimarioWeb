@@ -7,6 +7,12 @@ if (Input::has('pr')) {
     $preDatos = true;
     $config["campos"]["proyect_id"]["tipo"] = "hidden";
     $config["campos"]["proyect_id"]["valor"] = $proyect->id;
+    
+    if ($ultimoEntregable = $proyect->payments()->orderby("plandate", "DESC")->first()){
+        $config["campos"]["plandate"]["valor"] = $ultimoEntregable->plandate;
+    }else{
+        $config["campos"]["plandate"]["valor"] = $proyect->planstart;
+    }
 }
 ?>
 @extends("layouts.principal")
@@ -42,6 +48,20 @@ if (Input::has('pr')) {
             </div>
         </div>
     </div>
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="LabGantt">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabGantt" aria-expanded="false" aria-controls="TabGantt">
+                        {{ Lang::get("proyect.labels.gantt") }}
+                    </a>
+                </h4>
+            </div>
+            <div id="TabGantt" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LabGantt">
+                <div id="ganttpro" class="gantt"></div>
+            </div>
+        </div>
+    </div>
 </div>
 @endif
 <div class='container'>
@@ -52,14 +72,52 @@ if (Input::has('pr')) {
 
 @section("selfjs")
 @parent
+{{ HTML::script("js/jquery.fn.gantt.js") }}
 <script>
     $(document).ready(function() {
-        //alert(translations.payment.error);
+        $("#ganttpro").gantt({
+            source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
+            scale: "weeks",
+            minScale: "hours",
+            maxScale: "months",
+            itemsPerPage: 15,
+            navigate: "scroll",
+            scrollToToday: false,
+            onRender: function() {
+                //console.log("chart rendered");
+            },
+            onItemClick: function(dataObj) {
+                console.log("Click en" + dataObj);
+            },
+            months: [
+                "{{ Lang::get('principal.labels.months.Jan') }}",
+                "{{ Lang::get('principal.labels.months.Feb') }}",
+                "{{ Lang::get('principal.labels.months.Mar') }}",
+                "{{ Lang::get('principal.labels.months.Apr') }}",
+                "{{ Lang::get('principal.labels.months.May') }}",
+                "{{ Lang::get('principal.labels.months.Jun') }}",
+                "{{ Lang::get('principal.labels.months.Jul') }}",
+                "{{ Lang::get('principal.labels.months.Aug') }}",
+                "{{ Lang::get('principal.labels.months.Sep') }}",
+                "{{ Lang::get('principal.labels.months.Oct') }}",
+                "{{ Lang::get('principal.labels.months.Nov') }}",
+                "{{ Lang::get('principal.labels.months.Dec') }}"
+            ],
+            dow: [
+                "{{ Lang::get('principal.labels.dow.su') }}",
+                "{{ Lang::get('principal.labels.dow.mo') }}",
+                "{{ Lang::get('principal.labels.dow.tu') }}",
+                "{{ Lang::get('principal.labels.dow.we') }}",
+                "{{ Lang::get('principal.labels.dow.th') }}",
+                "{{ Lang::get('principal.labels.dow.fr') }}",
+                "{{ Lang::get('principal.labels.dow.sa') }}"
+            ]
+        });
     });
 </script>
 @stop
 
 @section("selfcss")
 @parent
-<!--{{ HTML::style("css/acerca.css") }} -->
+{{ HTML::style("css/gantt/gantt.css") }}
 @stop

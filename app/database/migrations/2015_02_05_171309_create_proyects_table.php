@@ -26,6 +26,7 @@ class CreateProyectsTable extends Migration {
             $table->string('type', 3)->default(0);
             $table->string('priority', 3)->default(0);
             $table->string('state', 3)->default(0);
+            $table->dateTime('planstart');
             $table->integer('user_id')->unsigned()->index();
             $table->timestamps();
         });

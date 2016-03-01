@@ -11,22 +11,28 @@ if (Input::has('pr') && Input::has('py')) {
     $config["campos"]["payments"]["valor"] = $payment->id;
     $config["campos"]["game_id"]["todos"] = $juegos;
     $config["campos"]["users"]["todos"] = $usuarios;
-    $otrasTareas = Task::where("proyect_id", "=", $proyect->id)->get()->filter(function($task) {
-                if ($task->payments->first()->id == Input::has('pr')) {
-                    return true;
-                }
-            });
-    $config["campos"]["order"]["valor"] = $otrasTareas->count()+1;
+    $otrasTareas = Task::where("proyect_id", "=", $proyect->id)->orderBy("plan","DESC")->get()->filter(function($task) {
+        if ($task->payments->first()->id == Input::has('pr')) {
+            return true;
+        }
+    });
+    if ($ultimaTarea = $otrasTareas->first()){
+        $config["campos"]["planstart"]["valor"] = $ultimaTarea->plan;
+    }else{
+        $config["campos"]["planstart"]["valor"] = $proyect->planstart;
+    }
+    
+    $config["campos"]["order"]["valor"] = $otrasTareas->count() + 1;
 }
 ?>
 @extends("layouts.principal")
 
 @section("contenido")
 <ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
-  <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
-  <li class="active">{{ Lang::get("task.titulos.create") }}</li>
+    <li><a href="/">Home</a></li>
+    <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
+    <li><a href="{{ URL::route(Lang::get("principal.menu.links.pago") . '.show', array($payment->id)) }}">{{ $payment->name }}</a></li>
+    <li class="active">{{ Lang::get("task.titulos.create") }}</li>
 </ol>
 <h1>{{ Lang::get("task.titulos.create") }}</h3>
 <p>{{ TransArticle::get("task.prueba2") }}</p>
@@ -66,6 +72,20 @@ if (Input::has('pr') && Input::has('py')) {
             </div>
         </div>
     </div>
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="LabGantt">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#TabGantt" aria-expanded="false" aria-controls="TabGantt">
+                        {{ Lang::get("proyect.labels.gantt") }}
+                    </a>
+                </h4>
+            </div>
+            <div id="TabGantt" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LabGantt">
+                <div id="ganttpro" class="gantt"></div>
+            </div>
+        </div>
+    </div>
 </div>
 @endif
 <div class='container'>
@@ -75,13 +95,52 @@ if (Input::has('pr') && Input::has('py')) {
 @stop
 
 @section("selfjs")
+{{ HTML::script("js/jquery.fn.gantt.js") }}
 <script>
     $(document).ready(function() {
-        //alert(translations.task.error);
+        $("#ganttpro").gantt({
+            source: "{{ action('JsonsController@getGanttproyect', $proyect->id); }}",
+            scale: "weeks",
+            minScale: "hours",
+            maxScale: "months",
+            itemsPerPage: 15,
+            navigate: "scroll",
+            scrollToToday: false,
+            onRender: function() {
+                //console.log("chart rendered");
+            },
+            onItemClick: function(dataObj) {
+                console.log("Click en" + dataObj);
+            },
+            months: [
+                "{{ Lang::get('principal.labels.months.Jan') }}",
+                "{{ Lang::get('principal.labels.months.Feb') }}",
+                "{{ Lang::get('principal.labels.months.Mar') }}",
+                "{{ Lang::get('principal.labels.months.Apr') }}",
+                "{{ Lang::get('principal.labels.months.May') }}",
+                "{{ Lang::get('principal.labels.months.Jun') }}",
+                "{{ Lang::get('principal.labels.months.Jul') }}",
+                "{{ Lang::get('principal.labels.months.Aug') }}",
+                "{{ Lang::get('principal.labels.months.Sep') }}",
+                "{{ Lang::get('principal.labels.months.Oct') }}",
+                "{{ Lang::get('principal.labels.months.Nov') }}",
+                "{{ Lang::get('principal.labels.months.Dec') }}"
+            ],
+            dow: [
+                "{{ Lang::get('principal.labels.dow.su') }}",
+                "{{ Lang::get('principal.labels.dow.mo') }}",
+                "{{ Lang::get('principal.labels.dow.tu') }}",
+                "{{ Lang::get('principal.labels.dow.we') }}",
+                "{{ Lang::get('principal.labels.dow.th') }}",
+                "{{ Lang::get('principal.labels.dow.fr') }}",
+                "{{ Lang::get('principal.labels.dow.sa') }}"
+            ]
+        });
     });
 </script>
 @stop
 
 @section("selfcss")
-<!--{{ HTML::style("css/acerca.css") }} -->
+@parent
+{{ HTML::style("css/gantt/gantt.css") }}
 @stop

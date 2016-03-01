@@ -19,7 +19,7 @@ class ProyectsController extends \BaseController {
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
             $proyects = $usuario->proyects()->where("state", "<>", "ter")->get();
-            $botonCrear = false;
+            $botonCrear = true;
             $configCampos = ['name', 'code', 'priority', 'state', 'advance', 'totalcost', 'totalplan'];
             $configBotones = [
                 "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array("{ID}")) . "'>" . Lang::get("proyect.labels.ver") . "</a>",
@@ -177,7 +177,7 @@ class ProyectsController extends \BaseController {
             $configCampos = ['satisfaction', 'experience', 'totalcost', 'totalplan', 'value', 'saves', 'profit','planh', 'totalhours', 'saveshours', 'priority'];
         }
         if ($userSen->inGroup(Sentry::findGroupByName('Lider'))) {
-            $botonCrearEntregables = false;
+            $botonCrearEntregables = true;
             $botonCrearSupuestos = true;
             $botonCrearClientes = true;
             $configCampos = ['satisfaction', 'experience', 'value', 'profit'];

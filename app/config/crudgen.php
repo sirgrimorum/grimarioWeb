@@ -338,6 +338,12 @@ return array(
                 "label" => Lang::get("proyect.labels.type"),
                 "opciones" => Lang::get("proyect.selects.type")
             ],
+            "planstart" => [
+                "tipo" => "datetime",
+                "label" => Lang::get("proyect.labels.planstart"),
+                "placeholder" => Lang::get("proyect.placeholders.planstart"),
+                "description" => Lang::get("proyect.descriptions.planstart"),
+            ],
             "state" => [
                 "tipo" => "select",
                 "label" => Lang::get("proyect.labels.state"),

@@ -62,6 +62,23 @@ if ($work && $task->state == 'pau') {
     $task->state = 'des';
     $task->save();
 }
+$first = true;
+foreach ($task->works()->get() as $auxwork) {
+    $nuecosts = $auxwork->costs()->get();
+    if ($first) {
+        $costs = $nuecosts;
+    } else {
+        $costs = $costs->merge($nuecosts);
+    }
+    $first = false;
+}
+$configCosts = array_except(Config::get('crudgen.cost'), array('campos'));
+$configCosts['campos'] = array_except(Config::get('crudgen.cost.campos'), array('code', 'user_id', 'work_id'));
+$configCosts['botones'] = [
+    "<a class='btn btn-info' href='" . URL::route(Lang::get("principal.menu.links.costo") . '.show', array("{ID}")) . "'>" . Lang::get("cost.labels.ver") . "</a>",
+    "<a class='btn btn-success' href='" . URL::route(Lang::get("principal.menu.links.costo") . '.edit', array("{ID}")) . "'>" . Lang::get("cost.labels.editar") . "</a>",
+    "<a class='btn btn-danger' href='" . URL::route(Lang::get("principal.menu.links.costo") . '.destroy', array("{ID}")) . "'>" . Lang::get("cost.labels.eliminar") . "</a>",
+];
 ?>
 <div class="collapse" id="collapseMasinfoTk">
     {{ CrudLoader::show($config,$task->id,$task) }}
@@ -295,6 +312,23 @@ if ($work && $task->state == 'pau') {
                         </div>
                     </div>
                     @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="LabCosts">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionTk" href="#TabCosts" aria-expanded="false" aria-controls="TabCosts">
+                        {{ Lang::get('work.labels.costs') }} - ${{number_format($task->othercosts(), 0, ".", ".")}}COP
+                    </a>
+                    @if ($work)
+                    <a class='pull-right' href="{{ action('CostsController@create') }}?wk={{ $work->id }}&tk={{ $task->id }}">{{ Lang::get("cost.labels.create") }}</a>
+                    @endif
+                </h4>
+            </div>
+            <div id="TabCosts" class="panel-collapse collapse" role="tabpanel" aria-labelledby="LabCosts">
+                <div class="panel-body">
+                    {{ CrudLoader::lists($configCosts,$costs) }}
                 </div>
             </div>
         </div>

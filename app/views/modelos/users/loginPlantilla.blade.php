@@ -88,7 +88,11 @@
                     $("#loginPlaEmail").parent().removeClass('has-error');
                     $("#loginPlaEmail_help").html("");
                 } else {
-                    window.history.back();
+                    if (document.referrer) {
+                        window.history.back();
+                    } else {
+                        window.location.href ="{{ action('HomeController@showWelcome') }}";
+                    }
                 }
             });
         });
