@@ -17,7 +17,7 @@
 		"intervention/image": "^2.2",
 		"google/apiclient": "^1.1",
 		"nesbot/carbon": "1.14",
-		"khill/lavacharts": "3.0.*"
+		"khill/lavacharts": "3.0.*",
 	},
 	"autoload": {
 		"classmap": [
