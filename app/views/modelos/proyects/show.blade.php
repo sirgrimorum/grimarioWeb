@@ -61,7 +61,9 @@ if (Input::has("py")) {
 @section("contenido")
 <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
+    @if ($proyect->enterprises()->first())
     <li><a href="{{ URL::route(Lang::get("principal.menu.links.empresa") . '.show', array($proyect->enterprises()->first()->id)) }}">{{ $proyect->enterprises()->first()->nickname }}</a></li>
+    @endif
     <li class="active">{{ $proyect->name }}</li>
 </ol>
 <div id="avancebar"><div class="progress-label">{{ Lang::get("proyect.labels.advance") }}: {{ $proyect->advance() }}%</div></div>

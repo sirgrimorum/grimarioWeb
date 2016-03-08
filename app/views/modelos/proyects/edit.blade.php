@@ -25,7 +25,9 @@ if (Input::has('en')) {
 @section("contenido")
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
+  @if ($proyect->enterprises()->first())
   <li><a href="{{ URL::route(Lang::get("principal.menu.links.empresa") . '.show', array($proyect->enterprises()->first()->id)) }}">{{ $proyect->enterprises()->first()->nickname }}</a></li>
+  @endif
   <li><a href="{{ URL::route(Lang::get("principal.menu.links.proyecto") . '.show', array($proyect->id)) }}">{{ $proyect->name }}</a></li>
   <li class="active">{{ Lang::get("proyect.titulos.edit") }}</li>
 </ol>
